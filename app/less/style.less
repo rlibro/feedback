@@ -1,0 +1,41 @@
+html, body, div, header, section, ul, ol, li, p, h1, h2, h3, h4, h5, h6 {
+  padding: 0;
+  margin: 0;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+
+  &:hover {
+    font-weight: bolder;
+  }
+}
+
+body {
+  font-family: Dotum,'돋움',Helvetica,AppleSDGothicNeo,sans-serif;
+  font-size: 12px;
+  background-color: #ededed;
+}
+
+
+/* ---------- GENERAL ---------- */
+* {
+  -moz-box-sizing: border-box;
+       box-sizing: border-box;
+}
+*:before, *:after {
+  -moz-box-sizing: border-box;
+       box-sizing: border-box;
+}
+
+#root {
+  margin: 0 auto;
+  min-width: 320px;
+}
+
+@import "header";
+@import "app";
