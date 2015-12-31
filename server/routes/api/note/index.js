@@ -44,7 +44,7 @@ router.get('/', function(req, res){
             id: 222, 
             name: 'Park'
           },
-          content:'댓글 어쩌구 저쩌구', 
+          content:'이것은 댓글입니다. 어쩌구 저쩌구 써있을것입니다. ', 
           createdAt: '2015-11-24T12:32:11'
         }]
       },
@@ -56,7 +56,7 @@ router.get('/', function(req, res){
           lng: '123.342334'
         },
         content:'여기는 서울! 좀 춥습니다. 옷가지 챙겨오세요!! [여기]:(3432) 좋아요!',
-        createdAt: '2015-11-23T12:32:11',
+        createdAt: '2015-12-23T14:12:11',
         userId: 213,
         user: {
           id: 213,
@@ -78,7 +78,7 @@ router.get('/', function(req, res){
             name: 'Park'
           },
           content:'댓글 어쩌구 저쩌구', 
-          createdAt: '2015-11-24T12:32:11'
+          createdAt: '2016-01-01T18:32:11'
         }]
       },
       {

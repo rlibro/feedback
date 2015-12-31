@@ -13,6 +13,7 @@ router.get('/', function(req, res){
   res.json([
     {
       id: 1,
+      uid: 'Seoul-South_Korea',
       countryId: 1,
       countryName: 'South_Korea',
       cityName: 'Seoul',
@@ -26,6 +27,7 @@ router.get('/', function(req, res){
     },
     {
       id: 2,
+      uid: 'Quetzaltenango-Guatemala',
       countryId: 2,
       countryName: 'Guatemala',
       cityName: 'Quetzaltenango',
@@ -39,6 +41,7 @@ router.get('/', function(req, res){
     },
     {
       id: 3,
+      uid: 'Havana-Cuba',
       countryId: 3,
       countryName: 'Cuba',
       cityName: 'Havana',
@@ -49,58 +52,6 @@ router.get('/', function(req, res){
         uploadAt: ''
       }],
       noteCount: 2
-    },
-    {
-      id: 4,
-      countryId: 3,
-      countryName: 'Cuba',
-      cityName: 'Vinales',
-      cityImage: '',
-      photos: [{
-        url: '',
-        userId:'',
-        uploadAt: ''
-      }],
-      noteCount: 2
-    },
-    {
-      id: 5,
-      countryId: 3,
-      countryName: 'Cuba',
-      cityName: 'Cienfuegos',
-      cityImage: '',
-      photos: [{
-        url: '',
-        userId:'',
-        uploadAt: ''
-      }],
-      noteCount: 10
-    },
-    {
-      id: 6,
-      countryId: 3,
-      countryName: 'Cuba',
-      cityName: 'Varadero',
-      cityImage: '',
-      photos: [{
-        url: '',
-        userId:'',
-        uploadAt: ''
-      }],
-      noteCount: 10
-    },
-    {
-      id: 7,
-      countryId: 3,
-      countryName: 'Mexico',
-      cityName: 'Cancun',
-      cityImage: '',
-      photos: [{
-        url: '',
-        userId:'',
-        uploadAt: ''
-      }],
-      noteCount: 21
     }
   ]);
 

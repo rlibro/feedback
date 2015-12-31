@@ -3,20 +3,19 @@
 var auth = require('../app/services/auth.service');
 
 module.exports = function(app) {
-  app.use('/facebook' , require('./facebook'));
-  app.use('/'         , require('./home'));
-  // app.use('/register' , require('./register'));
-  // app.use('/backpack' , require('./timeline'));
-  // app.use('/note'     , require('./note'));
-  // app.use('/map'      , require('./map'));
-  app.use('/api'      , require('./api'));
+  app.use('/facebook', require('./facebook'));
+  
+  app.use('/api', require('./api'));
+  
+  app.get('/logout', (req, res) => {
 
-  app.get('/logout', function(req, res) {
-
-    req.session.destroy(function(err) {
+    req.session.destroy(err => {
       console.log("destroying session");
     });
+
     return res.redirect('/');
+  
   });
 
+  app.use('/', require('./home'));
 };

@@ -8,10 +8,7 @@ var exphbs = require('express-handlebars');
 var path = require('path');
 
 var compiler = webpack(config)
-
-
 var app = express();
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,25 +21,10 @@ app.set('view engine', 'hbs');
 app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }))
 app.use(webpackHotMiddleware(compiler))
 
-
-
-// app.use(function(req, res) {
-//   res.sendFile(__dirname + '/index.html')
-// })
-
-// app.listen(port, function(error) {
-//   if (error) {
-//     console.error(error)
-//   } else {
-//     console.info("==> 🌎  Listening on port %s. Open up http://localhost:%s/ in your browser.", port, port)
-//   }
-// })
-
-
 // var favicon = require('serve-favicon');
-// //var logger  = require('morgan');
+// var logger  = require('morgan');
 // var cookieParser = require('cookie-parser');
-// var bodyParser = require('body-parser');
+var bodyParser = require('body-parser');
 var session = require('express-session');
 // var RedisStore = require('connect-redis')(session);
 // 
@@ -60,12 +42,10 @@ var session = require('express-session');
 // app.use(cookieParser());
 app.use(session({ 
   secret: 'redbook', 
- // store : new RedisStore(config.redis), // HACK: 테스트를 위해 세션을 30분에서 30시간으로 늘렸다. Redis 스토어가 너무 금방 차면 세션을 시간을 다시 줄여야한다. 
   saveUninitialized: false,
   resave: false
 }));
 app.use(express.static( path.resolve(__dirname, '../public') ));
-// app.use(express.static( path.resolve(__dirname, '../bower_components') ));
 app.use(require('./libs/middleware/1_req_session'));
 // app.use(require('./libs/middleware/2_res_locals'));
 // app.use(require('./libs/middleware/3_xss_filter'));

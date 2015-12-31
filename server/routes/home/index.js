@@ -1,11 +1,16 @@
 'use strict';
-var express = require('express');
-var router  = express.Router();
+const express = require('express');
+const router  = express.Router();
 
-router.get('/', function (req, res) {
+function mainRoute(req, res){
+
+  console.log('==> params', req.params);
 
   res.render('index')
+}
 
-});
+router.get('/', mainRoute);
+router.get('/:redBookId', mainRoute);
+router.get('/:redBookId/:noteId', mainRoute);
 
 module.exports = router;
