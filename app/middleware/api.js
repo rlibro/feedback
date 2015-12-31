@@ -22,10 +22,17 @@ const API_ROOT = 'http://localhost:3200/api'
 
 // Fetches an API response and normalizes the result JSON according to schema.
 // This makes every API response have the same shape, regardless of how nested it was.
-function callApi(endpoint, schema) {
+function callApi(endpoint, method, data, schema) {
   const fullUrl = (endpoint.indexOf(API_ROOT) === -1) ? API_ROOT + endpoint : endpoint
 
-  return fetch(fullUrl)
+  return fetch(fullUrl, {
+      method: method,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
     .then(response =>
       response.json().then(json => ({ json, response }))
     ).then(({ json, response }) => {
@@ -72,9 +79,6 @@ const countrySchema = new Schema('countries', {
 const redBookSchema = new Schema('redBooks', {
   idAttribute: 'id'
 })
-// redBookSchema.define({
-//   country: countrySchema
-// })
 
 /**
  * 레드북에 쓰여지는 노트
@@ -82,9 +86,13 @@ const redBookSchema = new Schema('redBooks', {
 const noteSchema = new Schema('notes', {
   idAttribute: 'id'
 })
-// noteSchema.define({
-//   redBook: redBookSchema
-// })
+
+/**
+ * 레드북에 쓰여지는 노트의 댓글
+ */
+const commentSchema = new Schema('comments', {
+  idAttribute: 'id'
+})
 
 
 // Schemas for Github API responses.
@@ -96,7 +104,8 @@ export const Schemas = {
   REDBOOK: redBookSchema,
   REDBOOK_ARRAY: arrayOf(redBookSchema),
   NOTE: noteSchema,
-  NOTE_ARRAY: arrayOf(noteSchema)
+  NOTE_ARRAY: arrayOf(noteSchema),
+  COMMENT: commentSchema
 }
 
 // Action key that carries API call info interpreted by this Redux middleware.
@@ -111,7 +120,7 @@ export default store => next => action => {
     return next(action)
   }
 
-  let { endpoint } = callAPI
+  let { endpoint, method = 'GET', data } = callAPI
   const { schema, types } = callAPI
 
   if (typeof endpoint === 'function') {
@@ -140,7 +149,7 @@ export default store => next => action => {
   const [ requestType, successType, failureType ] = types
   next(actionWith({ type: requestType }))
 
-  return callApi(endpoint, schema).then(
+  return callApi(endpoint, method, data, schema).then(
     response => next(actionWith({
       response,
       type: successType
