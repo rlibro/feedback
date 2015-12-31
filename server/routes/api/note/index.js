@@ -55,15 +55,7 @@ router.get('/', (req, res) => {
             lng: '23.3222'
           }
         }],
-        comments: [{
-          userId: 222,
-          user: {
-            id: 222, 
-            name: 'Park'
-          },
-          content:'이것은 댓글입니다. 어쩌구 저쩌구 써있을것입니다. ', 
-          createdAt: '2015-11-24T12:32:11'
-        }]
+        comments: []
       },
       {
         id: 2123, 
@@ -88,15 +80,7 @@ router.get('/', (req, res) => {
             lng: '23.3222'
           }
         }],
-        comments: [{
-          userId: 222,
-          user: {
-            id: 222, 
-            name: 'Park'
-          },
-          content:'댓글 어쩌구 저쩌구', 
-          createdAt: '2016-01-01T18:32:11'
-        }]
+        comments: []
       },
       {
         id: 3123, 
@@ -121,15 +105,7 @@ router.get('/', (req, res) => {
             lng: '23.3222'
           }
         }],
-        comments: [{
-          userId: 222,
-          user: {
-            id: 222, 
-            name: 'Park'
-          },
-          content:'댓글 어쩌구 저쩌구', 
-          createdAt: '2015-11-24T12:32:11'
-        }]
+        comments: []
       }]);
     break;
 
@@ -158,15 +134,7 @@ router.get('/', (req, res) => {
           lng: '23.3222'
         }
       }],
-      comments: [{
-        userId: 222,
-        user: {
-          id: 222, 
-          name: 'Park'
-        },
-        content:'댓글 어쩌구 저쩌구', 
-        createdAt: '2015-11-24T12:32:11'
-      }]
+      comments: []
     },
     {
       id: 2131324, 
@@ -191,15 +159,7 @@ router.get('/', (req, res) => {
           lng: '23.3222'
         }
       }],
-      comments: [{
-        userId: 222,
-        user: {
-          id: 222, 
-          name: 'Park'
-        },
-        content:'댓글 어쩌구 저쩌구', 
-        createdAt: '2015-11-24T12:32:11'
-      }]
+      comments: []
     }])
     break;
 
@@ -228,15 +188,7 @@ router.get('/', (req, res) => {
             lng: '23.3222'
           }
         }],
-        comments: [{
-          userId: 222,
-          user: {
-            id: 222, 
-            name: 'Park'
-          },
-          content:'댓글 어쩌구 저쩌구', 
-          createdAt: '2015-11-24T12:32:11'
-        }]
+        comments: []
       }
     ]);
 
