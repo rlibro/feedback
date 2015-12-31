@@ -239,6 +239,7 @@ function fetchNotesOfRedBook(redBookId, nextPageUrl) {
 
 // 레드북이 등록된 최근 노트 20개를 가져온다. 
 export function loadNotesByRedBookId (redBookId) {
+
   return (dispatch, getState) => {
 
     const {
@@ -255,4 +256,30 @@ export function loadNotesByRedBookId (redBookId) {
 }
 
 
+// 노트에 커맨트를 추가한다. 
+export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST'
+export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS'
+export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE'
+
+function addNoteComment(noteId, commentText, endPoint){
+
+  return {
+    [CALL_API]: {
+      method: 'POST',
+      data: { noteId, commentText},
+      types: [ ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE ],
+      endpoint: endPoint,
+      schema: Schemas.COMMENT
+    }
+  }
+
+}
+
+export function submitNoteComment (noteId, commentText) {
+  const endPoint = '/notes/comment';
+
+  return (dispatch, getState) => {
+    return dispatch(addNoteComment(noteId, commentText, endPoint));
+  }
+}
 

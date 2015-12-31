@@ -5,11 +5,21 @@ import { routeReducer, UPDATE_PATH} from 'redux-simple-router'
 import { combineReducers } from 'redux'
 
 // Updates an entity cache in response to any action with response.entities.
-/**
- * 서버에서 가져온 데이터를 캐시한다
- */
 function entities(state = { countries: {}, redBooks: {}, notes:{} }, action) {
+  
   if (action.response && action.response.entities) {
+
+    if( action.type === ActionTypes.ADD_COMMENT_SUCCESS){
+
+        const {entities, result} = action.response;
+        const comment = entities.comments[result];
+        const note = state.notes[comment.noteId];
+        delete comment.noteId;
+        note.comments.push(comment);
+
+        return merge({}, state)
+    }
+
     return merge({}, state, action.response.entities)
   }
 
@@ -73,8 +83,6 @@ function searchKeyword(state = '', action) {
   // }
   return state
 }
-
-
 
 /**
  * 데이터 스토어에 들어갈 기본 구조

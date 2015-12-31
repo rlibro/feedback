@@ -1,9 +1,26 @@
 'use strict';
 
 const express = require('express');
+const uuid = require('uuid');
+const moment = require('moment');
 const router  = express.Router();
 
-router.get('/', function(req, res){
+router.post('/comment', (req, res) => {
+  var user = req.session.user;
+  var commentText = req.body.commentText;
+  var noteId = req.body.noteId;
+
+  res.json({
+    id: uuid.v4(),
+    noteId: noteId,
+    user: user,
+    content: commentText, 
+    createdAt: moment().format()
+  })
+
+});
+
+router.get('/', (req, res) => {
 
   const redBookId = req.query.redBookId
 
