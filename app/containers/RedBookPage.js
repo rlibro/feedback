@@ -1,7 +1,9 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { loadNotesByRedBookId } from '../actions'
+import { loadNotesByRedBookId, submitNoteComment } from '../actions'
 import RedBookCover from '../components/RedBookCover'
+import RedBookNoteForm from '../components/RedBookNoteForm'
+import RedBookNoteList from '../components/RedBookNoteList'
 
 
 function loadData(props) {
@@ -36,9 +38,17 @@ class RedBookPage extends Component {
 
     const ids = notes.ids || [];
 
-    return <div id="redbook">
+
+
+    return <div id="RedBookPage" className="border green">
       <RedBookCover />
-      <ul>
+      <RedBookNoteForm />
+      <RedBookNoteList 
+        notes={entities.notes} 
+        ids={ids}
+        onSubmitComment={this.handleSubmitComment}/>
+
+     {/* <ul>
       { ids.map((id, i) => {
 
         const note = entities.notes[id];
@@ -48,7 +58,7 @@ class RedBookPage extends Component {
         </li>
 
       }) }
-      </ul>
+      </ul>*/}
     </div>
    
 
@@ -62,10 +72,17 @@ class RedBookPage extends Component {
       </div>
     )
   }
+
+  handleSubmitComment = (noteId, commentText) => {
+    
+    this.props.submitNoteComment(noteId, commentText)
+
+  }
 }
 
 RedBookPage.propTypes = {
-  loadNotesByRedBookId: PropTypes.func.isRequired
+  loadNotesByRedBookId: PropTypes.func.isRequired,
+  submitNoteComment: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {
@@ -85,5 +102,6 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, {
-  loadNotesByRedBookId
+  loadNotesByRedBookId,
+  submitNoteComment
 })(RedBookPage)
