@@ -16,9 +16,8 @@ a {
 }
 
 body {
-  font-family: Dotum,'돋움',Helvetica,AppleSDGothicNeo,sans-serif;
-  font-size: 12px;
-  background-color: #ededed;
+  // font-family: Dotum,'돋움',Helvetica,AppleSDGothicNeo,sans-serif;
+  // font-size: 14px;
 }
 
 
@@ -33,9 +32,25 @@ body {
 }
 
 #root {
+  width: 600px;
   margin: 0 auto;
   min-width: 320px;
+
 }
 
-@import "header";
-@import "app";
+.border {
+  border: 1px solid #111;
+
+  &.red {
+    border-color: red;
+  }
+  &.blue {
+    border-color: blue;
+  }
+  &.green {
+    border-color: green;
+  }
+}
+
+//@import "header";
+//@import "app";
