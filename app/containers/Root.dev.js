@@ -17,7 +17,7 @@ export default class Root extends Component {
         <div id="wrap">
           <Router history={history}>
             <Route path="/" component={App}>
-              <Route path="/guide/:redBookId" component={RedBookPage}/>
+              <Route path="/:RedBookUID" component={RedBookPage}/>
             </Route>
           </Router>
         </div>

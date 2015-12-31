@@ -24,23 +24,6 @@ class App extends Component {
     }
   }
 
-  handleDismissClick = (e) => { 
-    this.props.resetErrorMessage()
-    e.preventDefault()
-  }
-
-  handleFacebookLogin = (e) => {
-    window.open('/facebook/login', '', 'width=600, height=550');
-  }
-
-  handleMoveMyNote = (e) => {
-    this.props.pushState('/guide/note')
-  }
-
-  handleChange = (nextValue) => {
-    this.props.pushState(`/guide/${nextValue}`, nextValue);
-  }
-
   renderErrorMessage() {
     const { errorMessage } = this.props
     if (!errorMessage) {
@@ -98,8 +81,8 @@ class App extends Component {
 
       const redBook = entities.redBooks[id];
 
-      return <li key={i}>
-        <a href={'#/guide/'+ redBook.id} onClick={this.openRedBook.bind(this,redBook)}>
+      return <li key={i} className="redbook">
+        <a href={`/${redBook.uid}`} onClick={this.handleOpenRedBook.bind(this,redBook)}>
           <h3>{redBook.cityName}<span>({redBook.noteCount})</span></h3>
           in <span>{redBook.countryName}</span>
         </a>
@@ -107,11 +90,6 @@ class App extends Component {
 
     }) }</ul>
   
-  }
-
-  openRedBook = (redBook, e) => {
-    this.props.pushState(`/guide/${redBook.id}`, {redBookId:redBook.id, redBookName: redBook.cityName});
-    e.preventDefault()
   }
 
   render() {
@@ -124,19 +102,43 @@ class App extends Component {
           onMoveMyNote={this.handleMoveMyNote} 
           login={login} />
 
-        <Explore value={inputValue}
-                 onChange={this.handleChange} />
-        <hr />
-        {this.renderListOfCountries()}
+        {this.renderErrorMessage()}
+
+        {/*<Explore value={inputValue}
+                 onChange={this.handleChange} />*/}
 
         <hr />
         {this.renderListOfRedBooks()}
 
         <hr />
-        {this.renderErrorMessage()}
         {children}
       </div>
     )
+  }
+
+  handleDismissClick = (e) => { 
+    this.props.resetErrorMessage()
+    e.preventDefault()
+  }
+
+  handleFacebookLogin = (e) => {
+    window.open('/facebook/login', '', 'width=600, height=550');
+  }
+
+  handleMoveMyNote = (e) => {
+    this.props.pushState('/guide/note')
+  }
+
+  // 새로운 위치로 이동하는게 아니라 필터 처리하거나 DB에서 검색 해야한다. 
+  handleChange = (nextValue) => {
+
+    // pushState(path, state)
+    //this.props.pushState(`/guide/${nextValue}`, nextValue);
+  }
+
+  handleOpenRedBook = (redBook, e) => {
+    this.props.pushState(`/${redBook.uid}`, { redBookId:redBook.id, redBookName: redBook.cityName});
+    e.preventDefault()
   }
 }
 
