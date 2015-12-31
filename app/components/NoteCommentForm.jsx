@@ -3,18 +3,19 @@ import React, { Component, PropTypes } from 'react';
 export default class NoteCommentForm extends Component {
 
   render = () => {
-    return <div>
-      <form onSubmit={this.handleSubmit}>
-        <input type="text" placeholder="댓글을 입력하세요." 
-          autoFocus={true}
-          onKeyPress={this.checkEnter} />
-        <input type="submit" value="SEND" />
-      </form>
-    </div>
-  }
+    const { loginUser } = this.props;
 
-  handleSubmit = (e) => {
-    e.preventDefault()
+    return <div className="NoteCommentForm">
+    
+      <div className="profile photo">
+        <img src={loginUser.picture.data.url} />
+      </div>
+      
+      <input className="text" type="text" placeholder="댓글을 입력하세요." 
+        autoFocus={true}
+        onKeyPress={this.checkEnter} />
+    
+    </div>
   }
 
   checkEnter = (e) => {
@@ -31,6 +32,7 @@ export default class NoteCommentForm extends Component {
 }
 
 NoteCommentForm.propTypes = {
+  loginUser: PropTypes.object.isRequired,
   isOpenComment: PropTypes.bool.isRequired,
   onSubmitComment: PropTypes.func.isRequired
 }

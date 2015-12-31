@@ -7,10 +7,19 @@ export default class NoteComment extends Component {
 
     const { comment } = this.props;
 
-    return <div className="note-comment">
-      <img src={comment.user.picture.data.url} /> <span>{comment.user.name}</span>
-      <p>{comment.content}</p>
-      { moment(comment.createdAt).fromNow() }
+    return <div className="NoteComment">
+      <div className="profile photo">
+        <img src={comment.user.picture.data.url} />
+      </div>
+      <div className="comment-container">
+        <p className="content">
+          <span className="name">{comment.user.name}</span>
+          <span>{comment.content}</span>
+        </p>
+        <div>
+          { moment(comment.createdAt).fromNow() }
+        </div>
+      </div>
     </div>
   }
 }

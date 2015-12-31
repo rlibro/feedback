@@ -20,10 +20,10 @@ export default class RedBookNote extends Component {
 
   render = () => {
 
-    const { note } = this.props;
+    const { note, loginUser } = this.props;
     const {isOpenComment} = this.state
 
-    return <div className="RedBookNote border blue">
+    return <div className="RedBookNote">
       <div>{ moment(note.createdAt).format('LLL') } - {note.user.name}</div>
       <div>{note.content}</div>
       <div className="controls">
@@ -32,6 +32,7 @@ export default class RedBookNote extends Component {
       </div>
 
       <NoteCommentList 
+        loginUser={loginUser}
         comments={note.comments} 
         isOpenComment={isOpenComment}
         onSubmitComment={this.props.onSubmitComment.bind(null, note.id)} />
@@ -40,6 +41,7 @@ export default class RedBookNote extends Component {
 }
 
 RedBookNote.propTypes = {
+  loginUser: PropTypes.object.isRequired,
   note: PropTypes.object.isRequired,
   onSubmitComment: PropTypes.func.isRequired
 }

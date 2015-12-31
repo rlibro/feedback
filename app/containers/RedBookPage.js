@@ -30,7 +30,7 @@ class RedBookPage extends Component {
 
   renderListOfNotes = () => {
 
-    const { notes, entities, redBookName } = this.props;
+    const { notes, entities, redBookName, loginUser } = this.props;
    
     if( !notes ){
       return <h2><i>{redBookName} 정보북을 로드중입니다. </i></h2>
@@ -43,7 +43,8 @@ class RedBookPage extends Component {
     return <div id="RedBookPage" className="border green">
       <RedBookCover />
       <RedBookNoteForm />
-      <RedBookNoteList 
+      <RedBookNoteList
+        loginUser={loginUser}
         notes={entities.notes} 
         ids={ids}
         onSubmitComment={this.handleSubmitComment}/>
@@ -94,6 +95,7 @@ function mapStateToProps(state) {
   } = state
 
   return {
+    loginUser: state.login,
     redBookName,
     redBookId,
     notes: notesByRedBookId[redBookId],

@@ -8,7 +8,7 @@ export default class NoteCommentList extends Component {
 
   renderCommentList = () => {
 
-    const { comments, isOpenComment } = this.props
+    const { comments, isOpenComment, loginUser } = this.props
 
     return <div id="NoteCommentList">
 
@@ -17,6 +17,7 @@ export default class NoteCommentList extends Component {
       })}
 
       <NoteCommentForm 
+        loginUser={loginUser}
         isOpenComment={isOpenComment}
         onSubmitComment={this.props.onSubmitComment} />
     
@@ -37,6 +38,7 @@ export default class NoteCommentList extends Component {
 }
 
 NoteCommentList.propTypes = {
+  loginUser: PropTypes.object.isRequired,
   comments: PropTypes.array.isRequired,
   isOpenComment: PropTypes.bool.isRequired,
   onSubmitComment: PropTypes.func.isRequired

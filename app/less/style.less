@@ -31,6 +31,10 @@ body {
        box-sizing: border-box;
 }
 
+textarea:focus, input:focus{
+  outline: 0;
+}
+
 #root {
   width: 600px;
   margin: 0 auto;
@@ -51,6 +55,63 @@ body {
     border-color: green;
   }
 }
+
+/**
+ * 개발 편의를 위해 디자인 보다는 기능 관점에서 간단한 스타일만 추가, 나중에 디자인 다시 해야함!!
+ */
+.NoteComment {
+  position: relative;
+  border-top: 1px solid #ccc;
+  min-height: 47px;
+
+  .profile.photo {
+    position: absolute;
+    width: 40px;
+    
+    img {
+      margin: 4px;
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  .comment-container {
+    margin-left: 40px;
+
+    .content{
+      padding-right: 36px;
+
+      .name {
+        font-weight: bold;
+        margin-right: 6px;
+      }
+    }
+  }
+}
+
+.NoteCommentForm {
+  position: relative;
+  border-top: 1px solid #ccc;
+
+  .profile.photo {
+    position: absolute;
+    width: 40px;
+    
+    img {
+      margin: 4px;
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  input.text {
+    width: 100%;
+    padding: 10px 5px 10px 40px;
+    font-size: 13px;
+  }
+
+}
+
 
 //@import "header";
 //@import "app";
