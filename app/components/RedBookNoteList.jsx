@@ -7,7 +7,7 @@ export default class RedBookNoteList extends Component {
 
     const { notes, ids, loginUser, onSubmitComment } = this.props
 
-    return <div id="RedBookNoteList" className="border blue">
+    return <div id="RedBookNoteList" className="">
       { ids.map( (id, i) => {
         
         const note = notes[id];

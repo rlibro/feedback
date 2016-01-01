@@ -18,6 +18,7 @@ a {
 body {
   // font-family: Dotum,'돋움',Helvetica,AppleSDGothicNeo,sans-serif;
   // font-size: 14px;
+  background-color: #efefef;
 }
 
 
@@ -59,6 +60,43 @@ textarea:focus, input:focus{
 /**
  * 개발 편의를 위해 디자인 보다는 기능 관점에서 간단한 스타일만 추가, 나중에 디자인 다시 해야함!!
  */
+.dimmed {
+  background-color: #222;
+  left: 0;
+  top: 0;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  opacity: 0.7;
+  z-index: -1;
+}
+
+.RedBookPage {
+  position: absolute;
+  top: 50px;
+  width: 600px;
+  z-index: 1000;
+}
+
+.RedBookCover {
+  position: relative;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  min-height: 360px; 
+}
+
+.RedBookNote {
+  position: relative;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
 .NoteComment {
   position: relative;
   border-top: 1px solid #ccc;

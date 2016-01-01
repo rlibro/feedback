@@ -9,9 +9,10 @@ import DevTools from './DevTools'
 
 
 export default class Root extends Component {
-  render() {
-    const { store, history } = this.props
 
+  render() {
+    const { store, history } = this.props;
+  
     return (
       <Provider store={store}>
         <div id="wrap">
