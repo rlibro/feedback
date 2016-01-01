@@ -78,7 +78,7 @@ const countrySchema = new Schema('countries', {
  * 레드북
  */
 const redBookSchema = new Schema('redBooks', {
-  idAttribute: 'id'
+  idAttribute: 'uname'
 })
 
 /**

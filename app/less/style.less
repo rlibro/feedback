@@ -88,6 +88,63 @@ textarea:focus, input:focus{
   min-height: 360px; 
 }
 
+.RedBookNoteForm {
+  position: relative;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  margin-bottom: 10px;
+  border-radius: 5px;
+
+  .note-form-header{
+    border-bottom: 1px solid #e5e5e5;
+    background-color: #f6f7f8;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 5px 10px;
+
+    button {
+      width: 50px;
+      padding: 5px;
+      border: none;
+      background-color: #f6f7f8;
+      margin: 0 5px;
+      font-size: 14px;
+      outline: 0;
+    }
+  }
+
+  textarea.text {
+    width: 100%;
+    border: none;
+    padding: 12px;
+    resize: none;
+    font-size: 14px;
+    line-height: 24px;
+  }
+
+  .note-form-footer {
+    background-color: #f6f7f8;
+    border-top: 1px solid #e5e5e5;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 8px;
+    text-align: right;
+
+    button {
+      height: 24px;
+      width: 50px;
+      border: 1px solid #ccc;
+      margin: 0 5px;
+      font-size: 13px;
+      background-color: #4e69a2;
+      border-color: #435a8b #3c5488 #334c83;
+      border-radius: 2px;
+      color: #efefef;
+    }
+  }
+
+}
+
 .RedBookNote {
   position: relative;
   border: 1px solid #ccc;

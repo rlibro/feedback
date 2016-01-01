@@ -15,10 +15,16 @@ function loadData(props) {
 class App extends Component {
 
   componentWillMount() {
+
+    console.log('App componentWillMount ==> ', this.props)
+
     loadData(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
+
+    console.log( 'App componentWillReceiveProps ==> ' , this.props, nextProps);
+
     if (nextProps.fullName !== this.props.fullName) {
       loadData(nextProps)
     }
@@ -135,7 +141,7 @@ class App extends Component {
   }
 
   handleOpenRedBook = (redBook, e) => {
-    this.props.pushState(`/${redBook.uid}`, { redBookId:redBook.id, redBookName: redBook.cityName});
+    this.props.pushState(`/${redBook.uname}`) //, { redBookId:redBook.id, cityName: redBook.cityName, countryName: redBook.countryName});
     e.preventDefault()
   }
 }

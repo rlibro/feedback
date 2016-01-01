@@ -8,39 +8,49 @@ import RedBookNoteList from '../components/RedBookNoteList'
 
 
 function loadData(props) {
-  const { redBookId } = props
-  props.loadNotesByRedBookId( redBookId )
+  const { redBook, redBookId } = props
+
+  if( redBook ){
+
+    console.log('RedBookPage loadNotes', redBookId);
+    props.loadNotesByRedBookId( redBookId )  
+  }
+  
 }
 
 class RedBookPage extends Component {
   
   componentWillMount() {
+
+    console.log('RedBookPage componentWillMount ==> ', this.props)
+
     loadData(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
 
-    if (nextProps.redBookId !== this.props.redBookId) {
+    console.log('RedBookPage componentWillReceiveProps ==> ' , this.props, nextProps);
+
+    if( nextProps.redBook && !this.props.redBook){
       loadData(nextProps)
     }
   }
 
-  // handleLoadMoreClick = () => {
-  //   this.props.loadStarred(this.props.login, true)
-  // }
-
   renderListOfNotes = () => {
 
-    const { notes, entities, redBookName, loginUser } = this.props;
+    const { notes, entities, redBook, countryName, cityName, loginUser } = this.props;
    
     if( !notes ){
-      return <h2><i>{redBookName} 정보북을 로드중입니다. </i></h2>
+
+      return <h2><i>{cityName} 정보북을 로드중입니다. </i></h2>
     }
 
     const ids = notes.ids || [];
 
     return <div className="RedBookPage">
-      <RedBookCover loginUser={loginUser}/>
+      <RedBookCover 
+        loginUser={loginUser} 
+        redBook={redBook} />
       <RedBookNoteForm loginUser={loginUser} />
       <RedBookNoteList
         loginUser={loginUser}
@@ -83,14 +93,19 @@ function mapStateToProps(state) {
   const {
     pagination: { notesByRedBookId },
     entities: { redBooks },
-    routing: {state: { redBookId, redBookName }}
+    routing: { path }
   } = state
+
+  const uname = path.substr(1) 
+  const [ cityName, countryName ] = uname.split('-');
 
   return {
     loginUser: state.login,
-    redBookName,
-    redBookId,
-    notes: notesByRedBookId[redBookId],
+    redBookId: uname,
+    cityName: cityName,
+    countryName: countryName,
+    redBook: redBooks[uname],
+    notes: notesByRedBookId[uname],
     entities: state.entities
   }
 }
