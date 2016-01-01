@@ -27,6 +27,7 @@ function callApi(endpoint, method, data, schema) {
 
   return fetch(fullUrl, {
       method: method,
+      credentials: 'same-origin',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
