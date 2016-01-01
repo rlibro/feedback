@@ -20,7 +20,7 @@ export default class RedBookNote extends Component {
 
   render = () => {
 
-    const { note, loginUser } = this.props;
+    const { note, loginUser, onSubmitComment } = this.props;
     const {isOpenComment} = this.state
 
     return <div className="RedBookNote">
@@ -35,7 +35,7 @@ export default class RedBookNote extends Component {
         loginUser={loginUser}
         comments={note.comments} 
         isOpenComment={isOpenComment}
-        onSubmitComment={this.props.onSubmitComment.bind(null, note.id)} />
+        onSubmitComment={onSubmitComment.bind(null, note.id)} />
     </div>
   }
 }

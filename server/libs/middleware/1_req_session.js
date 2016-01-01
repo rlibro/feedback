@@ -11,8 +11,6 @@ module.exports = function(req, res, next){
   debug("\n", req.session);
   var user = req.session.user;
 
-  console.log("로그인한 유저가 있니?", user);
-
   // 페북으로 연결할 경우 정보를 페북에서 가져와 DB에 기록하고, 
   // 반대로 필요한 정보를 DB에서 가져와 세션에 기록한다. 
   if( user && user.provider === 'facebook' ) {
@@ -49,16 +47,16 @@ module.exports = function(req, res, next){
   }else{
 
     //개발을 위해 로그인 세션 정보를 강제로 저장해둔다.
-    req.session.user = { 
-      id: '10153031949693302',
-      name: 'ByungDae Sohn',
-      email: 'miconblog@gmail.com',
-      picture: { data: { url: 'https://scontent.xx.fbcdn.net/hprofile-xap1/v/t1.0-1/p50x50/1510494_10151938283373302_404117394_n.jpg?oh=14fb9c1fcd97aa23810499900f48b57b&oe=5719336B' } },
-      provider: 'facebook',
-      ip: '::1' 
-    };
+    // req.session.user = { 
+    //   id: '10153031949693302',
+    //   name: 'ByungDae Sohn',
+    //   email: 'miconblog@gmail.com',
+    //   picture: { data: { url: 'https://scontent.xx.fbcdn.net/hprofile-xap1/v/t1.0-1/p50x50/1510494_10151938283373302_404117394_n.jpg?oh=14fb9c1fcd97aa23810499900f48b57b&oe=5719336B' } },
+    //   provider: 'facebook',
+    //   ip: '::1' 
+    // };
 
-    res.locals.user = JSON.stringify({login:req.session.user});
+    res.locals.user = JSON.stringify({});
     next();    
   }
 

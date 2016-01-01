@@ -8,7 +8,7 @@ export default class NoteCommentList extends Component {
 
   renderCommentList = () => {
 
-    const { comments, isOpenComment, loginUser } = this.props
+    const { comments, isOpenComment, loginUser, onSubmitComment } = this.props
 
     return <div id="NoteCommentList">
 
@@ -19,7 +19,7 @@ export default class NoteCommentList extends Component {
       <NoteCommentForm 
         loginUser={loginUser}
         isOpenComment={isOpenComment}
-        onSubmitComment={this.props.onSubmitComment} />
+        onSubmitComment={onSubmitComment} />
     
     </div>
   }

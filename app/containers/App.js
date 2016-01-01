@@ -99,8 +99,9 @@ class App extends Component {
       <div id="app">
         <Header 
           onLogin={this.handleFacebookLogin} 
-          onMoveMyNote={this.handleMoveMyNote} 
-          login={login} />
+          onMoveHome={this.handleMove.bind(this, '/')} 
+          onMoveMyNote={this.handleMove.bind(this, 'note')} 
+          loginUser={login} />
 
         {this.renderErrorMessage()}
 
@@ -121,12 +122,9 @@ class App extends Component {
     e.preventDefault()
   }
 
-  handleFacebookLogin = (e) => {
-    window.open('/facebook/login', '', 'width=600, height=550');
-  }
-
-  handleMoveMyNote = (e) => {
-    this.props.pushState('/guide/note')
+  handleMove = (path, e) => {
+    this.props.pushState(path);
+    e.preventDefault()
   }
 
   // 새로운 위치로 이동하는게 아니라 필터 처리하거나 DB에서 검색 해야한다. 

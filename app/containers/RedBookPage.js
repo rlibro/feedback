@@ -38,8 +38,6 @@ class RedBookPage extends Component {
 
     const ids = notes.ids || [];
 
-
-
     return <div id="RedBookPage" className="border green">
       <RedBookCover />
       <RedBookNoteForm />
@@ -48,21 +46,7 @@ class RedBookPage extends Component {
         notes={entities.notes} 
         ids={ids}
         onSubmitComment={this.handleSubmitComment}/>
-
-     {/* <ul>
-      { ids.map((id, i) => {
-
-        const note = entities.notes[id];
-
-        return <li key={i}>
-          {note.content}
-        </li>
-
-      }) }
-      </ul>*/}
     </div>
-   
-
   }
 
   render() {

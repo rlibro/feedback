@@ -2,7 +2,13 @@ import React, { Component, PropTypes } from 'react';
 
 export default class NoteCommentForm extends Component {
 
-  render = () => {
+  renderLogin = () => {
+    return <div className="NoteCommentForm"> 
+      댓글을 남기시려면 <a href="#" onClick={this.handleFacebookLogin}>페이스북으로 로그인</a> 해주세요!;
+    </div>
+  }
+
+  renderForm = () => {
     const { loginUser } = this.props;
 
     return <div className="NoteCommentForm">
@@ -13,21 +19,32 @@ export default class NoteCommentForm extends Component {
       
       <input className="text" type="text" placeholder="댓글을 입력하세요." 
         autoFocus={true}
-        onKeyPress={this.checkEnter} />
+        onKeyPress={this.handleCheckEnter} />
     
     </div>
+
   }
 
-  checkEnter = (e) => {
+  render() {
+    const { loginUser } = this.props;
+
+    return loginUser.id ? this.renderForm() : this.renderLogin();
+  }
+
+  handleCheckEnter = (e) => {
     if(e.key === 'Enter') {
-      this.finishEdit(e);
+      this.handleFinishEdit(e);
     }
   }
 
-  finishEdit = (e) => {
+  handleFinishEdit = (e) => {
     this.props.onSubmitComment(e.target.value);
 
     e.target.value = '';
+  }
+
+  handleFacebookLogin = (e) => {
+    window.open('/facebook/login', '', 'width=600, height=550');
   }
 }
 

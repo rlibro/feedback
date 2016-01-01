@@ -5,7 +5,7 @@ export default class RedBookNoteList extends Component {
 
   render = () => {
 
-    const { notes, ids, loginUser } = this.props
+    const { notes, ids, loginUser, onSubmitComment } = this.props
 
     return <div id="RedBookNoteList" className="border blue">
       { ids.map( (id, i) => {
@@ -14,7 +14,7 @@ export default class RedBookNoteList extends Component {
 
         return <RedBookNote 
           key={i} note={note} loginUser={loginUser}
-          onSubmitComment={this.props.onSubmitComment} />
+          onSubmitComment={onSubmitComment} />
       }) }
     </div>
   }

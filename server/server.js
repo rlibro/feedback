@@ -1,16 +1,20 @@
 'use strict';
-var webpack = require('webpack')
-var webpackDevMiddleware = require('webpack-dev-middleware')
-var webpackHotMiddleware = require('webpack-hot-middleware')
-var config = require('../webpack.config')
+var webpack = require('webpack');
+var webpackDevMiddleware = require('webpack-dev-middleware');
+var webpackHotMiddleware = require('webpack-hot-middleware');
+var config = require('../webpack.config');
 var express = require('express');
 var exphbs = require('express-handlebars');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var path = require('path');
-var compiler = webpack(config)
+var compiler = webpack(config);
 var app = express();
+
+// Webpack Setup!
+app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }))
+app.use(webpackHotMiddleware(compiler))
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -20,13 +24,11 @@ app.engine('hbs', exphbs({
 }));
 app.set('view engine', 'hbs');
 
-app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }))
-app.use(webpackHotMiddleware(compiler))
-
+app.use(cookieParser());
 app.use(session({ 
-  secret: 'redbook', 
-  saveUninitialized: false,
-  resave: false
+  secret: 'redbook-secret',
+  resave: false,
+  saveUninitialized: false
 }));
 app.use(bodyParser.json());
 app.use(express.static( path.resolve(__dirname, '../public') ));
