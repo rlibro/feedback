@@ -4,7 +4,7 @@ export default class RedBookCover extends Component {
 
   render(){
 
-    const { loginUser, redBook } = this.props;
+    const { loginUser, redBook, onCloseRedBook } = this.props;
     var style = {
       color: 'white',
       backgroundSize: 'cover',
@@ -19,6 +19,9 @@ export default class RedBookCover extends Component {
         <h2 className="city-name">{redBook.cityName}</h2>
         <h4 className="country-name">{redBook.countryName}</h4>
       </div>
+      <div className="button-close">
+        <img src="/assets/images/closebutton.svg"  onClick={onCloseRedBook}/>
+      </div>
       
 {/*      <div className="controls">
         <button>체크인</button>
@@ -29,5 +32,6 @@ export default class RedBookCover extends Component {
 
 RedBookCover.propTypes = {
   loginUser: PropTypes.object.isRequired,
-  redBook: PropTypes.object.isRequired
+  redBook: PropTypes.object.isRequired,
+  onCloseRedBook: PropTypes.func.isRequired
 }

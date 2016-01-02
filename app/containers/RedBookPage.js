@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { loadNotesByRedBookId, submitNoteComment, submitRedBookNote } from '../actions'
-import { pushPath as pushState } from 'redux-simple-router'
+import { pushPath as pushState, replacePath } from 'redux-simple-router'
 import RedBookCover from '../components/RedBookCover'
 import RedBookNoteForm from '../components/RedBookNoteForm'
 import RedBookNoteList from '../components/RedBookNoteList'
@@ -50,7 +50,8 @@ class RedBookPage extends Component {
     return <div className="RedBookPage">
       <RedBookCover 
         loginUser={loginUser} 
-        redBook={redBook} />
+        redBook={redBook}
+        onCloseRedBook={this.handleCloseRedBook} />
       <RedBookNoteForm 
         loginUser={loginUser}
         onSubmitNote={this.handleSubmitNote.bind(null, redBook.id)} />
@@ -59,7 +60,7 @@ class RedBookPage extends Component {
         notes={entities.notes} 
         ids={ids}
         onSubmitComment={this.handleSubmitComment}/>
-      <div className="dimmed" onClick={this.handleCloseRedBook}></div>
+      <div className="dimmed"></div>
     </div>
   }
 
@@ -73,8 +74,12 @@ class RedBookPage extends Component {
   }
 
   handleCloseRedBook = (e) => {
-  
-    this.props.pushState('/');
+
+    if( history.length === 2) {
+      this.props.replacePath('/')  
+    }else{
+      history.back()
+    }
   }
 
   handleSubmitComment = (noteId, commentText) => {
@@ -90,6 +95,7 @@ class RedBookPage extends Component {
 
 RedBookPage.propTypes = {
   pushState: PropTypes.func.isRequired,
+  replacePath: PropTypes.func.isRequired,
   loadNotesByRedBookId: PropTypes.func.isRequired,
   submitRedBookNote: PropTypes.func.isRequired,
   submitNoteComment: PropTypes.func.isRequired
@@ -121,5 +127,6 @@ export default connect(mapStateToProps, {
   loadNotesByRedBookId,
   submitRedBookNote,
   submitNoteComment,
-  pushState
+  pushState,
+  replacePath
 })(RedBookPage)
