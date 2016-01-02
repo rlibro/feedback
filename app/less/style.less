@@ -58,6 +58,79 @@ textarea:focus, input:focus{
 }
 
 /**
+ * 레드북 헤더
+ */
+.Header {
+  background-color: #ef0123;
+  height: 54px;
+  line-height: 54px;
+  top: 0px;
+  z-index: 1000;
+  width: 100%;
+
+  a {
+    color: #fff;
+  }
+
+  .logo {
+    display: inline-block;
+    height: 54px;
+    margin-left: 15px;
+
+    a {
+      display: inline-block;
+      height: 54px;
+    }
+  }
+
+  .account-menu {
+    float: right;
+    margin-right: 10px;
+   
+    li {
+      height: 54px;
+      line-height: 54px;
+      float: left;
+      margin-left: 5px;
+      font-size: 15px;
+
+      img {
+        margin-top: 2px;
+      }
+
+      a {
+        color: #eee;
+      }
+    }
+  }
+
+}
+
+.RedBookList {}
+
+.RedBook {
+  float: left;
+  cursor: pointer;
+  min-width: 263px;
+  height: 170px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  color: #fff;
+  padding-top: 20px;
+  margin-top: 5px;
+
+  h3, h4 {
+    text-align: center;
+    color: #fff;
+  }
+
+  &.middle {
+    margin: 5px 5px 0 5px;
+  }
+
+}
+
+/**
  * 개발 편의를 위해 디자인 보다는 기능 관점에서 간단한 스타일만 추가, 나중에 디자인 다시 해야함!!
  */
 .dimmed {
@@ -302,7 +375,7 @@ textarea:focus, input:focus{
 
   input.text {
     width: 100%;
-    padding: 10px 60px 10px 50px;
+    padding: 10px 60px 10px 40px;
     font-size: 13px;
   }
 
@@ -337,6 +410,17 @@ textarea:focus, input:focus{
     width: 97%;
     z-index: 1000;
     margin: 0 10px;
+  }
+
+  .RedBook {
+    float: none;
+
+    &.left, &.right {
+      margin: 0 5px;
+    }
+    &.middle {
+      margin-bottom: 5px;
+    }
   }
 
   .RedBookCover {

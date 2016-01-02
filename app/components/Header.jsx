@@ -6,7 +6,7 @@ export default class Header extends Component {
     const { loginUser } = this.props;
 
     return (
-      <header id="header" className="clearfix">
+      <header className="Header">
       <h1 className="logo">
         
         <a href="/" onClick={this.props.onMoveHome}>

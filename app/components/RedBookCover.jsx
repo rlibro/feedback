@@ -5,7 +5,7 @@ export default class RedBookCover extends Component {
   render(){
 
     const { loginUser, redBook, onCloseRedBook } = this.props;
-    var style = {
+    const style = {
       color: 'white',
       backgroundSize: 'cover',
       backgroundImage: 'url(' + redBook.cityImage + ')',

@@ -4,6 +4,7 @@ import { loadAllCounties, loadAllRedBooks } from '../actions'
 import { pushPath as pushState } from 'redux-simple-router'
 import Explore from '../components/Explore'
 import Header from '../components/Header'
+import RedBookList from '../components/RedBookList'
 import { resetErrorMessage } from '../actions'
 
 function loadData(props) {
@@ -73,33 +74,8 @@ class App extends Component {
 
   }
 
-  renderListOfRedBooks = () => {
-
-    const { redBooks, entities } = this.props;
-    const { isFetching } = redBooks;
-    const ids = redBooks.ids || [];
-   
-    if( isFetching ){
-      return <h2>레드북이 등록된 나라를 로드중입니다...</h2>
-    } 
-
-    return <ul>{ ids.map((id, i) => {
-
-      const redBook = entities.redBooks[id];
-
-      return <li key={i} className="redbook">
-        <a href={`/${redBook.uid}`} onClick={this.handleOpenRedBook.bind(this,redBook)}>
-          <h3>{redBook.cityName}<span>({redBook.noteCount})</span></h3>
-          in <span>{redBook.countryName}</span>
-        </a>
-      </li>
-
-    }) }</ul>
-  
-  }
-
   render() {
-    const { children, inputValue, login, countries, redBooks } = this.props
+    const { children, inputValue, login, countries, redBooks, entities} = this.props
     
     return (
       <div id="app">
@@ -111,13 +87,13 @@ class App extends Component {
 
         {this.renderErrorMessage()}
 
-        {/*<Explore value={inputValue}
-                 onChange={this.handleChange} />*/}
+        {<Explore value={inputValue}
+                 onChange={this.handleChange} />}
 
-        <hr />
-        {this.renderListOfRedBooks()}
+        <RedBookList redBooks={redBooks} 
+          entities={entities} 
+          onOpenRedBook={this.handleOpenRedBook}/>
 
-        <hr />
         {children}
       </div>
     )
