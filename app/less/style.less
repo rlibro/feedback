@@ -37,7 +37,7 @@ textarea:focus, input:focus{
 }
 
 #root {
-  width: 600px;
+  width: 800px;
   margin: 0 auto;
   min-width: 320px;
 
@@ -74,7 +74,7 @@ textarea:focus, input:focus{
 .RedBookPage {
   position: absolute;
   top: 50px;
-  width: 600px;
+  width: 800px;
   z-index: 1000;
 }
 
@@ -82,10 +82,32 @@ textarea:focus, input:focus{
   position: relative;
   border: 1px solid #ccc;
   background-color: #fff;
-  padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
   min-height: 360px; 
+
+  .shadow {
+    background: linear-gradient(#000, #999);
+    opacity: 0.2;
+    height: 110px;
+  }
+  .cover-title-header {
+    position: absolute;
+    top: 0;
+
+    .city-name {
+      padding: 10px 0 0 10px;
+      font-size: 60px;
+    }
+    .country-name {
+      position: relative;
+      top: -10px;
+      padding-left: 10px;
+      font-size: 30px;
+    }
+
+  }
+  
 }
 
 .RedBookNoteForm {
@@ -136,10 +158,11 @@ textarea:focus, input:focus{
       border: 1px solid #ccc;
       margin: 0 5px;
       font-size: 13px;
-      background-color: #4e69a2;
-      border-color: #435a8b #3c5488 #334c83;
+      background-color: #ab0000;
+      border-color: #980000 #870000 #770000;
       border-radius: 2px;
       color: #efefef;
+      font-weight: bold;
     }
   }
 
@@ -281,6 +304,48 @@ textarea:focus, input:focus{
 
 }
 
+
+@media screen and (min-width: 820px) /* Desktop */ {
+}
+
+@media screen  and (max-width: 819px) /* Tablet */ {
+  #root {
+    width: 100%;
+    margin: 0;
+  }
+
+  .RedBookPage {
+    position: absolute;
+    top: 20px;
+    width: 97%;
+    z-index: 1000;
+    margin: 0 10px;
+  }
+
+  .RedBookCover {
+    min-height: 300px;
+  }
+
+
+}
+
+@media screen and (max-width: 500px) /* Mobile */ {
+
+  .RedBookPage {
+    position: absolute;
+    top: 10px;
+    width: 95%;
+    z-index: 1000;
+    margin: 0 5px;
+    min-width: 310px;
+  }
+
+
+  .RedBookCover {
+    min-height: 260px;
+  }
+
+}
 
 //@import "header";
 //@import "app";

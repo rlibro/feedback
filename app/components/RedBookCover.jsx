@@ -14,14 +14,15 @@ export default class RedBookCover extends Component {
     };
 
     return <div style={style} className="RedBookCover">
-      <div>
-        <h2>{redBook.cityName}</h2>
-        <h4>{redBook.countryName}</h4>
+      <div className="shadow"></div>
+      <div className="cover-title-header">
+        <h2 className="city-name">{redBook.cityName}</h2>
+        <h4 className="country-name">{redBook.countryName}</h4>
       </div>
-
-      <div className="controls">
+      
+{/*      <div className="controls">
         <button>체크인</button>
-      </div>
+      </div>*/}
     </div>
   }
 }
