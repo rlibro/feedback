@@ -24,11 +24,19 @@ export default class RedBookNote extends Component {
     const {isOpenComment} = this.state
 
     return <div className="RedBookNote">
-      <div>{ moment(note.createdAt).format('LLL') } - {note.user.name}</div>
-      <div dangerouslySetInnerHTML={{__html:note.content.replace(/\n/g,'<br/>')}}></div>
+      <div className="note-header">
+        <div className="profile photo" >
+          <img src={note.user.picture.data.url} />
+        </div>
+        <div className="meta">
+          <div className="date">{ moment(note.createdAt).format('LLL') }</div>
+          <div className="username">{ note.user.name }</div>
+        </div>
+      </div>
+      <div className="content" dangerouslySetInnerHTML={{__html:note.content.replace(/\n/g,'<br/>')}}></div>
       <div className="controls">
-        <div>좋아요</div>
-        <div onClick={this.handleOpenComment}>댓글({note.comments.length})</div>
+        <div className="like">좋아요</div>
+        <div className="comments" onClick={this.handleOpenComment}>댓글({note.comments.length})</div>
       </div>
 
       <NoteCommentList 

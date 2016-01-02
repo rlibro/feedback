@@ -10,7 +10,7 @@ export default class NoteCommentList extends Component {
 
     const { comments, isOpenComment, loginUser, onSubmitComment } = this.props
 
-    return <div id="NoteCommentList">
+    return <div className="NoteCommentList">
 
       {comments.map( (comment,i) => {
         return <NoteComment key={i} comment={comment}></NoteComment>

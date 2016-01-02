@@ -149,14 +149,60 @@ textarea:focus, input:focus{
   position: relative;
   border: 1px solid #ccc;
   background-color: #fff;
-  padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
+
+  .note-header {
+    padding: 10px;
+
+    .profile.photo {
+      position: absolute;
+      width: 40px;
+      img {
+        width: 40px;
+        height: 40px;
+      }
+    }
+
+    .meta {
+      padding-left: 48px;
+      height: 40px;
+
+      .date {
+        font-weight: bold; 
+      }
+      .username{
+        color: #777;
+      }
+    }
+
+  }
+
+  .content {
+    padding: 10px; 
+  }
+
+  .controls {
+    border-top: 1px solid #ccc;
+
+    border-bottom-left-radius : 5px;
+    border-bottom-right-radius : 5px;
+
+    div {
+      display: inline-block;
+      padding: 10px;
+    }
+  }
+  
+}
+.NoteCommentList {
+  background-color: #f6f7f8;
+  border-top: 1px solid #ccc;
+  padding: 10px;
 }
 
 .NoteComment {
   position: relative;
-  border-top: 1px solid #ccc;
   min-height: 47px;
 
   .profile.photo {
@@ -164,7 +210,6 @@ textarea:focus, input:focus{
     width: 40px;
     
     img {
-      margin: 4px;
       width: 32px;
       height: 32px;
     }
@@ -172,21 +217,26 @@ textarea:focus, input:focus{
 
   .comment-container {
     margin-left: 40px;
+    margin-bottom: 10px;
 
     .content{
-      padding-right: 36px;
+      padding: 0 36px 0 0;
 
       .name {
         font-weight: bold;
         margin-right: 6px;
       }
     }
+
+    .date {
+      color: #777;
+      font-size: 14px;
+    }
   }
 }
 
 .NoteCommentForm {
   position: relative;
-  border-top: 1px solid #ccc;
 
   .profile.photo {
     position: absolute;

@@ -16,7 +16,7 @@ export default class NoteComment extends Component {
           <span className="name">{comment.user.name}</span>
           <span>{comment.content}</span>
         </p>
-        <div>
+        <div className="date">
           { moment(comment.createdAt).fromNow() }
         </div>
       </div>
