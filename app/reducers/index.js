@@ -9,18 +9,28 @@ function entities(state = { countries: {}, redBooks: {}, notes:{} }, action) {
   
   if (action.response && action.response.entities) {
 
-    if( action.type === ActionTypes.ADD_COMMENT_SUCCESS){
+    const {entities, result} = action.response;
 
-        const {entities, result} = action.response;
+    switch(action.type){
+      case ActionTypes.ADD_COMMENT_SUCCESS:
         const comment = entities.comments[result];
         const note = state.notes[comment.noteId];
         delete comment.noteId;
         note.comments.push(comment);
 
         return merge({}, state)
-    }
 
-    return merge({}, state, action.response.entities)
+      case ActionTypes.ADD_NOTE_SUCCESS:
+        state.notes[result] = entities.notes[result];
+        state.redBooks[action.redBookUname].noteCount++;
+
+        return merge({}, state)
+        
+
+      default: 
+        return merge({}, state, action.response.entities)
+
+    }
   }
 
   return state

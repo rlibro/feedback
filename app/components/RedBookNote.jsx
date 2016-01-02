@@ -25,7 +25,7 @@ export default class RedBookNote extends Component {
 
     return <div className="RedBookNote">
       <div>{ moment(note.createdAt).format('LLL') } - {note.user.name}</div>
-      <div>{note.content}</div>
+      <div dangerouslySetInnerHTML={{__html:note.content.replace(/\n/g,'<br/>')}}></div>
       <div className="controls">
         <div>좋아요</div>
         <div onClick={this.handleOpenComment}>댓글({note.comments.length})</div>

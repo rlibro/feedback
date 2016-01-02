@@ -1,5 +1,6 @@
 import merge from 'lodash/object/merge'
 import union from 'lodash/array/union'
+import * as ActionTypes from '../actions';
 
 // Creates a reducer managing pagination, given the action types to handle,
 // and a function telling how to extract the key from an action.
@@ -39,18 +40,30 @@ export default function paginate({ types, mapActionToKey }) {
         return merge({}, state, {
           isFetching: false
         })
+
       default:
         return state
     }
   }
 
   return function updatePaginationByKey(state = {}, action) {
+
+    // 노트를 추가했을때 결과값을 페이지네이션에 직접 추가한다.
+    if ( action.type === ActionTypes.ADD_NOTE_SUCCESS 
+      && action.redBookUname && state[action.redBookUname]){
+        
+      state[action.redBookUname].ids.unshift(action.response.result);
+
+      return merge({}, state); 
+    }
+        
     switch (action.type) {
       case requestType:
       case successType:
       case failureType:
 
         const key = mapActionToKey(action)
+
         if (typeof key !== 'string' && typeof key === null) {
           throw new Error('Expected key to be a string.')
         }

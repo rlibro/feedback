@@ -23,7 +23,7 @@ router.get('/', function(req, res){
         userId:'',
         uploadAt: ''
       }],
-      noteCount: 100
+      noteCount: 0
     },
     {
       id: 2,
@@ -37,7 +37,7 @@ router.get('/', function(req, res){
         userId:'',
         uploadAt: ''
       }],
-      noteCount: 2
+      noteCount: 0
     },
     {
       id: 3,
@@ -51,7 +51,7 @@ router.get('/', function(req, res){
         userId:'',
         uploadAt: ''
       }],
-      noteCount: 2
+      noteCount: 0
     }
   ]);
 

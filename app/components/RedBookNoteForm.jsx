@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { findDOMNode } from 'react-dom';
 
 export default class RedBookNoteForm extends Component {
 
@@ -12,10 +13,10 @@ export default class RedBookNoteForm extends Component {
         <button>마커</button>
       </div>
   
-      <textarea className="text" autoFocus={true} placeholder="이 도시에서 경험한 유용한 정보를 공유하세요!"></textarea>
+      <textarea ref="textarea" className="text" autoFocus={true} placeholder="이 도시에서 경험한 유용한 정보를 공유하세요!"></textarea>
         
       <div className="note-form-footer">
-        <button>게시</button>
+        <button onClick={this.handleSubmitNote}>게시</button>
       </div>
     </div>
   }
@@ -41,15 +42,18 @@ export default class RedBookNoteForm extends Component {
     
   }
 
-  handleSubmit = (e) => {
+  handleSubmitNote = (e) => {
 
-
-
+    const node = findDOMNode(this.refs.textarea);
+    const text = node.value.trim();
+    this.props.onSubmitNote(text);
+    node.value = '';
     e.preventDefault()
   }
 
 }
 
 RedBookNoteForm.propTypes = {
-  loginUser: PropTypes.object.isRequired
+  loginUser: PropTypes.object.isRequired,
+  onSubmitNote: PropTypes.func.isRequired
 }
