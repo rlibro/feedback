@@ -24,7 +24,7 @@ export default class NoteCommentList extends Component {
     </div>
   }
 
-  render = () => {
+  render() {
 
     const { comments, isOpenComment } = this.props
 

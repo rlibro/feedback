@@ -20,12 +20,19 @@ export default class NoteCommentForm extends Component {
       <input className="text" type="text" placeholder="댓글을 입력하세요." 
         autoFocus={true}
         onKeyPress={this.handleCheckEnter} />
+
+      <button className="send">입력</button>
     
     </div>
 
   }
 
   render() {
+
+    setTimeout(()=>{
+      window.scrollTo(0,document.body.scrollHeight);
+    }, 10);
+
     const { loginUser } = this.props;
 
     return loginUser.id ? this.renderForm() : this.renderLogin();
@@ -39,7 +46,6 @@ export default class NoteCommentForm extends Component {
 
   handleFinishEdit = (e) => {
     this.props.onSubmitComment(e.target.value);
-
     e.target.value = '';
   }
 

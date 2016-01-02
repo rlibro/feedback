@@ -180,6 +180,11 @@ textarea:focus, input:focus{
 
   .content {
     padding: 10px; 
+
+    span {
+      display: inline-block;
+      width: 5px;
+    }
   }
 
   .controls {
@@ -221,6 +226,12 @@ textarea:focus, input:focus{
 
     .content{
       padding: 0 36px 0 0;
+      overflow-wrap: break-word;
+
+      span {
+        display: inline;
+        font-size: 13px;
+      }
 
       .name {
         font-weight: bold;
@@ -251,8 +262,21 @@ textarea:focus, input:focus{
 
   input.text {
     width: 100%;
-    padding: 10px 5px 10px 40px;
+    padding: 10px 60px 10px 50px;
     font-size: 13px;
+  }
+
+  .send {
+    position: absolute;
+    top: 0;
+    right: 0px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin: 6px;
+    font-size: 13px;
+    width: 50px;
+    background-color: #fff;
+    border-radius: 3px;
   }
 
 }

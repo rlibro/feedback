@@ -21,7 +21,11 @@ export default class RedBookNote extends Component {
   render = () => {
 
     const { note, loginUser, onSubmitComment } = this.props;
-    const {isOpenComment} = this.state
+    const {isOpenComment} = this.state;
+
+    const contentText = note.content
+                        .replace(/(.*)\n(.*)/g, '<p>$1<br/></p><p>$2</p>')
+                        .replace(/\s/g, '<span></span>')
 
     return <div className="RedBookNote">
       <div className="note-header">
@@ -33,7 +37,7 @@ export default class RedBookNote extends Component {
           <div className="username">{ note.user.name }</div>
         </div>
       </div>
-      <div className="content" dangerouslySetInnerHTML={{__html:note.content.replace(/\n/g,'<br/>')}}></div>
+      <div className="content" dangerouslySetInnerHTML={{__html: contentText}}></div>
       <div className="controls">
         <div className="like">좋아요</div>
         <div className="comments" onClick={this.handleOpenComment}>댓글({note.comments.length})</div>
