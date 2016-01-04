@@ -52,6 +52,20 @@ router.get('/', function(req, res){
         uploadAt: ''
       }],
       noteCount: 0
+    },
+    {
+      id: 4,
+      uname: 'Antigua-Guatemala',
+      countryId: 3,
+      countryName: 'Guatemala',
+      cityName: 'Antigua',
+      cityImage: 'http://www.escapefromamerica.com/wp-content/uploads/2013/03/antigua2.jpg',
+      photos: [{
+        url: '',
+        userId:'',
+        uploadAt: ''
+      }],
+      noteCount: 0
     }
   ]);
 
