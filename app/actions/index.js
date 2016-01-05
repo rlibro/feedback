@@ -134,7 +134,7 @@ export function loadNotesByRedBookId (redBookId) {
   return (dispatch, getState) => {
 
     const {
-      nextPageUrl = `/notes?redBookId=${redBookId}`,
+      nextPageUrl = `/notes?uname=${redBookId}`,
       pageCount = 0
     } = getState().pagination.notes || {}
 

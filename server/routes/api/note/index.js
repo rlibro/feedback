@@ -68,52 +68,47 @@ router.post('/comment', (req, res) => {
 
 router.get('/', (req, res) => {
 
-  const redBookId = req.query.redBookId
+  const uname = req.query.uname
 
   res.links({
     next: 'http://localhost/api/notes?page=2',
     last: 'http://localhost/api/notes?page=2'
   });
 
-  switch (redBookId){
-    case '1':
-    res.json([
-      
-      {
-        id: 3123,
-        redBookId: 1,
+  if( uname === 'Seoul-South_Korea') {
+    res.json([{
+      id: 3123,
+      redBookId: 1,
+      geo: {
+        lat: '32.432423',
+        lng: '123.342334'
+      },
+      content:'여기는 한국! 옷가지 챙겨오세요!! [여기]:(3432) 좋아요!',
+      createdAt: '2015-11-23T12:32:11',
+      user: {
+        email: "miconblog@gmail.com",
+        id: "10153031949693302",
+        name: "ByungDae Sohn",
+        picture: {
+          data: {
+            url: "https://scontent.xx.fbcdn.net/hprofile-xap1/v/t1.0-1/p50x50/1510494_10151938283373302_404117394_n.jpg?oh=14fb9c1fcd97aa23810499900f48b57b&oe=5719336B"
+          }
+        }
+      },
+      markers: [{
+        id: 3432,
+        type: 'eat',
+        title: '바리스타 카페',
         geo: {
-          lat: '32.432423',
-          lng: '123.342334'
-        },
-        content:'여기는 한국! 옷가지 챙겨오세요!! [여기]:(3432) 좋아요!',
-        createdAt: '2015-11-23T12:32:11',
-        user: {
-          email: "miconblog@gmail.com",
-          id: "10153031949693302",
-          name: "ByungDae Sohn",
-          picture: {
-            data: {
-              url: "https://scontent.xx.fbcdn.net/hprofile-xap1/v/t1.0-1/p50x50/1510494_10151938283373302_404117394_n.jpg?oh=14fb9c1fcd97aa23810499900f48b57b&oe=5719336B"
-            }
-          }
-        },
-        markers: [{
-          id: 3432,
-          type: 'eat',
-          title: '바리스타 카페',
-          geo: {
-            lan: '23.3432',
-            lng: '23.3222'
-          }
-        }],
-        comments: []
-      }]);
-    break;
-
-    default:
+          lan: '23.3432',
+          lng: '23.3222'
+        }
+      }],
+      comments: []
+    }]);
+  }
+  else {
     res.json([]);
-
   }
 
 });
