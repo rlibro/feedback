@@ -50,7 +50,7 @@ export default class NoteCommentForm extends Component {
   }
 
   handleFacebookLogin = (e) => {
-    window.open('/facebook/login', '', 'width=600, height=550');
+    window.open(`/facebook/login?redirect=${encodeURIComponent(location.href)}`, '', 'width=600, height=550');
   }
 }
 
