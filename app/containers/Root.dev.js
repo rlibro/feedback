@@ -3,7 +3,6 @@ import { Provider } from 'react-redux'
 import { Router, Route } from 'react-router'
 
 import App from './App'
-//import UserPage from './UserPage'
 import RedBookPage from './RedBookPage'
 import DevTools from './DevTools'
 

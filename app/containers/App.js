@@ -8,27 +8,26 @@ import RedBookList from '../components/RedBookList'
 import { resetErrorMessage } from '../actions'
 
 function loadData(props) {
-  const { login } = props    
-  //props.loadAllCounties()
   props.loadAllRedBooks()
 }
 
 class App extends Component {
 
-  componentWillMount() {
+  constructor(props){
+    super(props)
 
-    console.log('App componentWillMount ==> ', this.props)
+    this.state = {
+      checkCount: 2,
+      isLoadedGoogle: false,
+      message: ''
+    }
 
-    loadData(this.props)
+    window.loadedGoogle = function(){}
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillMount() {
 
-    console.log( 'App componentWillReceiveProps ==> ' , this.props, nextProps);
-
-    if (nextProps.fullName !== this.props.fullName) {
-      loadData(nextProps)
-    }
+    loadData(this.props)
   }
 
   renderErrorMessage() {
@@ -49,31 +48,6 @@ class App extends Component {
     )
   }
 
-  renderListOfCountries = () => {
-
-    const { countries, entities } = this.props;
-    const { isFetching } = countries;
-    const ids = countries.ids || [];
-  
-    if( isFetching ){
-      return <h2>레드북이 등록된 나라를 로드중입니다...</h2>
-    } 
-
-    return <ul>{ ids.map((id, i) => {
-
-      const country = entities.countries[id];
-
-      return <li key={i}>
-        <a href={'/' + country.iso3}>
-          <img src={country.flagImage} /><span>{country.name}({country.readBookCount})</span>
-        </a>
-      </li>
-
-    }) }</ul>
-  
-
-  }
-
   render() {
     const { children, inputValue, login, countries, redBooks, entities} = this.props
     
@@ -81,14 +55,14 @@ class App extends Component {
       <div id="app">
         <Header 
           onLogin={this.handleFacebookLogin} 
-          onMoveHome={this.handleMove.bind(this, '/')} 
-          onMoveMyNote={this.handleMove.bind(this, 'note')} 
-          loginUser={login} />
+          onMoveHome={this.handleChangePath.bind(this, '/')} 
+          onMoveMyNote={this.handleChangePath.bind(this, 'note')} 
+          loginUser={login}
+          message={this.state.message} />
 
         {this.renderErrorMessage()}
 
-        {<Explore value={inputValue}
-                 onChange={this.handleChange} />}
+        {<Explore value={inputValue} />}
 
         <RedBookList redBooks={redBooks} 
           entities={entities} 
@@ -104,16 +78,9 @@ class App extends Component {
     e.preventDefault()
   }
 
-  handleMove = (path, e) => {
+  handleChangePath = (path, e) => {
     this.props.pushState(path);
     e.preventDefault()
-  }
-
-  // 새로운 위치로 이동하는게 아니라 필터 처리하거나 DB에서 검색 해야한다. 
-  handleChange = (nextValue) => {
-
-    // pushState(path, state)
-    //this.props.pushState(`/guide/${nextValue}`, nextValue);
   }
 
   handleOpenRedBook = (redBook, e) => {
