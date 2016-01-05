@@ -1,9 +1,10 @@
 import React, { Component, PropTypes } from 'react'
+import CurrentLocation from '../components/CurrentLocation'
 
 export default class Header extends Component {
 
   render() {
-    const { loginUser } = this.props;
+    const { loginUser, message, onUpdateCurrentUserLocation } = this.props;
 
 
 
@@ -20,12 +21,17 @@ export default class Header extends Component {
 
           return <ul className="account-menu">
             <li>
+              <CurrentLocation 
+                onUpdateCurrentUserLocation={onUpdateCurrentUserLocation}
+                loginUser={loginUser} />
+            </li>
+            <li>
               <div className="photo">
                 <img src={loginUser.picture.data.url}/>
               </div>
               <ul className="sub-menu">
-                <li><a href="/mynote">내 노트</a></li>
-                <li><a href="/logout">로그아웃</a></li>
+                <li><a href="/mynote">MY NOTES</a></li>
+                <li><a href="/logout">Logout</a></li>
               </ul>
             </li>
             
@@ -52,8 +58,10 @@ export default class Header extends Component {
 }
 
 Header.propTypes = {
+  message: PropTypes.string.isRequired,
   loginUser: PropTypes.object.isRequired,
   onMoveHome: PropTypes.func.isRequired,
-  onMoveMyNote: PropTypes.func.isRequired
+  onMoveMyNote: PropTypes.func.isRequired,
+  onUpdateCurrentUserLocation: PropTypes.func.isRequired
 }
 

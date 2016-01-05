@@ -21,8 +21,6 @@ class App extends Component {
       isLoadedGoogle: false,
       message: ''
     }
-
-    window.loadedGoogle = function(){}
   }
 
   componentWillMount() {
@@ -57,6 +55,7 @@ class App extends Component {
           onLogin={this.handleFacebookLogin} 
           onMoveHome={this.handleChangePath.bind(this, '/')} 
           onMoveMyNote={this.handleChangePath.bind(this, 'note')} 
+          onUpdateCurrentUserLocation={this.handleUpdateCurrentUserLocation}
           loginUser={login}
           message={this.state.message} />
 
@@ -71,6 +70,10 @@ class App extends Component {
         {children}
       </div>
     )
+  }
+
+  handleUpdateCurrentUserLocation = (name) => {
+    console.log('TODO: update action - current user location!!', name)
   }
 
   handleDismissClick = (e) => { 
