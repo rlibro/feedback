@@ -13,15 +13,15 @@ router.post('/', (req, res) => {
 
   switch(redBookId){
     case 1:
-      uname = 'Seoul-South_Korea';
+      uname = 'Seoul_South,Korea';
       break;
 
     case 2:
-      uname = 'Quetzaltenango-Guatemala';
+      uname = 'Quetzaltenango,Guatemala';
       break;
 
     case 3:
-      uname = 'Havana-Cuba';
+      uname = 'Havana,Cuba';
   }
 
 
@@ -75,7 +75,7 @@ router.get('/', (req, res) => {
     last: 'http://localhost/api/notes?page=2'
   });
 
-  if( uname === 'Seoul-South_Korea') {
+  if( uname === 'Seoul,South_Korea') {
     res.json([{
       id: 3123,
       redBookId: 1,

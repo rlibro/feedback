@@ -13,9 +13,9 @@ router.get('/', function(req, res){
   res.json([
     {
       id: 1,
-      uname: 'Seoul-South_Korea',
+      uname: 'Seoul,South_Korea',
       countryId: 1,
-      countryName: 'South_Korea',
+      countryName: 'South Korea',
       cityName: 'Seoul',
       cityImage: 'http://travel.aarp.org/content/dam/travel/destination-images/south-korea/seoul/1400-hero-seoul-south-korea-traffic-night.jpg',
       photos: [{
@@ -27,7 +27,7 @@ router.get('/', function(req, res){
     },
     {
       id: 2,
-      uname: 'Quetzaltenango-Guatemala',
+      uname: 'Quetzaltenango,Guatemala',
       countryId: 2,
       countryName: 'Guatemala',
       cityName: 'Quetzaltenango',
@@ -41,7 +41,7 @@ router.get('/', function(req, res){
     },
     {
       id: 3,
-      uname: 'Havana-Cuba',
+      uname: 'Havana,Cuba',
       countryId: 3,
       countryName: 'Cuba',
       cityName: 'Havana',
@@ -55,10 +55,10 @@ router.get('/', function(req, res){
     },
     {
       id: 4,
-      uname: 'Antigua-Guatemala',
+      uname: 'Antigua_Guatemala,Guatemala',
       countryId: 3,
       countryName: 'Guatemala',
-      cityName: 'Antigua',
+      cityName: 'Antigua Guatemala',
       cityImage: 'http://www.escapefromamerica.com/wp-content/uploads/2013/03/antigua2.jpg',
       photos: [{
         url: '',

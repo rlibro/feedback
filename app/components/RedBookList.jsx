@@ -16,7 +16,7 @@ export default class RedBookList extends Component {
 
 
       return <div className="RedBookList-byLocation">
-        You are in {location.cityName}, {location.countryName}
+        You are in {location.cityName.replace(/\_/g, ' ')}, {location.countryName.replace(/\_/g, ' ')}
 
         <ul className="RedBookList">{ redBooks.map( (redBook, i) => {
           var className;
@@ -63,8 +63,6 @@ export default class RedBookList extends Component {
         return id.indexOf(location.countryName) < 0
       });
     } 
-
-    console.log( ids );
 
     return <ul className="RedBookList">{ ids.map((id, i) => {
 

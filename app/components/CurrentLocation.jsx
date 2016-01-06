@@ -85,32 +85,24 @@ export default class CurrentLocation extends Component {
 
     geocoder.geocode({'location': latlng}, function(results, status) {
       if (status === google.maps.GeocoderStatus.OK) {
-        if (results[1]) {
 
-          const { types, formatted_address } = results[1];
-          const address = formatted_address.split(',').map( name => {
-            return trim(name);
-          })
+        console.log(results);
 
-          const cityIdx = findIndex(types, function(type){
-            return type === 'sublocality'
-          });
-          const countryIdx = findIndex(types, function(type){
-            return type === 'political'
-          })
+        const countryName = results[results.length-1].formatted_address;
+        let cityName = results[results.length-3].formatted_address;
+        cityName = cityName.split(',').map( name => {
+          return trim(name);
+        })[0];
 
+        // 현재위치를 업데이트 한다.
+        self.props.onUpdateCurrentUserLocation({ 
+          'cityName' : cityName.replace(/\s/g,'_'), 
+          'countryName' : countryName.replace(/\s/g,'_'), 
+          'latlng': latlng    
+        });
+        self.setState({message: cityName});
 
-          // 현재위치를 업데이트 한다.
-          self.props.onUpdateCurrentUserLocation({ 
-            'cityName' : address[cityIdx], 
-            'countryName' : address[countryIdx], 
-            'latlng': latlng    
-          });
-          self.setState({message: address[cityIdx]});
-
-        } else {
-          window.alert('No results found');
-        }
+        
       } else {
         window.alert('Geocoder failed due to: ' + status);
       }
