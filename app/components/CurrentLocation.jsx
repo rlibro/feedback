@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import string from 'lodash/string';
-import array from 'lodash/array';
+import trim from 'lodash/string/trim';
+import findIndex from 'lodash/array/findIndex';
 
 export default class CurrentLocation extends Component {
 
@@ -89,13 +89,13 @@ export default class CurrentLocation extends Component {
 
           const { types, formatted_address } = results[1];
           const address = formatted_address.split(',').map( name => {
-            return string.trim(name);
+            return trim(name);
           })
 
-          const cityIdx = array.findIndex(types, function(type){
+          const cityIdx = findIndex(types, function(type){
             return type === 'sublocality'
           });
-          const countryIdx = array.findIndex(types, function(type){
+          const countryIdx = findIndex(types, function(type){
             return type === 'political'
           })
 

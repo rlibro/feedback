@@ -26,7 +26,6 @@ export default class Explore extends Component {
   render() {
     return (
       <div className="Explore">
-        <p>You are in Quetzaltenango, Guatemala</p>
         <div className="search-bar">
           <input ref="input"
                  placeholder="Countries, Cites, Friends "

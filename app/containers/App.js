@@ -52,7 +52,7 @@ class App extends Component {
     return (
       <div id="app">
         <Header 
-          onLogin={this.handleFacebookLogin} 
+          onLogin={this.handleFacebookLogin}
           onMoveHome={this.handleChangePath.bind(this, '/')} 
           onMoveMyNote={this.handleChangePath.bind(this, 'note')} 
           onUpdateCurrentUserLocation={this.handleUpdateCurrentUserLocation}
@@ -63,7 +63,9 @@ class App extends Component {
 
         {<Explore value={inputValue} />}
 
-        <RedBookList redBooks={redBooks} 
+        <RedBookList 
+          loginUser={login}
+          redBooks={redBooks} 
           entities={entities} 
           onOpenRedBook={this.handleOpenRedBook}/>
 
@@ -74,7 +76,6 @@ class App extends Component {
 
   handleUpdateCurrentUserLocation = (location) => {
     this.props.updateCurrentUserLocation(location)
-    console.log('TODO: update action - current user location!!', location)
   }
 
   handleDismissClick = (e) => { 

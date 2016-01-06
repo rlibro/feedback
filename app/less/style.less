@@ -156,6 +156,18 @@ textarea:focus, input:focus{
   }
 }
 
+.wrap-RedBookList {
+  .RedBookList-byLocation {
+    overflow: auto;
+  }
+
+  hr {
+    clear: both;
+    display: block;
+    margin: 15px 0;
+  }
+}
+
 .RedBookList {}
 
 .RedBook {
@@ -177,6 +189,17 @@ textarea:focus, input:focus{
 
   &.middle {
     margin: 5px 5px 0 5px;
+  }
+
+  &.create-book {
+    background-color: #ff7872;
+    text-align: center;
+
+    img {
+      margin-top: 10px;
+      width: 85px;
+      height: 85px;
+    }
   }
 
 }
