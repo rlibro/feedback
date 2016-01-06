@@ -9,11 +9,16 @@ export default class CurrentLocation extends Component {
 
     this.state = {
       checkCount: 2,
-      message: 'finding current location...',
+      message: '',
       latlng : null
     };
 
     window.loadedGoogle = this.onLoadedGoogle;
+
+    const script = document.createElement('script');
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyABFo5etnTuWbcrgVxaCeJa7a4R2ZLZsOY&signed_in=true&language=en&callback=loadedGoogle';
+    document.head.appendChild(script);
+
   }
 
   render(){
@@ -24,17 +29,12 @@ export default class CurrentLocation extends Component {
     const {loginUser} = this.props;
 
     if( loginUser.currentLocation ){ 
-      self.setState({message: loginUser.currentLocation.cityName});
+      this.setState({message: loginUser.currentLocation.cityName});
     }
 
-    const script = document.createElement('script');
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyABFo5etnTuWbcrgVxaCeJa7a4R2ZLZsOY&signed_in=true&language=en&callback=loadedGoogle';
-    document.head.appendChild(script);
-
     if (navigator.geolocation) {
-      setTimeout(function (){
-        navigator.geolocation.getCurrentPosition(this.onSuccessPosition, this.onFailPosition);
-      }.bind(this), 2000);      
+      this.setState({message: 'finding current location...'})
+      navigator.geolocation.getCurrentPosition(this.onSuccessPosition, this.onFailPosition);
     }
 
   }

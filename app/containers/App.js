@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { loadAllCounties, loadAllRedBooks } from '../actions'
+import { loadAllCounties, loadAllRedBooks, updateCurrentUserLocation } from '../actions'
 import { pushPath as pushState } from 'redux-simple-router'
 import Explore from '../components/Explore'
 import Header from '../components/Header'
@@ -72,8 +72,9 @@ class App extends Component {
     )
   }
 
-  handleUpdateCurrentUserLocation = (name) => {
-    console.log('TODO: update action - current user location!!', name)
+  handleUpdateCurrentUserLocation = (location) => {
+    this.props.updateCurrentUserLocation(location)
+    console.log('TODO: update action - current user location!!', location)
   }
 
   handleDismissClick = (e) => { 
@@ -100,6 +101,7 @@ App.propTypes = {
   inputValue: PropTypes.string.isRequired,
   // Injected by React Router
 
+  updateCurrentUserLocation: PropTypes.func.isRequired,
   loadAllCounties: PropTypes.func.isRequired,
   children: PropTypes.node
 }
@@ -121,5 +123,6 @@ export default connect(mapStateToProps, {
   resetErrorMessage,
   pushState,
   loadAllCounties,
-  loadAllRedBooks
+  loadAllRedBooks,
+  updateCurrentUserLocation
 })(App)

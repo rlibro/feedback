@@ -205,3 +205,18 @@ export function submitRedBookNote (redBookId, noteText, redBookUname){
   } 
 }
 /* END OF submitRedBookNote */
+
+
+/**
+ * 사용자의 현재 위치를 로그인 정보에 업데이트 한다.
+ */
+ export function updateCurrentUserLocation(location){
+
+
+  return (dispatch, getState) => {
+    return dispatch({
+      type: 'UPDATE_CURRENT_USER_LOCATION',
+      current_location: location
+    });
+  }
+ }

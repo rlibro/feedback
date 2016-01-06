@@ -26,7 +26,7 @@ export default class Explore extends Component {
   render() {
     return (
       <div className="Explore">
-        <p>찾고자하는 나라/도시/친구 이름을 입력하세요!</p>
+        <p>You are in Quetzaltenango, Guatemala</p>
         <div className="search-bar">
           <input ref="input"
                  placeholder="Countries, Cites, Friends "

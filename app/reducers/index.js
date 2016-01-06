@@ -84,6 +84,12 @@ function login(state = {}, action) {
   // if (action.response && action.response.entities) {
   //   return merge({}, state, action.response.entities)
   // }
+
+  if( action.type === 'UPDATE_CURRENT_USER_LOCATION' ) {
+    state.current_location = action.current_location;
+    return merge({}, state)
+  }
+
   return state
 }
 
