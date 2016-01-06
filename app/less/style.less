@@ -51,6 +51,10 @@ textarea:focus, input:focus{
   z-index: 1000;
   width: 100%;
 
+  .stack-menu {
+    display: none;
+  }
+
   a {
     color: #fff;
   }
@@ -493,6 +497,33 @@ textarea:focus, input:focus{
 
 @media screen and (max-width: 500px) /* Mobile */ {
 
+  .Header {
+
+    .stack-menu {
+      float: left;
+      display: inline-block;
+      width: 54px;
+      height: 54px;
+
+      img {
+        width: 54px;
+        height: 54px;
+      }
+    }
+
+    .logo {
+      display: block;
+      float: left;
+      margin-left: 0px;
+    }
+
+    .account-menu {
+      li .message, li .photo {
+        display: none;
+      }
+    }
+  }
+
   .Explore {
 
     p {
@@ -535,6 +566,3 @@ textarea:focus, input:focus{
   }
 
 }
-
-//@import "header";
-//@import "app";

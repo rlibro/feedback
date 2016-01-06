@@ -9,7 +9,7 @@ export default class CurrentLocation extends Component {
 
     this.state = {
       checkCount: 2,
-      message: 'finding location...',
+      message: 'finding current location...',
       latlng : null
     };
 
