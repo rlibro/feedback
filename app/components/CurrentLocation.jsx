@@ -41,17 +41,17 @@ export default class CurrentLocation extends Component {
 
   onLoadedGoogle = () => {
     this.findLocation();    
-  }
+  };
 
   onSuccessPosition = (position) => {
     this.onGetCoords(position.coords);
-  }
+  };
 
   onFailPosition = () => {
     this.setState({
       message: '현재위치를 가져올수없습니다'
     });
-  }
+  };
 
   onGetCoords = (coords) => {
     const latlng = {
@@ -61,7 +61,7 @@ export default class CurrentLocation extends Component {
 
     this.setState({latlng});
     this.findLocation();
-  }
+  };
 
 
   findLocation = () => {
@@ -76,7 +76,7 @@ export default class CurrentLocation extends Component {
     if( checkCount === 0 ) {
       this.getGeoCodeder(this.state.latlng) 
     }
-  }
+  };
 
   getGeoCodeder = (latlng) => {
 
@@ -108,7 +108,7 @@ export default class CurrentLocation extends Component {
       }
     });
 
-  }
+  };
 }
 
 CurrentLocation.propTypes = {

@@ -3,7 +3,7 @@ import RedBookNote from '../components/RedBookNote'
 
 export default class RedBookNoteList extends Component {
 
-  render = () => {
+  render(){
 
     const { notes, ids, loginUser, onSubmitComment } = this.props
 

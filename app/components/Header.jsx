@@ -4,9 +4,7 @@ import CurrentLocation from '../components/CurrentLocation'
 export default class Header extends Component {
 
   render() {
-    const { loginUser, message, onUpdateCurrentUserLocation } = this.props;
-
-
+    const { loginUser, onUpdateCurrentUserLocation } = this.props;
 
     return (
       <header className="Header">
@@ -56,12 +54,11 @@ export default class Header extends Component {
 
   handleFacebookLogin = (e) => {
     window.open('/facebook/login', '', 'width=600, height=550');
-  }
+  };
 
 }
 
 Header.propTypes = {
-  message: PropTypes.string.isRequired,
   loginUser: PropTypes.object.isRequired,
   onMoveHome: PropTypes.func.isRequired,
   onMoveMyNote: PropTypes.func.isRequired,

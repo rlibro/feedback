@@ -4,6 +4,7 @@ import { Router, Route } from 'react-router'
 
 import App from './App'
 import RedBookPage from './RedBookPage'
+import NewRedBookPage from './NewRedBookPage'
 import DevTools from './DevTools'
 
 
@@ -18,6 +19,7 @@ export default class Root extends Component {
           <Router history={history}>
             <Route path="/" component={App}>
               <Route path="/:RedBookUID" component={RedBookPage}/>
+              <Route path="/redbooks/:countryName" component={NewRedBookPage}/>
             </Route>
           </Router>
         </div>

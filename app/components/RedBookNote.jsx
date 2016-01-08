@@ -12,13 +12,7 @@ export default class RedBookNote extends Component {
     }
   }
 
-  handleOpenComment = (e) => {
-    this.setState({
-      isOpenComment : !this.state.isOpenComment
-    })
-  }
-
-  render = () => {
+  render() {
 
     const { note, loginUser, onSubmitComment } = this.props;
     const {isOpenComment} = this.state;
@@ -52,6 +46,12 @@ export default class RedBookNote extends Component {
         onSubmitComment={onSubmitComment.bind(null, note.id)} />
     </div>
   }
+
+  handleOpenComment = (e) => {
+    this.setState({
+      isOpenComment : !this.state.isOpenComment
+    })
+  };
 }
 
 RedBookNote.propTypes = {

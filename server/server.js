@@ -8,6 +8,7 @@ var exphbs = require('express-handlebars');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var favicon = require('serve-favicon');
 var path = require('path');
 var compiler = webpack(config);
 var app = express();
@@ -23,6 +24,8 @@ app.engine('hbs', exphbs({
   partialsDir: ['./server/views/partials']
 }));
 app.set('view engine', 'hbs');
+
+app.use(favicon( path.resolve(__dirname, '../public/favicon.ico')));
 
 app.use(cookieParser());
 app.use(session({ 

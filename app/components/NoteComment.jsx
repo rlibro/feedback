@@ -3,7 +3,7 @@ import moment from 'moment'
 
 export default class NoteComment extends Component {
 
-  render = () => {
+  render(){
 
     const { comment } = this.props;
 

@@ -19,7 +19,7 @@ export default class RedBookNoteForm extends Component {
         <button onClick={this.handleSubmitNote}>게시</button>
       </div>
     </div>
-  }
+  };
 
   renderFormReady = () => {
     const { loginUser } = this.props;
@@ -33,7 +33,7 @@ export default class RedBookNoteForm extends Component {
   
       <textarea className="text" placeholder="이 도시에서 경험한 유용한 정보를 공유하세요!"></textarea>
     </div>
-  }
+  };
 
   render() {
 
@@ -49,7 +49,7 @@ export default class RedBookNoteForm extends Component {
     this.props.onSubmitNote(text);
     node.value = '';
     e.preventDefault()
-  }
+  };
 
 }
 

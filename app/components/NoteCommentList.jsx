@@ -22,7 +22,7 @@ export default class NoteCommentList extends Component {
         onSubmitComment={onSubmitComment} />
     
     </div>
-  }
+  };
 
   render() {
 

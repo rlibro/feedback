@@ -37,7 +37,7 @@ module.exports = function(req, res, next){
     //   req.session.user = user.get({plain:true})
     //   user.save();
 
-      res.locals.user = JSON.stringify({login:user});
+      //res.locals.user = JSON.stringify({login:user});
 
       return next();
 

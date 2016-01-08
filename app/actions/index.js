@@ -152,14 +152,14 @@ export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST'
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS'
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE'
 
-function addNoteComment(noteId, commentText, endPoint){
+function addNoteComment(noteId, commentText){
 
   return {
     [CALL_API]: {
       method: 'POST',
       data: { noteId, commentText},
       types: [ ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE ],
-      endpoint: endPoint,
+      endpoint: '/notes/comment',
       schema: Schemas.COMMENT
     }
   }
@@ -167,10 +167,8 @@ function addNoteComment(noteId, commentText, endPoint){
 }
 
 export function submitNoteComment (noteId, commentText) {
-  const endPoint = '/notes/comment';
-
   return (dispatch, getState) => {
-    return dispatch(addNoteComment(noteId, commentText, endPoint));
+    return dispatch(addNoteComment(noteId, commentText));
   }
 }
 
@@ -182,7 +180,7 @@ export const ADD_NOTE_REQUEST = 'ADD_NOTE_REQUEST'
 export const ADD_NOTE_SUCCESS = 'ADD_NOTE_SUCCESS'
 export const ADD_NOTE_FAILURE = 'ADD_NOTE_FAILURE'
 
-function addRedBookNote(redBookId, redBookUname, noteText, endPoint){
+function addRedBookNote(redBookId, redBookUname, noteText){
 
   return {
     redBookUname,
@@ -190,7 +188,7 @@ function addRedBookNote(redBookId, redBookUname, noteText, endPoint){
       method: 'POST',
       data: { redBookId, noteText },
       types: [ ADD_NOTE_REQUEST, ADD_NOTE_SUCCESS, ADD_NOTE_FAILURE ],
-      endpoint: endPoint,
+      endpoint: '/notes',
       schema: Schemas.NOTE
     }
   }
@@ -198,10 +196,9 @@ function addRedBookNote(redBookId, redBookUname, noteText, endPoint){
 }
 
 export function submitRedBookNote (redBookId, noteText, redBookUname){
-  const endPoint = '/notes';
 
   return (dispatch, getState) => {
-    return dispatch(addRedBookNote(redBookId, redBookUname, noteText, endPoint));
+    return dispatch(addRedBookNote(redBookId, redBookUname, noteText));
   } 
 }
 /* END OF submitRedBookNote */
@@ -211,8 +208,6 @@ export function submitRedBookNote (redBookId, noteText, redBookUname){
  * 사용자의 현재 위치를 로그인 정보에 업데이트 한다.
  */
  export function updateCurrentUserLocation(location){
-
-
   return (dispatch, getState) => {
     return dispatch({
       type: 'UPDATE_CURRENT_USER_LOCATION',
@@ -220,3 +215,43 @@ export function submitRedBookNote (redBookId, noteText, redBookUname){
     });
   }
  }
+/* END OF updateCurrentUserLocation */
+
+/**
+ * 키워드 검색후 검색어를 저장한다. 
+ */
+export const FIND_KEYWORD_REQUEST = 'FIND_KEYWORD_REQUEST'
+export const FIND_KEYWORD_SUCCESS = 'FIND_KEYWORD_SUCCESS'
+export const FIND_KEYWORD_FAILURE = 'FIND_KEYWORD_FAILURE'
+
+function findKeyWord(keyword){
+  return {
+    [CALL_API]: {
+      types: [ FIND_KEYWORD_REQUEST, FIND_KEYWORD_SUCCESS, FIND_KEYWORD_FAILURE ],
+      endpoint: `/find?q=${keyword}`,
+      schema: Schemas.RESULT_ARRAY
+    }
+  } 
+}
+export function findingKeyWord(keyword) {
+  return (dispatch, getState) => {
+    return dispatch(findKeyWord(keyword));
+  }
+}
+/* END OF findingKeyWord */
+
+
+
+/**
+ * 데이터 변경 사항을 저장한다. 
+ */
+ export function setNewRedBookCityName(cityData){
+  return (dispatch, getState) => {
+    return dispatch({
+      type: 'SET_NEW_RED_BOOK_CITY_NAME',
+      cityName: cityData[0].label
+    });
+  }
+ }
+/* END OF setNewRedBookCityName */
+

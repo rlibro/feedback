@@ -1,5 +1,0 @@
-{
-  login : false | {
-    name: "xxx"
-  }
-}

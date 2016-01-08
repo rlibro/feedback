@@ -6,7 +6,7 @@ export default class RedBookList extends Component {
 
   renderRedBooksByCurrentLocation = (location) => {
 
-    var { entities : { redBooks }, onOpenRedBook } = this.props;
+    var { entities : { redBooks }, onOpenRedBook, onCreateRedBook } = this.props;
 
     if( location ){
 
@@ -39,7 +39,7 @@ export default class RedBookList extends Component {
 
 
         })}
-          <li className="RedBook create-book">
+          <li className="RedBook create-book" onClick={onCreateRedBook.bind(this,location)}>
             <h3>Create a RedBook</h3>
             <h4>Be the pioneer of {location.countryName}</h4>
             <img src="/assets/images/create-redbook.png" />
@@ -50,7 +50,7 @@ export default class RedBookList extends Component {
     }
 
     return false;
-  }
+  };
 
   renderRedBooks = (location) => {
 
@@ -88,7 +88,7 @@ export default class RedBookList extends Component {
 
     }) }</ul>
 
-  }
+  };
 
   render() {
 
@@ -115,5 +115,6 @@ RedBookList.propTypes = {
   loginUser : PropTypes.object.isRequired,
   redBooks : PropTypes.object.isRequired,
   entities : PropTypes.object.isRequired,
-  onOpenRedBook : PropTypes.func.isRequired
+  onOpenRedBook : PropTypes.func.isRequired,
+  onCreateRedBook: PropTypes.func.isRequired
 }

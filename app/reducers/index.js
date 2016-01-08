@@ -4,14 +4,16 @@ import paginate from './paginate'
 import { routeReducer, UPDATE_PATH} from 'redux-simple-router'
 import { combineReducers } from 'redux'
 
-// Updates an entity cache in response to any action with response.entities.
-function entities(state = { countries: {}, redBooks: {}, notes:{} }, action) {
+// API 응답은 캐시를 위해 모두 entities에 저장한다. 
+function entities(state = { redBooks: {}, notes:{} }, action) {
   
   if (action.response && action.response.entities) {
 
     const {entities, result} = action.response;
 
     switch(action.type){
+
+      // 새로 생성한 댓글은 해당 노트의 댓글목록에 추가한다.
       case ActionTypes.ADD_COMMENT_SUCCESS:
         const comment = entities.comments[result];
         const note = state.notes[comment.noteId];
@@ -20,13 +22,15 @@ function entities(state = { countries: {}, redBooks: {}, notes:{} }, action) {
 
         return merge({}, state)
 
+      // 새로 생성된 노트는 기존 노트 목록에 추가한다.
       case ActionTypes.ADD_NOTE_SUCCESS:
         state.notes[result] = entities.notes[result];
         state.redBooks[action.redBookUname].noteCount++;
 
         return merge({}, state)
-        
 
+
+      // 나머지는 모두 새로운 entities를 만들어 저장한다.
       default: 
         return merge({}, state, action.response.entities)
 
@@ -52,14 +56,6 @@ function errorMessage(state = null, action) {
 // Updates the pagination data for different actions.
 const pagination = combineReducers({
   
-  countries: paginate({
-    mapActionToKey: action => null,
-    types: [
-      ActionTypes.COUNTRIES_REQUEST,
-      ActionTypes.COUNTRIES_SUCCESS,
-      ActionTypes.COUNTRIES_FAILURE
-    ]
-  }),
   redBooks: paginate({
     mapActionToKey: action => null,
     types: [
@@ -93,10 +89,26 @@ function login(state = {}, action) {
   return state
 }
 
-function searchKeyword(state = '', action) {
+function finding(state = {}, action) {
+  // console.log( 'FFF ==> ', action,  state)
+
   // if (action.response && action.response.entities) {
+    
   //   return merge({}, state, action.response.entities)
   // }
+  return state
+}
+
+function newRedBook(state = {}, action) {
+
+
+  if( action.type === 'SET_NEW_RED_BOOK_CITY_NAME') {
+   
+    state.cityName = action.cityName;
+
+    return merge({}, state);
+  }
+  
   return state
 }
 
@@ -112,7 +124,8 @@ const rootReducer = combineReducers({
   pagination,
   errorMessage,
   login,
-  searchKeyword,
+  finding,
+  newRedBook,
   routing: routeReducer
 })
 

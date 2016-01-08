@@ -6,7 +6,7 @@ export default class NoteCommentForm extends Component {
     return <div className="NoteCommentForm"> 
       댓글을 남기시려면 <a href="#" onClick={this.handleFacebookLogin}>페이스북으로 로그인</a> 해주세요!;
     </div>
-  }
+  };
 
   renderForm = () => {
     const { loginUser } = this.props;
@@ -25,7 +25,7 @@ export default class NoteCommentForm extends Component {
     
     </div>
 
-  }
+  };
 
   render() {
 
@@ -42,16 +42,16 @@ export default class NoteCommentForm extends Component {
     if(e.key === 'Enter') {
       this.handleFinishEdit(e);
     }
-  }
+  };
 
   handleFinishEdit = (e) => {
     this.props.onSubmitComment(e.target.value);
     e.target.value = '';
-  }
+  };
 
   handleFacebookLogin = (e) => {
     window.open(`/facebook/login?redirect=${encodeURIComponent(location.href)}`, '', 'width=600, height=550');
-  }
+  };
 }
 
 NoteCommentForm.propTypes = {

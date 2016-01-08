@@ -25,6 +25,8 @@ const API_ROOT = 'http://localhost:3200/api'
 function callApi(endpoint, method, data, schema) {
   const fullUrl = (endpoint.indexOf(API_ROOT) === -1) ? API_ROOT + endpoint : endpoint
 
+  console.log('CALL API: ==> ', endpoint, method, data, schema);
+
   return fetch(fullUrl, {
       method: method,
       credentials: 'same-origin',
@@ -95,6 +97,13 @@ const commentSchema = new Schema('comments', {
   idAttribute: 'id'
 })
 
+/**
+ * 검색 결과
+ */
+const resultSchema = new Schema('findings', {
+  idAttribute: 'id'
+})
+
 
 // Schemas for Github API responses.
 export const Schemas = {
@@ -106,7 +115,9 @@ export const Schemas = {
   REDBOOK_ARRAY: arrayOf(redBookSchema),
   NOTE: noteSchema,
   NOTE_ARRAY: arrayOf(noteSchema),
-  COMMENT: commentSchema
+  COMMENT: commentSchema,
+  RESULT: resultSchema,
+  RESULT_ARRAY: arrayOf(resultSchema),
 }
 
 // Action key that carries API call info interpreted by this Redux middleware.

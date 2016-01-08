@@ -62,7 +62,7 @@ class RedBookPage extends Component {
         onSubmitComment={this.handleSubmitComment}/>
       <div className="dimmed"></div>
     </div>
-  }
+  };
 
   render() {
 
@@ -80,17 +80,17 @@ class RedBookPage extends Component {
     }else{
       history.back()
     }
-  }
+  };
 
   handleSubmitComment = (noteId, commentText) => {
     
     this.props.submitNoteComment(noteId, commentText)
 
-  }
+  };
 
   handleSubmitNote = (redBookId, noteText) => {
     this.props.submitRedBookNote(redBookId, noteText, this.props.redBook.uname)    
-  }
+  };
 }
 
 RedBookPage.propTypes = {
