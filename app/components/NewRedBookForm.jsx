@@ -9,21 +9,8 @@ export default class NewRedBookForm extends Component {
 
     const { loginUser, newRedBook, onChangeCityName, onCloseRedBook, onSubmitRedBook } = this.props;
 
-    // 기본 도시는 현재도시를 선택하고
-    // 이미 있는 도시는 라벨에 선택 못하도록 설정이 필요
-    var options = newRedBook.cities.map((city, i)=>{
-      return {
-        value: i,
-        label: city
-      }
-    });
-
     return <div className="RedBookNoteForm">
       <div className="note-form-header">
-        <Select name="form-field-name" className="city-select"
-        placeholder="Plases, select the city!"
-        value={newRedBook.cityName}
-        options={options} onChange={onChangeCityName.bind(this)} />
       </div>
   
       <textarea ref="textarea" className="text" autoFocus={true} placeholder="Share your useful experiences of this city!"></textarea>

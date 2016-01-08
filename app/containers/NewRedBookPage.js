@@ -7,13 +7,18 @@ import NewRedBookForm from '../components/NewRedBookForm'
 
 class NewRedBookPage extends Component {
 
+  constructor(props){
+    super(props);
+
+    if( !this.props.loginUser.id ){
+      replacePath('/');
+    }
+
+  }
+
   render(){
 
     const { loginUser, replacePath, newRedBook } = this.props;
-
-    if( !loginUser.id ){
-      replacePath('/');
-    }
 
     return <div className="NewRedBookPage">
       <NewRedBookCover 
@@ -61,7 +66,7 @@ function mapStateToProps(state) {
   } = state
 
   const uname = path.substr(1) 
-  const [ cityName, countryName ] = uname.split('-');
+  const [ cityName, countryName ] = uname.split(',');
 
   return {
     loginUser: state.login,

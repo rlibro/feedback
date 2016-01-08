@@ -6,17 +6,16 @@ export default class NewRedBookCover extends Component {
     super(props);
 
     this.state = {
-      isLoading: false,
       imageSrc: false
     };
   }
 
-  // componentWillReceiveProps(nextProp){
+  componentWillReceiveProps(nextProp){
 
- 
-  //   this.loadFlickImage(nextProp.newRedBook.cityName);
-
-  // }
+    if( nextProp.newRedBook.cityName ) {
+      //this.loadFlickImage(nextProp.newRedBook.cityName + ',' + nextProp.newRedBook.countryName);
+    }
+  }
 
   render(){
     const { newRedBook } = this.props;
@@ -38,19 +37,14 @@ export default class NewRedBookCover extends Component {
   }
 
   componentDidMount(){
-    this.loadFlickImage();
+    const { newRedBook: {countryName} } = this.props;
+     
+    this.loadFlickImage(countryName);
   }
 
-  loadFlickImage = (word) =>{
-    
-    const { newRedBook } = this.props;
+  loadFlickImage = (keyword) =>{
+        
     const flickr = 'http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?';
-
-    let keyword = word || newRedBook.countryName; 
-
-    this.setState({
-      isLoading: true
-    })
 
     $.getJSON(flickr,{
       tags: keyword,
@@ -62,9 +56,9 @@ export default class NewRedBookCover extends Component {
       var image_src = data.items[rnd]['media']['m'].replace('_m', '_b');
 
       this.setState({
-        isLoading: false,
         imageSrc: image_src
       })
+
     }.bind(this));
     
   };
