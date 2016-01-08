@@ -1,7 +1,7 @@
 'use strict';
 const express = require('express');
 const router  = express.Router();
-const cities = require('../../../countriesToCities.json');
+//const cities = require('../../../countriesToCities.json');
 
 function mainRoute(req, res){
 
@@ -17,14 +17,20 @@ function mainRoute(req, res){
 
 
 router.get('/', mainRoute);
-router.get('/redbooks/:countryName', function(req, res){
+router.get('/redbooks/:uname', function(req, res){
  
-  const countryName = req.params.countryName.replace(/_/g, ' ');
+  const login = req.session.user;
+  const names = req.params.uname.replace(/_/g,' ').split(',');
+
+  if( !login || !names || names.length !== 2 ){
+    return res.redirect('/');
+  }
+
   const state = {
     login: req.session.user || {},
     newRedBook : {
-      countryName: req.params.countryName,
-      cities: cities[countryName]
+      cityName : names[0],
+      countryName: names[1]
     }
   } 
 

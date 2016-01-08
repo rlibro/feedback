@@ -25,8 +25,6 @@ const API_ROOT = 'http://localhost:3200/api'
 function callApi(endpoint, method, data, schema) {
   const fullUrl = (endpoint.indexOf(API_ROOT) === -1) ? API_ROOT + endpoint : endpoint
 
-  console.log('CALL API: ==> ', endpoint, method, data, schema);
-
   return fetch(fullUrl, {
       method: method,
       credentials: 'same-origin',
