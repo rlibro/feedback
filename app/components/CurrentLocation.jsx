@@ -49,7 +49,7 @@ export default class CurrentLocation extends Component {
 
   onFailPosition = () => {
     this.setState({
-      message: '현재위치를 가져올수없습니다'
+      message: 'Please turn on GPS sensor'
     });
   };
 
@@ -84,28 +84,35 @@ export default class CurrentLocation extends Component {
     const self = this;
 
     geocoder.geocode({'location': latlng}, function(results, status) {
-      if (status === google.maps.GeocoderStatus.OK) {
-
-        console.log(results);
-
-        const countryName = results[results.length-1].formatted_address;
-        let cityName = results[results.length-3].formatted_address;
-        cityName = cityName.split(',').map( name => {
-          return trim(name);
-        })[0];
-
-        // 현재위치를 업데이트 한다.
-        self.props.onUpdateCurrentUserLocation({ 
-          'cityName' : cityName.replace(/\s/g,'_'), 
-          'countryName' : countryName.replace(/\s/g,'_'), 
-          'latlng': latlng    
-        });
-        self.setState({message: cityName});
-
-        
-      } else {
-        window.alert('Geocoder failed due to: ' + status);
+      
+      if (status !== google.maps.GeocoderStatus.OK) {
+        self.setState({
+          message: 'Where I am?'
+        })
       }
+
+      console.log('현재 위치 검색 결과', results, status);
+
+      let cityName, countryName;
+
+      results[0].address_components.forEach( (addr, i) => {
+
+        if (addr.types[0] === 'locality'){
+            cityName = addr.long_name;
+        }
+
+        if (addr.types[0] === 'country'){
+            countryName = addr.long_name;
+        }
+
+      });
+
+      self.props.onUpdateCurrentUserLocation({ 
+        'cityName' : cityName, 
+        'countryName' : countryName, 
+        'latlng': latlng    
+      });
+      self.setState({message: cityName});
     });
 
   };
