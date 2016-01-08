@@ -4,46 +4,73 @@ import _ from 'lodash';
 
 export default class RedBookList extends Component {
 
+  renderNewRedBookCard = (hasThisCity, location) => {
+
+    const { onCreateRedBook } = this.props;
+
+    if( !hasThisCity ){
+      return <li className="RedBook create-book" onClick={onCreateRedBook.bind(this,location)}>
+        <h3>You are in {location.cityName}</h3>
+        <h4>Be the pioneer of {location.countryName}</h4>
+        <img src="/assets/images/create-redbook.png" />
+      </li>
+    }
+    return false;
+
+  };
+
   renderRedBooksByCurrentLocation = (location) => {
 
-    var { entities : { redBooks }, onOpenRedBook, onCreateRedBook } = this.props;
+    let { entities : { redBooks }, onOpenRedBook, onCreateRedBook } = this.props;
+    let hasThisCity = false;
 
     if( location ){
 
+      // 현재 위치에 있는 나라와 도시를 분리해 낸다.
       redBooks = _.filter(redBooks, function(book){
+        if( book.cityName === location.cityName ){
+          hasThisCity = true;
+        }
         return book.countryName === location.countryName
       });
 
+      // 현재 위치에 있는 카드를 맨 앞으로 둔다.
+      redBooks.sort( (a,b) => {
+        return a.cityName !== location.cityName 
+      });
 
       return <div className="RedBookList-byLocation">
-        You are in {location.cityName.replace(/\_/g, ' ')}, {location.countryName.replace(/\_/g, ' ')}
+        <ul className="RedBookList">
 
-        <ul className="RedBookList">{ redBooks.map( (redBook, i) => {
-          var className;
+          {this.renderNewRedBookCard(hasThisCity, location)}    
 
-          switch( i % 3 ){
-            case 0:
-              className = 'left';
-              break;
-            case 1:
-              className = 'middle';
-              break;
-            case 2:
-              className = 'right';
-              break;
-          }
+          { redBooks.map( (redBook, i) => {
+            var className;
+            var count = i;
 
-          return <RedBook key={i} redBook={redBook} 
-                  klassName={className}
-                  onOpenRedBook={onOpenRedBook} />
+            if( !hasThisCity ){
+              count++;
+            }
 
+            switch( count % 3 ){
+              case 0:
+                className = 'left';
+                break;
+              case 1:
+                className = 'middle';
+                break;
+              case 2:
+                className = 'right';
+                break;
+            }
 
+            if( count % 2 === 1 ){
+              className += ' alt'
+            }
+
+            return <RedBook key={i} redBook={redBook} klassName={className}
+              onOpenRedBook={onOpenRedBook} />
         })}
-          <li className="RedBook create-book" onClick={onCreateRedBook.bind(this,location)}>
-            <h3>Create a RedBook</h3>
-            <h4>Be the pioneer of {location.countryName}</h4>
-            <img src="/assets/images/create-redbook.png" />
-          </li>
         </ul>
 
       </div>
@@ -60,7 +87,7 @@ export default class RedBookList extends Component {
 
     if( location ) {
       ids = _.filter(ids, (id)=>{
-        return id.indexOf(location.countryName) < 0
+        return id.indexOf(location.countryName.replace(/\s/g,'_')) < 0
       });
     } 
 

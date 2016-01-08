@@ -88,9 +88,9 @@ class App extends Component {
 
   handleCreateRedBook = (loc, e) => {
 
-    const { countryName } = loc;
+    const { cityName, countryName } = loc;
 
-    location.href=`/redbooks/${countryName}`;
+    location.href=`/redbooks/${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`;
 
     /**
      * 조건, 로그인 되어 있고 로그인 정보에 current Location이 있어야 한다. 
