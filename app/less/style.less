@@ -184,7 +184,6 @@ textarea:focus, input:focus{
   border-radius: 5px;
   color: #fff;
   padding-top: 20px;
-  margin-top: 5px;
   background-color: gray;
 
   h3, h4 {
@@ -193,7 +192,7 @@ textarea:focus, input:focus{
   }
 
   &.middle {
-    margin: 5px 5px 0 5px;
+    margin: 0px 5px 0 5px;
   }
 
   &.create-book {
@@ -518,10 +517,17 @@ textarea:focus, input:focus{
     width: 48%;
     min-width: 240px;
 
+    &.create-book {
+      margin-top: 0px;
+      margin-left: 5px;
+    }
+
     &.left, &.right {
       margin: 0 5px;
     }
+
     &.middle {
+      margin-top: 0px;
       margin-bottom: 5px;
     }
   }
@@ -596,6 +602,10 @@ textarea:focus, input:focus{
   .RedBook {
     float: none;
     width: 97%;
+
+    &.middle {
+      margin-top: 5px;
+    }
   }
 
   .RedBookPage {
