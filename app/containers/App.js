@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { loadAllCounties, loadAllRedBooks, updateCurrentUserLocation, findingKeyWord } from '../actions'
+import { loadAllCounties, loadAllRedBooks, updateCurrentUserLocation, updateLoginUser, findingKeyWord } from '../actions'
 import { pushPath as pushState } from 'redux-simple-router'
 import Explore from '../components/Explore'
 import Header from '../components/Header'
@@ -45,7 +45,8 @@ class App extends Component {
           onLogin={this.handleFacebookLogin}
           onMoveHome={this.handleChangePath.bind(this, '/')} 
           onMoveMyNote={this.handleChangePath.bind(this, 'note')} 
-          onUpdateCurrentUserLocation={this.handleUpdateCurrentUserLocation}
+          onUpdateCurrentUserLocation={this.props.updateCurrentUserLocation}
+          onUpdateLoginUser={this.props.updateLoginUser}
           loginUser={login} />
 
         {this.renderErrorMessage()}
@@ -66,10 +67,6 @@ class App extends Component {
       </div>
     )
   }
-
-  handleUpdateCurrentUserLocation = (location) => {
-    this.props.updateCurrentUserLocation(location)
-  };
 
   handleDismissClick = (e) => { 
     this.props.resetErrorMessage()
@@ -130,5 +127,6 @@ export default connect(mapStateToProps, {
   findingKeyWord,
   loadAllCounties,
   loadAllRedBooks,
-  updateCurrentUserLocation
+  updateCurrentUserLocation,
+  updateLoginUser
 })(App)
