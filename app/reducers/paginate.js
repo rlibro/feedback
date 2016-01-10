@@ -58,13 +58,13 @@ export default function paginate({ types, mapActionToKey }) {
 
      // 노트가 삭제되면 해당 아이디를 제거한다.  
 
-    if ( action.type === ActionTypes.DELETE_NOTE_SUCCESS && state[action.redBookId]) {
+    if ( action.type === ActionTypes.DELETE_NOTE_SUCCESS && state[action.response.redBookId]) {
 
-      let notes = state[action.redBookId].ids;
+      let notes = state[action.response.redBookId].ids;
 
       for (let i=0; i < notes.length; ++i){
       
-        if( notes[i] === action.noteId ){
+        if( notes[i] === action.response.noteId ){
           notes.splice(i, 1);
           break;
         }

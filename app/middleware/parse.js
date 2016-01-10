@@ -134,85 +134,77 @@ const parseAPI = {
 
   addComment: function(schema, params, next, actionWith, successType, failureType){
 
-    let noteQuery = new Parse.Query(Note);
-    let commentQuery = new Parse.Query(Comment);
+    let note = new Note();
+    note.id = params.noteId;
 
-    noteQuery
-    .get(params.noteId)
-    .then(function(note){
+    const comment = new Comment();
+    params.Comment.parent = note;
 
-      const comment = new Comment();
-      params.Comment.parent = note;
+    // 1. 일단 댓글을 서버에 저장해!      
+    return comment
+    .save(params.Comment)
+    .then(function(){
+
+      // 2. 그리고 해당 노트에 걸린 모든 댓글 찾아!
+      const promise = new Parse.Promise();
+      const commentQuery = new Parse.Query(Comment);
+      commentQuery.equalTo('parent', note);
       
-      comment
-      .save(params.Comment)
-      .then(function(){
+      commentQuery.find({
+        success: function(comments){
 
-        commentQuery.equalTo('parent', note);
-        commentQuery.find({
-          success: function(comments){
+          // 3. 모든 댓글을 모아서 노트의 comments로 저장한 뒤에 반환해! 
+          comments.forEach( function(savedComment, i, a){
+            let savedJsonComment = savedComment.toJSON();
+            clearObjectId(savedJsonComment, 'author');
+            a[i] = savedJsonComment;
+          });
 
-            comments.forEach( function(savedComment, i, a){
-              let savedJsonComment = savedComment.toJSON();
-              clearObjectId(savedJsonComment, 'author');
-              a[i] = savedJsonComment;
-            })
+          note.set('comments', comments);
+          note
+          .save()
+          .then(function(){
 
-            note.set('comments', comments);
-            note
-            .save()
-            .then(function(){
+            promise.resolve({
+              comments: comments,
+              noteId: params.noteId,
+            });
 
-              next(actionWith({
-                response: comments,
-                noteId: params.noteId,
-                type: successType
-              }))
-
-            })
-          }
-        })
+          })
+        }
       })
-    }, function(err){
-        
-      next(actionWith({
-        type: failureType,
-        error: error.message || 'Something bad happened'
-      }))
 
+      return promise;
     })
+    
   },
 
-  deleteNote: function(schema, params, next, actionWith, successType, failureType){
+  deleteNote: function(schema, params){
 
     const noteQuery = new Parse.Query(Note);
-    
-    noteQuery
+
+    return noteQuery
     .get(params.noteId)
     .then(function(note){
+
+      const promise = new Parse.Promise();
 
       note.destroy({
 
         success: function(){
-          next(actionWith({
+          promise.resolve({
             noteId: params.noteId,
-            redBookId: params.redBookId,
-            type: successType
-          }))
-
+            redBookId: params.redBookId
+          })
         },
 
-        error: function(){
-
-          next(actionWith({
-            type: failureType,
-            error: error.message || 'Something bad happened'
-          }))
-
+        error: function(err){
+          promise.reject(err)
         }
 
       });
-      
+
+      return promise;      
 
     });
     
@@ -235,7 +227,7 @@ export default store => next => action => {
   const [ requestType, successType, failureType ] = types
 
   if (!schema) {
-    throw new Error('Specify one of the exported Schemas.')
+    throw new Error('필요한 스카마(Schema)가 없습니다.')
   }
   if (!Array.isArray(types) || types.length !== 3) {
     throw new Error('Expected an array of three action types.')
@@ -253,15 +245,7 @@ export default store => next => action => {
   // 요청 액션을 실행하고
   next(actionWith({ type: requestType }))
 
-  // 실제 API를 호출한다
-  if( method === 'addComment' ) {
-    return parseAPI[method](schema, params, next, actionWith, successType, failureType);
-  } 
-
-  if( method === 'deleteNote' ) {
-    return parseAPI[method](schema, params, next, actionWith, successType, failureType);
-  } 
-
+  // 성공과 실패에 대한 응답은 Promise 패턴으로 처리한다. 
   return parseAPI[method](schema, params).then(
     response => next(actionWith({
       response,

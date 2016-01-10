@@ -29,8 +29,8 @@ function entities(state = { redBooks: {}, notes:{} }, action) {
 
   if( action.response && action.type === 'ADD_COMMENT_SUCCESS'){
 
-    const comments = action.response;
-    const notes = state.notes[action.noteId];
+    const { comments, noteId } = action.response;
+    const notes = state.notes[noteId];
     notes.comments = comments;
     
     return merge({}, state);
@@ -131,13 +131,6 @@ function newRedBook(state = {}, action) {
   return state
 }
 
-/**
- * 데이터 스토어에 들어갈 기본 구조
- * country - 나라 목록 (페이징 구조, 기본은 Top10만 가져오기)
- * redbook = {
-     nearby : { ids:[] }
-   }
- */
 const rootReducer = combineReducers({
   entities,
   pagination,

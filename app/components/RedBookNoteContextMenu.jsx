@@ -29,7 +29,7 @@ export default class RedBookNoteContextMenu extends Component {
     }
 
 
-    return !isOpenContext ? <div className="ContextMenu">
+    return isOpenContext ? <div className="ContextMenu">
       {ContextMenu}
     </div>: false
   }

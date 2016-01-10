@@ -45,7 +45,7 @@ export default class NoteCommentForm extends Component {
   };
 
   handleFinishEdit = (e) => {
-    this.props.onSubmitComment(e.target.value);
+    this.props.onAddComment(e.target.value);
     e.target.value = '';
   };
 
