@@ -39,6 +39,9 @@ textarea:focus, input:focus{
 
 }
 
+.sub .wrap-RedBookList {
+  display: none;
+}
 
 /**
  * 레드북 헤더
@@ -306,9 +309,9 @@ textarea:focus, input:focus{
     right: 10px;
     cursor: pointer;
 
-    img {
-      width: 50px;
-      height: 50px;
+    i {
+      font-size: 30px;
+      padding: 8px;
       opacity: 0.7;
 
       &:hover {
@@ -566,6 +569,16 @@ textarea:focus, input:focus{
       }
     }
 
+    .button-close {
+      top: 10px;
+      right: 10px;
+
+      i {
+        font-size: 24px;
+      }
+    }
+
+
   }
 
 
@@ -580,10 +593,10 @@ textarea:focus, input:focus{
       display: inline-block;
       width: 54px;
       height: 54px;
+      text-align: center;
 
-      img {
-        width: 54px;
-        height: 54px;
+      i {
+        font-size: 24px;
       }
     }
 
@@ -643,6 +656,16 @@ textarea:focus, input:focus{
         font-size: 20px;
       }
     }
+    .button-close {
+      top: 10px;
+      right: 10px;
+
+      i {
+        padding: 5px;
+        font-size: 20px;
+      }
+    }
+
   }
 
 }

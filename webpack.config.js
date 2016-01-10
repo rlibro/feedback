@@ -36,11 +36,7 @@ var common = {
       }
     ]
   },
-  plugins: [
-    // new HtmlwebpackPlugin({
-    //   title: 'RedBook'
-    // })
-  ]
+  plugins: []
 };
 
 if(TARGET === 'server') {
@@ -92,13 +88,26 @@ if(TARGET === 'start' || !TARGET) {
       port: process.env.PORT
     },
     module: {
-      loaders: [{
-        test: /\.css$/,
-        loaders: ['style', 'css'],
-        include: PATHS.app
-      }]
+      loaders: [
+        {
+          test: /\.jsx?$/,
+          loaders: ['babel'],
+          include: PATHS.app
+        },
+        {
+          test: /\.less$/,
+          loader: 'style!css!less'
+        }
+      ]
     },
     plugins: [
+      new HtmlwebpackPlugin({ 
+        title: 'RedBook',
+        favicon: 'public/favicon.ico',
+        chunks: ['public'],
+        template: 'public/index.html',
+        filename: 'index.html'
+      }),
       new webpack.HotModuleReplacementPlugin()
     ]
   });

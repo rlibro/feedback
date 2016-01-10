@@ -9,7 +9,7 @@ export default class Header extends Component {
     return (
       <header className="Header">
       <div className="stack-menu">
-        <img src="/assets/images/stack-menu.png" />
+        <i className="fa fa-bars"/>
       </div>
       <h1 className="logo">  
         <a href="/" onClick={this.props.onMoveHome}>

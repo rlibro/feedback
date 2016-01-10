@@ -37,10 +37,12 @@ class App extends Component {
   }
 
   render() {
-    const { children, login, countries, redBooks, entities} = this.props
+    const { children, login, countries, redBooks, entities, path} = this.props
     
+    let klass = (path !== '/')? 'sub':''
+
     return (
-      <div id="app">
+      <div id="app" className={klass}>
         <Header 
           onLogin={this.handleFacebookLogin}
           onMoveHome={this.handleChangePath.bind(this, '/')} 
@@ -140,6 +142,7 @@ App.propTypes = {
 function mapStateToProps(state) {
 
   return {
+    path: state.routing.path,
     errorMessage: state.errorMessage,
     login: state.login,
     countries: state.pagination.countries,

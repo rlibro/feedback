@@ -20,7 +20,7 @@ export default class RedBookCover extends Component {
         <h4 className="country-name">{redBook.countryName}</h4>
       </div>
       <div className="button-close">
-        <img src="/assets/images/closebutton.svg"  onClick={onCloseRedBook}/>
+        <i className="fa fa-times" onClick={onCloseRedBook}/>
       </div>
       
 {/*      <div className="controls">
