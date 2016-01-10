@@ -82,7 +82,6 @@ textarea:focus, input:focus{
 
     .fb-login {
       margin-right: 10px;
-      display: block;
       font-size: 16px;
       
       &:hover {
@@ -411,6 +410,31 @@ textarea:focus, input:focus{
       }
     }
 
+    .options {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+
+      button {
+        position: absolute;
+        right: 0px;
+        cursor: pointer;
+        background-color: transparent;
+        border: none;
+        opacity: 0.5;
+        outline: none;
+
+        &:hover {
+          opacity: 1;
+        }
+
+        i {
+          font-size: 20px;
+          font-weight: bold;
+        }
+      }
+    }
+
   }
 
   .content {
@@ -433,8 +457,46 @@ textarea:focus, input:focus{
       padding: 10px;
     }
   }
-  
 }
+
+.ContextMenu {
+  position: relative;
+  top: 20px;
+  width: 100px;
+  text-align: right;
+  padding: 5px 0;
+
+  -webkit-background-clip: padding-box;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: 3px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
+
+  .separator {
+    border-bottom: 1px solid #e9eaed;
+    margin: 5px 7px 6px;
+    padding-top: 1px;
+  }
+
+  .option {
+    display: block;
+    outline: none;
+    text-decoration: none;
+
+    border: solid #fff;
+    border-width: 1px 0;
+    color: #141823;
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 22px;
+    padding: 0 12px;
+
+    &:hover{
+      font-weight: bold;
+    }
+  }
+}
+
 .NoteCommentList {
   background-color: #f6f7f8;
   border-top: 1px solid #ccc;

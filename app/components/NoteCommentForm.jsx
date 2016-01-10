@@ -4,7 +4,7 @@ export default class NoteCommentForm extends Component {
 
   renderLogin = () => {
     return <div className="NoteCommentForm"> 
-      댓글을 남기시려면 <a href="#" onClick={this.handleFacebookLogin}>페이스북으로 로그인</a> 해주세요!;
+      댓글을 남기시려면 <a href="#" className="fa fa-facebook" onClick={this.handleFacebookLogin}> 페이스북으로 로그인</a> 해주세요!;
     </div>
   };
 
@@ -57,5 +57,5 @@ export default class NoteCommentForm extends Component {
 NoteCommentForm.propTypes = {
   loginUser: PropTypes.object.isRequired,
   isOpenComment: PropTypes.bool.isRequired,
-  onSubmitComment: PropTypes.func.isRequired
+  onAddComment: PropTypes.func.isRequired
 }

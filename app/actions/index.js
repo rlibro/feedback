@@ -5,7 +5,7 @@ import { PARSE, Schemas } from '../middleware/parse'
  * 페이스북 로그인 정보를 저장한다. 
  */
 export function updateLoginUser(userInfo){
-  delete userInfo.sessionToken;
+  //delete userInfo.sessionToken;
   
   return (dispatch, getState) => {
     return dispatch({
@@ -221,3 +221,31 @@ export function addNoteComment (noteId, commentText) {
   }
 }
 /* END OF addNoteComment */
+
+
+
+
+/**
+ *  노트를 삭제한다.
+ */ 
+export const DELETE_NOTE_REQUEST = 'DELETE_NOTE_REQUEST'
+export const DELETE_NOTE_SUCCESS = 'DELETE_NOTE_SUCCESS'
+export const DELETE_NOTE_FAILURE = 'DELETE_NOTE_FAILURE'
+export function deleteNote (noteId, redBookId) {
+  return (dispatch, getState) => {
+    return dispatch(function(){
+      return {
+        [PARSE]: {
+          method: 'deleteNote',
+          params: {
+            noteId: noteId,
+            redBookId: redBookId
+          },
+          types: [ DELETE_NOTE_REQUEST, DELETE_NOTE_SUCCESS, DELETE_NOTE_FAILURE ],
+          schema: Schemas.NOTE
+        }
+      }
+    }());
+  }
+}
+/* END OF deleteNote */

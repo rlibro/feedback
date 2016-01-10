@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { loadNotesByRedBookId, addNoteComment, addRedBookNote } from '../actions'
+import { loadNotesByRedBookId, deleteNote, addNoteComment, addRedBookNote } from '../actions'
 import { pushPath as pushState, replacePath } from 'redux-simple-router'
 import RedBookCover from '../components/RedBookCover'
 import RedBookNoteForm from '../components/RedBookNoteForm'
@@ -55,7 +55,8 @@ class RedBookPage extends Component {
         loginUser={loginUser}
         notes={entities.notes} 
         ids={ids}
-        onSubmitComment={this.handleSubmitComment}/>
+        onDeleteNote={this.handleDeleteNote}
+        onAddComment={this.handleAddComment}/>
       <div className="dimmed"></div>
     </div>
   };
@@ -78,7 +79,11 @@ class RedBookPage extends Component {
     }
   };
 
-  handleSubmitComment = (noteId, commentText) => {
+  handleDeleteNote = (noteId) => {
+    this.props.deleteNote(noteId, this.props.redBook.id);
+  };
+
+  handleAddComment = (noteId, commentText) => {
     
     this.props.addNoteComment(noteId, commentText)
 
@@ -94,7 +99,8 @@ RedBookPage.propTypes = {
   replacePath: PropTypes.func.isRequired,
   loadNotesByRedBookId: PropTypes.func.isRequired,
   addRedBookNote: PropTypes.func.isRequired,
-  addNoteComment: PropTypes.func.isRequired
+  addNoteComment: PropTypes.func.isRequired,
+  deleteNote: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {
@@ -130,6 +136,7 @@ export default connect(mapStateToProps, {
   loadNotesByRedBookId,
   addRedBookNote,
   addNoteComment,
+  deleteNote,
   pushState,
   replacePath
 })(RedBookPage)

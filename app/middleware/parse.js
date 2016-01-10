@@ -20,6 +20,20 @@ const RedBook = Parse.Object.extend('RedBook');
 const Note = Parse.Object.extend('Note');
 const Comment = Parse.Object.extend('Comment');
 
+function clearObjectId(obj, key){
+  obj.id = obj.objectId;
+  delete obj.objectId;
+
+  if( key ){
+    obj[key].id = obj[key].objectId;
+
+    delete obj[key].objectId;
+    delete obj[key].sessionToken;
+    delete obj[key].type;
+    delete obj[key].className;    
+  }
+}
+
 const parseAPI = {
   fetchRedBook: function (schema) {
 
@@ -29,8 +43,9 @@ const parseAPI = {
     .then(function(data) {
       data.forEach(function(o, i, a){
         const camelizedJson = camelizeKeys(o.toJSON());
-        camelizedJson.id = o.id;
-        delete camelizedJson.objectId;
+      
+        clearObjectId(camelizedJson, 'creator');
+
         a[i] = camelizedJson;
       });
 
@@ -60,8 +75,9 @@ const parseAPI = {
       results.forEach(function(note, i, a){
 
         const camelizedJson = camelizeKeys(note.toJSON());
-        camelizedJson.id = note.id;
-        delete camelizedJson.objectId;
+
+        clearObjectId(camelizedJson, 'author');
+
         a[i] = camelizedJson;
       
       });
@@ -88,14 +104,12 @@ const parseAPI = {
       note.save(params.Note);
 
       let newbook = book.toJSON();
-      delete newbook.objectId;
-      newbook.id = book.id;
+
+      clearObjectId(newbook, 'creator');
 
       return Object.assign({}, normalize(newbook, schema));
 
 
-    }, function(err){
-      console.log(err);
     })
   }, 
 
@@ -111,17 +125,14 @@ const parseAPI = {
     .then(function(redBookNote){
 
       let newNote = redBookNote.toJSON();
-      delete newNote.objectId;
-      newNote.id = redBookNote.id;
+      clearObjectId(newNote, 'author');
 
       return Object.assign({}, normalize(newNote, schema));
 
-    }, function(err){
-      console.log(err);
     })
   },
 
-  addComment: function(schema, params, next, actionWith, successType){
+  addComment: function(schema, params, next, actionWith, successType, failureType){
 
     let noteQuery = new Parse.Query(Note);
     let commentQuery = new Parse.Query(Comment);
@@ -143,8 +154,7 @@ const parseAPI = {
 
             comments.forEach( function(savedComment, i, a){
               let savedJsonComment = savedComment.toJSON();
-                  savedJsonComment.id = savedComment.id;
-                  delete savedJsonComment.objectId;
+              clearObjectId(savedJsonComment, 'author');
               a[i] = savedJsonComment;
             })
 
@@ -164,8 +174,48 @@ const parseAPI = {
         })
       })
     }, function(err){
-      console.log(err);
+        
+      next(actionWith({
+        type: failureType,
+        error: error.message || 'Something bad happened'
+      }))
+
     })
+  },
+
+  deleteNote: function(schema, params, next, actionWith, successType, failureType){
+
+    const noteQuery = new Parse.Query(Note);
+    
+    noteQuery
+    .get(params.noteId)
+    .then(function(note){
+
+      note.destroy({
+
+        success: function(){
+          next(actionWith({
+            noteId: params.noteId,
+            redBookId: params.redBookId,
+            type: successType
+          }))
+
+        },
+
+        error: function(){
+
+          next(actionWith({
+            type: failureType,
+            error: error.message || 'Something bad happened'
+          }))
+
+        }
+
+      });
+      
+
+    });
+    
   }
 }
 
@@ -205,7 +255,11 @@ export default store => next => action => {
 
   // 실제 API를 호출한다
   if( method === 'addComment' ) {
-    return parseAPI[method](schema, params, next, actionWith, successType);
+    return parseAPI[method](schema, params, next, actionWith, successType, failureType);
+  } 
+
+  if( method === 'deleteNote' ) {
+    return parseAPI[method](schema, params, next, actionWith, successType, failureType);
   } 
 
   return parseAPI[method](schema, params).then(

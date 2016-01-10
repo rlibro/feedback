@@ -1,6 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import NoteCommentList from '../components/NoteCommentList'
+import ContextMenu from '../components/RedBookNoteContextMenu'
 import moment from 'moment'
+
+import { Provider } from 'react-redux'
 
 export default class RedBookNote extends Component {
 
@@ -8,14 +11,15 @@ export default class RedBookNote extends Component {
     super(props)
 
     this.state = {
+      isOpenContext: false,
       isOpenComment: false
     }
   }
 
   render() {
 
-    const { note, loginUser, onSubmitComment } = this.props;
-    const {isOpenComment} = this.state;
+    const { note, loginUser, onAddComment, onDeleteNote } = this.props;
+    const {isOpenComment, isOpenContext} = this.state;
 
     const contentText = note.content
                         .replace(/(.*)\n(.*)/g, '<p>$1<br/></p><p>$2</p>')
@@ -30,6 +34,14 @@ export default class RedBookNote extends Component {
           <div className="date">{ moment(note.createdAt).format('LLL') }</div>
           <div className="username">{ note.author.name }</div>
         </div>
+        <div className="options">
+          <button><i className="fa fa-angle-down" onClick={this.handleOpenContext} /></button>
+          <ContextMenu 
+            loginUser={loginUser}
+            noteAuthor={note.author}
+            onDeleteNote={onDeleteNote.bind(null, note.id)}
+            isOpenContext={isOpenContext} />
+        </div>
       </div>
       <div className="content" dangerouslySetInnerHTML={{__html: contentText}}></div>
       <div className="controls">
@@ -43,7 +55,7 @@ export default class RedBookNote extends Component {
         loginUser={loginUser}
         comments={note.comments || []} 
         isOpenComment={isOpenComment}
-        onSubmitComment={onSubmitComment.bind(null, note.id)} />
+        onAddComment={onAddComment.bind(null, note.id)} />
     </div>
   }
 
@@ -52,10 +64,17 @@ export default class RedBookNote extends Component {
       isOpenComment : !this.state.isOpenComment
     })
   };
+
+  handleOpenContext = (e) => {
+    this.setState({
+      isOpenContext : !this.state.isOpenContext
+    })
+  };
 }
 
 RedBookNote.propTypes = {
   loginUser: PropTypes.object.isRequired,
   note: PropTypes.object.isRequired,
-  onSubmitComment: PropTypes.func.isRequired
+  onAddComment: PropTypes.func.isRequired,
+  onDeleteNote: PropTypes.func.isRequired
 }

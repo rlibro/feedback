@@ -41,7 +41,7 @@ export default class Header extends Component {
         }else{
 
           return <ul className="account-menu">
-            <li><a href="/" className="fb-login" onClick={this.handleFacebookLogin}>Login with Facebook</a></li>
+            <li><a href="/" className="fa fa-facebook fb-login" onClick={this.handleFacebookLogin}> Login with Facebook</a></li>
           </ul>
 
         }
@@ -87,6 +87,8 @@ export default class Header extends Component {
       FB.api('/me?fields=id,name,email,location,picture{url}', function(user) {
 
         if( user.error ){
+
+          debugger;
           Parse.User.logOut();
           return;
         }

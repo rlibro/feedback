@@ -97,8 +97,6 @@ export default class CurrentLocation extends Component {
         })
       }
 
-      console.log('현재 위치 검색 결과', results, status);
-
       let cityName, countryName;
 
       results[0].address_components.forEach( (addr, i) => {

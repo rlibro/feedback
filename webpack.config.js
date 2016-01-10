@@ -105,7 +105,7 @@ if(TARGET === 'start' || !TARGET) {
         title: 'RedBook',
         favicon: 'public/favicon.ico',
         chunks: ['public'],
-        template: 'public/index.html',
+        template: 'public/template.html',
         filename: 'index.html'
       }),
       new webpack.HotModuleReplacementPlugin()

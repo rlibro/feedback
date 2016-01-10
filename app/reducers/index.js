@@ -37,6 +37,19 @@ function entities(state = { redBooks: {}, notes:{} }, action) {
 
   }
 
+  if( action.response && action.type === 'DELETE_NOTE_SUCCESS') {
+
+    for (let i=0; i < state.notes.length; ++i){
+      
+      if( state.notes[i] === action.noteId ){
+        this.state.notes.splice(i, 1);
+        break;
+      }
+    }
+
+    return merge({}, state);   
+  }
+
   return state
 }
 
