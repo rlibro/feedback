@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { loadAllCounties, loadAllRedBooks, updateCurrentUserLocation, updateLoginUser, findingKeyWord } from '../actions'
+import { loadAllCounties, loadAllRedBooks, updateCurrentUserLocation, updateLoginUser, findingKeyWord, logOutUser } from '../actions'
 import { pushPath as pushState } from 'redux-simple-router'
 import Explore from '../components/Explore'
 import Header from '../components/Header'
@@ -47,6 +47,7 @@ class App extends Component {
           onMoveMyNote={this.handleChangePath.bind(this, 'note')} 
           onUpdateCurrentUserLocation={this.props.updateCurrentUserLocation}
           onUpdateLoginUser={this.props.updateLoginUser}
+          onLogOutUser={this.props.logOutUser}
           loginUser={login} />
 
         {this.renderErrorMessage()}
@@ -68,6 +69,42 @@ class App extends Component {
     )
   }
 
+  componentDidMount() {
+
+    const sessionUser = Parse.User.current();
+    if( sessionUser ){
+
+      let userInfo = sessionUser.toJSON();
+      userInfo.id = sessionUser.id;
+      delete userInfo.objectId;
+
+      this.props.updateLoginUser(userInfo)
+    }
+
+
+    window.fbAsyncInit = function() {
+
+      Parse.FacebookUtils.init({
+        appId      : '1155091951184116',
+        cookie     : true,
+        xfbml      : true,
+        version    : 'v2.4'
+      });
+
+
+    }.bind(this);
+
+    // Load the SDK asynchronously
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = '//connect.facebook.net/en_US/sdk.js';
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+  }
+
   handleDismissClick = (e) => { 
     this.props.resetErrorMessage()
     e.preventDefault()
@@ -86,18 +123,8 @@ class App extends Component {
   handleCreateRedBook = (loc, e) => {
 
     const { cityName, countryName } = loc;
-
-    location.href=`/redbooks/${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`;
-
-    /**
-     * 조건, 로그인 되어 있고 로그인 정보에 current Location이 있어야 한다. 
-     * 
-     * 1. 아직 생성 가능한 도시 목록을 보여준다. (현재 위치에 있는 나라중에 하나를 고른다. )
-     * 어떤  
-     */
-
-    console.log('TODO: create RedBook', loc);
-    //e.preventDefault();
+    this.props.pushState(`/redbooks/${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`, `${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`);
+    e.preventDefault();
   };
 }
 
@@ -128,5 +155,6 @@ export default connect(mapStateToProps, {
   loadAllCounties,
   loadAllRedBooks,
   updateCurrentUserLocation,
-  updateLoginUser
+  updateLoginUser,
+  logOutUser
 })(App)

@@ -10,13 +10,6 @@ export default class NewRedBookCover extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProp){
-
-    if( nextProp.newRedBook.cityName ) {
-      //this.loadFlickImage(nextProp.newRedBook.cityName + ',' + nextProp.newRedBook.countryName);
-    }
-  }
-
   render(){
     const { newRedBook } = this.props;
     const style = {
@@ -53,11 +46,13 @@ export default class NewRedBookCover extends Component {
     }, function(data){
 
       var rnd = Math.floor(Math.random() * data.items.length);
-      var image_src = data.items[rnd]['media']['m'].replace('_m', '_b');
+      var imageSrc = data.items[rnd]['media']['m'].replace('_m', '_b');
 
       this.setState({
-        imageSrc: image_src
-      })
+        imageSrc: imageSrc
+      });
+
+      this.props.setCoverImageForNewRedBook({coverImage:imageSrc});
 
     }.bind(this));
     
@@ -74,5 +69,6 @@ export default class NewRedBookCover extends Component {
 
 NewRedBookCover.propTypes = {
   loginUser: PropTypes.object.isRequired,
+  setCoverImageForNewRedBook: PropTypes.func.isRequired,
   newRedBook: PropTypes.object.isRequired
 }

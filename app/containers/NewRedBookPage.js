@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux'
-import { submitNoteComment, submitRedBookNote, clearNewRedBook, setNewRedBookCityName } from '../actions'
+import { updateDataForNewRedBook, addRedBook } from '../actions'
 import { pushPath as pushState, replacePath } from 'redux-simple-router'
 import NewRedBookCover from '../components/NewRedBookCover'
 import NewRedBookForm from '../components/NewRedBookForm'
@@ -13,42 +13,60 @@ class NewRedBookPage extends Component {
     if( !this.props.loginUser.id ){
       replacePath('/');
     }
+  }
 
+  componentWillReceiveProps(nextProps){
+
+    if( nextProps.redBooks !== this.props.redBooks ) {
+
+      setTimeout(function(){
+        this.props.replacePath(`/${this.props.redirect}`);
+      }.bind(this), 400)    
+      
+    }
+  }
+
+  componentWillUnmount(){
+
+    this.props.updateDataForNewRedBook(null);
   }
 
   render(){
 
-    const { loginUser, replacePath, newRedBook } = this.props;
+    const { loginUser, replacePath, location } = this.props;
 
     return <div className="NewRedBookPage">
       <NewRedBookCover 
         loginUser={loginUser}
-        newRedBook={newRedBook}
-        onCloseRedBook={this.handleCloseRedBook} />
+        newRedBook={location}
+        setCoverImageForNewRedBook={this.handleCoverImageForNewRedBook} />
 
       <NewRedBookForm 
         loginUser={loginUser}
-        newRedBook={newRedBook}
-        onSubmitRedBook={this.handleSubmitRedBook}
-        onChangeCityName={this.handleChangeCityName}
-        onCloseRedBook={this.handleCloseNewRedBook}
+        newRedBook={location}
+        onCreateNewRedBook={this.handleCreateNewRedBook}
+        onCancelNewRedBook={this.handleCancelNewRedBook}
       />
       <div className="dimmed"></div>
     </div>
   }
 
-  handleCloseNewRedBook = (e) => {
+  componentDidMount(){
+     this.props.updateDataForNewRedBook(this.props.location);
+  }
+
+  handleCancelNewRedBook = (e) => {
     this.props.replacePath('/')
   };
 
-  handleChangeCityName = (cityIdx, cityData) => {
-
-    console.log('cha--> ', cityIdx, cityData)
-    this.props.setNewRedBookCityName(cityData);
+  handleCreateNewRedBook = (noteText) => {
+    this.props.addRedBook(noteText);
   };
 
-  handleSubmitRedBook = (noteText) => {
-    this.props.submitRedBookNote(noteText)    
+  handleCoverImageForNewRedBook = (imgData) => {
+
+    this.props.updateDataForNewRedBook(imgData);
+
   };
 }
 
@@ -60,28 +78,26 @@ NewRedBookPage.propTypes = {
 
 function mapStateToProps(state) {
 
-  const {
-    entities: { redBooks },
-    routing: { path }
-  } = state
-
-  const uname = path.substr(1) 
-  const [ cityName, countryName ] = uname.split(',');
+  const { routing, entities:{ redBooks } } = state
+  const [ cityName, countryName ] = routing.state.split(',');
+  const location = {
+    uname: routing.state,
+    countryName: countryName.replace(/_/g,' '),
+    cityName: cityName.replace(/_/g,' ')
+  }
 
   return {
+    redirect: location.uname,
+    redBooks: redBooks,
     loginUser: state.login,
-    countryName: countryName,
-    entities: state.entities,
-    newRedBook: state.newRedBook
+    location: location
   }
 }
 
 
 export default connect(mapStateToProps, {
-  submitRedBookNote,
-  submitNoteComment,
-  clearNewRedBook,
-  setNewRedBookCityName,
+  updateDataForNewRedBook,
+  addRedBook,
   pushState,
   replacePath
 })(NewRedBookPage)

@@ -14,7 +14,7 @@ export default class NoteCommentForm extends Component {
     return <div className="NoteCommentForm">
     
       <div className="profile photo">
-        <img src={loginUser.picture.data.url} />
+        <img src={loginUser.picture} />
       </div>
       
       <input className="text" type="text" placeholder="댓글을 입력하세요." 
@@ -29,9 +29,9 @@ export default class NoteCommentForm extends Component {
 
   render() {
 
-    setTimeout(()=>{
-      window.scrollTo(0,document.body.scrollHeight);
-    }, 10);
+    // setTimeout(()=>{
+    //   window.scrollTo(0,document.body.scrollHeight);
+    // }, 10);
 
     const { loginUser } = this.props;
 

@@ -24,7 +24,7 @@ export default class RedBookList extends Component {
     let { entities : { redBooks }, onOpenRedBook, onCreateRedBook } = this.props;
     let hasThisCity = false;
 
-    if( location ){
+    if( location && location.cityName ){
 
       // 현재 위치에 있는 나라와 도시를 분리해 낸다.
       redBooks = _.filter(redBooks, function(book){
@@ -85,9 +85,9 @@ export default class RedBookList extends Component {
     const { isFetching } = redBooks;
     var ids = redBooks.ids || [];
 
-    if( location ) {
+    if( location && location.cityName ) {
       ids = _.filter(ids, (id)=>{
-        return id.indexOf(location.countryName.replace(/\s/g,'_')) < 0
+        return entities.redBooks[id].countryName !== location.countryName;
       });
     } 
 

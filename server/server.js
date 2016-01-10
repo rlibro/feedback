@@ -12,6 +12,8 @@ var favicon = require('serve-favicon');
 var path = require('path');
 var compiler = webpack(config);
 var app = express();
+var Parse = require('parse');
+Parse.initialize('oI9ho8CTpm5bFDliirnMFEdH3UGCzaBI8YHBtlnD', '97zh1DEXSPm7DiJjRZYy8KXJBMUVmSxUrScJlgAh');
 
 // Webpack Setup!
 app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }))

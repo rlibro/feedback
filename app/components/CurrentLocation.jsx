@@ -8,17 +8,13 @@ export default class CurrentLocation extends Component {
     super(props);
 
     this.state = {
+      loadedGoogleSDK: false,
       checkCount: 2,
       message: '',
       latlng : null
     };
 
     window.loadedGoogle = this.onLoadedGoogle;
-
-    const script = document.createElement('script');
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyABFo5etnTuWbcrgVxaCeJa7a4R2ZLZsOY&signed_in=true&language=en&callback=loadedGoogle';
-    document.head.appendChild(script);
-
   }
 
   render(){
@@ -35,6 +31,16 @@ export default class CurrentLocation extends Component {
     if (navigator.geolocation) {
       this.setState({message: 'finding current location...'})
       navigator.geolocation.getCurrentPosition(this.onSuccessPosition, this.onFailPosition);
+    }
+
+    // 구글 지도 API 로딩
+    if( !this.state.loadedGoogleSDK ){
+      this.setState({
+        loadedGoogleSDK: true
+      })
+      const script = document.createElement('script');
+      script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyABFo5etnTuWbcrgVxaCeJa7a4R2ZLZsOY&signed_in=true&language=en&callback=loadedGoogle';
+      document.head.appendChild(script);
     }
 
   }
@@ -112,7 +118,14 @@ export default class CurrentLocation extends Component {
         'countryName' : countryName, 
         'latlng': latlng    
       });
-      self.setState({message: cityName});
+
+      if( cityName ){
+        self.setState({message: cityName});  
+      } else {
+        self.setState({message: '도시로 이동하세요!' });
+      }
+
+      
     });
 
   };

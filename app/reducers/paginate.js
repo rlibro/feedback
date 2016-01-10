@@ -49,11 +49,17 @@ export default function paginate({ types, mapActionToKey }) {
   return function updatePaginationByKey(state = {}, action) {
 
     // 노트를 추가했을때 결과값을 페이지네이션에 직접 추가한다.
-    if ( action.type === ActionTypes.ADD_NOTE_SUCCESS 
-      && action.redBookUname && state[action.redBookUname]){
-        
-      state[action.redBookUname].ids.unshift(action.response.result);
+    if ( action.type === ActionTypes.ADD_NOTE_SUCCESS && state[action.redBookId] ){        
+ 
+      state[action.redBookId].ids.unshift(action.response.result);
 
+      return merge({}, state); 
+    }
+
+    // 레드북이 추가되면 페이지 네이션에 아이디를 넣는다.  
+    if ( action.type === ActionTypes.ADD_REDBOOK_SUCCESS && state.ids) {
+
+      state.ids.push(action.response.result)
       return merge({}, state); 
     }
         

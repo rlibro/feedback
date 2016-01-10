@@ -7,17 +7,18 @@ export default class NewRedBookForm extends Component {
 
   renderFormWrite = () => {
 
-    const { loginUser, newRedBook, onChangeCityName, onCloseRedBook, onSubmitRedBook } = this.props;
+    const { loginUser, newRedBook, onCancelNewRedBook, onCreateNewRedBook } = this.props;
 
     return <div className="RedBookNoteForm">
       <div className="note-form-header">
+        <p className="notice">You are going to be the pioneer of {newRedBook.cityName}</p>
       </div>
   
-      <textarea ref="textarea" className="text" autoFocus={true} placeholder="Share your useful experiences of this city!"></textarea>
+      <textarea ref="textarea" className="text" autoFocus={true} placeholder="Share your useful experiences of this city!">{newRedBook.noteText}</textarea>
         
       <div className="note-form-footer">
-        <button className="cancel" onClick={onCloseRedBook}>Cancel</button>
-        <button className="create" onClick={onSubmitRedBook}>Create</button>
+        <button className="cancel" onClick={onCancelNewRedBook}>Cancel</button>
+        <button className="create" onClick={this.handleCreateNewRedBook}>Create</button>
       </div>
     </div>
   };
@@ -43,12 +44,19 @@ export default class NewRedBookForm extends Component {
     
   }
 
-  handleSubmitNote = (e) => {
+  handleCreateNewRedBook = (e) => {
 
     const node = findDOMNode(this.refs.textarea);
     const text = node.value.trim();
-    this.props.onSubmitNote(text);
-    node.value = '';
+
+    if( text.length < 1 ){
+      alert('Please, share your experiences!');
+      node.focus();
+      return;
+    }
+
+    this.props.onCreateNewRedBook(text);
+    //node.value = '';
     e.preventDefault()
   };
 
@@ -56,7 +64,6 @@ export default class NewRedBookForm extends Component {
 
 NewRedBookForm.propTypes = {
   loginUser: PropTypes.object.isRequired,
-  onSubmitRedBook: PropTypes.func.isRequired,
-  onChangeCityName: PropTypes.func.isRequired,
-  onCloseRedBook: PropTypes.func.isRequired
+  onCreateNewRedBook: PropTypes.func.isRequired,
+  onCancelNewRedBook: PropTypes.func.isRequired
 }

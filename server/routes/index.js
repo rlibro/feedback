@@ -1,7 +1,5 @@
 'use strict';
 
-var auth = require('../app/services/auth.service');
-
 module.exports = function(app) {
   app.use('/facebook', require('./facebook'));
   

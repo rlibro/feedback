@@ -8,7 +8,7 @@ export default class RedBook extends Component {
     const style = {
       color: 'white',
       backgroundSize: 'cover',
-      backgroundImage: 'url(' + redBook.cityImage + ')',
+      backgroundImage: 'url(' + redBook.coverImage + ')',
       WebkitTransition: 'all', // note the capital 'W' here
       msTransition: 'all' // 'ms' is the only lowercase vendor prefix
     };

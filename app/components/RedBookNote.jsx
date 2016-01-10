@@ -24,11 +24,11 @@ export default class RedBookNote extends Component {
     return <div className="RedBookNote">
       <div className="note-header">
         <div className="profile photo" >
-          <img src={note.user.picture.data.url} />
+          <img src={note.author.picture} />
         </div>
         <div className="meta">
           <div className="date">{ moment(note.createdAt).format('LLL') }</div>
-          <div className="username">{ note.user.name }</div>
+          <div className="username">{ note.author.name }</div>
         </div>
       </div>
       <div className="content" dangerouslySetInnerHTML={{__html: contentText}}></div>
@@ -41,7 +41,7 @@ export default class RedBookNote extends Component {
 
       <NoteCommentList 
         loginUser={loginUser}
-        comments={note.comments} 
+        comments={note.comments || []} 
         isOpenComment={isOpenComment}
         onSubmitComment={onSubmitComment.bind(null, note.id)} />
     </div>

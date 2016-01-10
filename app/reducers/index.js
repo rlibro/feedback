@@ -1,7 +1,7 @@
 import * as ActionTypes from '../actions'
 import merge from 'lodash/object/merge'
 import paginate from './paginate'
-import { routeReducer, UPDATE_PATH} from 'redux-simple-router'
+import { pushPath as pushState, routeReducer } from 'redux-simple-router'
 import { combineReducers } from 'redux'
 
 // API 응답은 캐시를 위해 모두 entities에 저장한다. 
@@ -13,19 +13,9 @@ function entities(state = { redBooks: {}, notes:{} }, action) {
 
     switch(action.type){
 
-      // 새로 생성한 댓글은 해당 노트의 댓글목록에 추가한다.
-      case ActionTypes.ADD_COMMENT_SUCCESS:
-        const comment = entities.comments[result];
-        const note = state.notes[comment.noteId];
-        delete comment.noteId;
-        note.comments.push(comment);
-
-        return merge({}, state)
-
       // 새로 생성된 노트는 기존 노트 목록에 추가한다.
       case ActionTypes.ADD_NOTE_SUCCESS:
         state.notes[result] = entities.notes[result];
-        state.redBooks[action.redBookUname].noteCount++;
 
         return merge({}, state)
 
@@ -35,6 +25,16 @@ function entities(state = { redBooks: {}, notes:{} }, action) {
         return merge({}, state, action.response.entities)
 
     }
+  }
+
+  if( action.response && action.type === 'ADD_COMMENT_SUCCESS'){
+
+    const comments = action.response;
+    const notes = state.notes[action.noteId];
+    notes.comments = comments;
+    
+    return merge({}, state);
+
   }
 
   return state
@@ -81,6 +81,10 @@ function login(state = {}, action) {
   //   return merge({}, state, action.response.entities)
   // }
 
+  if( action.type === 'UPDATE_LOGIN_USER') {
+    return merge({}, action.login)
+  }
+
   if( action.type === 'UPDATE_CURRENT_USER_LOCATION' ) {
     state.current_location = action.current_location;
     return merge({}, state)
@@ -101,12 +105,14 @@ function finding(state = {}, action) {
 
 function newRedBook(state = {}, action) {
 
+  switch(action.type){
 
-  if( action.type === 'SET_NEW_RED_BOOK_CITY_NAME') {
-   
-    state.cityName = action.cityName;
+    case 'UPDATE_DATA_FOR_NEW_BOOK':
+      if( !action.data ) {
+        return null;
+      }
 
-    return merge({}, state);
+      return merge({}, state, action.data);
   }
   
   return state

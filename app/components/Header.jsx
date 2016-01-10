@@ -28,11 +28,11 @@ export default class Header extends Component {
             </li>
             <li>
               <div className="photo">
-                <img src={loginUser.picture.data.url}/>
+                <img src={loginUser.picture}/>
               </div>
               <ul className="sub-menu">
                 <li><a href="/mynote">MY NOTES</a></li>
-                <li><a href="#logout" onClick={this.handleFacebookLogout}>Logout</a></li>
+                <li><a href="/" onClick={this.handleFacebookLogout}>Logout</a></li>
               </ul>
             </li>
             
@@ -41,7 +41,7 @@ export default class Header extends Component {
         }else{
 
           return <ul className="account-menu">
-            <li><a href="#loginWithFaceBook" className="fb-login" onClick={this.handleFacebookLogin}>Login with Facebook</a></li>
+            <li><a href="/" className="fb-login" onClick={this.handleFacebookLogin}>Login with Facebook</a></li>
           </ul>
 
         }
@@ -50,33 +50,6 @@ export default class Header extends Component {
       </header>
 
     );
-  }
-
-  componentDidMount() {
-
-    window.fbAsyncInit = function() {
-
-      Parse.FacebookUtils.init({
-        appId      : '1155091951184116',
-        cookie     : true,
-        xfbml      : true,
-        version    : 'v2.4'
-      });
-
-      if( Parse.User.current() ){
-        this.fetchUserInfo();
-      }
-
-    }.bind(this);
-
-    // Load the SDK asynchronously
-    (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s); js.id = id;
-      js.src = '//connect.facebook.net/en_US/sdk.js';
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
   }
 
   handleFacebookLogin = (e) => {
@@ -96,29 +69,38 @@ export default class Header extends Component {
   };
 
   handleFacebookLogout = (e) => {
-    const {onUpdateLoginUser} = this.props;
-
-    Parse.User.logOut();
-    
-    onUpdateLoginUser(null);
-    e.preventDefault()
-
+    const {onLogOutUser} = this.props;
+    onLogOutUser();
+    e.preventDefault();
   };
 
   fetchUserInfo = () => {
     
-    const {onUpdateLoginUser} = this.props;
+    const { onUpdateLoginUser } = this.props;
+    const loginUser = Parse.User.current();
+    let loginInfo = loginUser.toJSON()
+    loginInfo.id = loginUser.id;
+    delete loginInfo.objectId;
 
-    FB.api('/me?fields=id,name,email,location,picture{url}', function(user) {
-     
-      FB.api(`/${user.location.id}/?fields=location`, function(res){
-       
-        user.location = res.location;
+    if( !loginInfo.location ) {
 
-        onUpdateLoginUser(user);
+      FB.api('/me?fields=id,name,email,location,picture{url}', function(user) {
 
-      })
-    });
+        if( user.error ){
+          Parse.User.logOut();
+          return;
+        }
+
+        FB.api(`/${user.location.id}/?fields=location`, function(res){
+          user.location = res.location;
+          onUpdateLoginUser(user);
+
+        })
+      });
+
+    } else {
+      onUpdateLoginUser(loginInfo);
+    }    
   };
 }
 
@@ -127,6 +109,7 @@ Header.propTypes = {
   onMoveHome: PropTypes.func.isRequired,
   onMoveMyNote: PropTypes.func.isRequired,
   onUpdateCurrentUserLocation: PropTypes.func.isRequired,
-  onUpdateLoginUser: PropTypes.func.isRequired
+  onUpdateLoginUser: PropTypes.func.isRequired,
+  onLogOutUser: PropTypes.func.isRequired
 }
 

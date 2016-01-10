@@ -116,6 +116,8 @@ textarea:focus, input:focus{
       border-top: none;
       width: 100px;
       right: 0px;
+      z-index: 1000;
+      background-color: #fff;
 
       li {
         text-align: center;
@@ -185,6 +187,7 @@ textarea:focus, input:focus{
   color: #fff;
   padding-top: 20px;
   background-color: gray;
+  margin-bottom: 5px;
 
   h3, h4 {
     text-align: center;
@@ -230,9 +233,16 @@ textarea:focus, input:focus{
   margin-bottom: 50px;
 
   .RedBookNoteForm {
+    .note-form-header {
+      height: 38px;
+      p{
+        padding: 7px 0px 7px 2px;
+        color: #777;
+      }
+    }
+
     .note-form-footer button {
       width: 80px;
-
     }
 
     button.cancel {
@@ -524,6 +534,7 @@ textarea:focus, input:focus{
 
     &.left, &.right {
       margin: 0 5px;
+      margin-bottom: 5px;
     }
 
     &.middle {

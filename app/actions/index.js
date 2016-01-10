@@ -1,82 +1,37 @@
-import { CALL_API, Schemas } from '../middleware/api'
+//import { CALL_API, Schemas } from '../middleware/api'
+import { PARSE, Schemas } from '../middleware/parse'
 
-export const USER_REQUEST = 'USER_REQUEST'
-export const USER_SUCCESS = 'USER_SUCCESS'
-export const USER_FAILURE = 'USER_FAILURE'
-
-// Fetches a single user from Github API.
-// Relies on the custom API middleware defined in ../middleware/api.js.
-function fetchUser(login) {
-  return {
-    [CALL_API]: {
-      types: [ USER_REQUEST, USER_SUCCESS, USER_FAILURE ],
-      endpoint: `users/${login}`,
-      schema: Schemas.USER
-    }
-  }
-}
-
-// Fetches a single user from Github API unless it is cached.
-// Relies on Redux Thunk middleware.
-export function loadUser(login, requiredFields = []) {
+/**
+ * 페이스북 로그인 정보를 저장한다. 
+ */
+export function updateLoginUser(userInfo){
+  delete userInfo.sessionToken;
+  
   return (dispatch, getState) => {
-    const user = getState().entities.users[login]
-    if (user && requiredFields.every(key => user.hasOwnProperty(key))) {
-      return null
-    }
-
-    return dispatch(fetchUser(login))
-  }
+    return dispatch({
+      type: 'UPDATE_LOGIN_USER',
+      login: userInfo
+    });
+  };
 }
+/* END OF setNewRedBookCityName */
 
 
-// 레드북이 등록된 나라 목록을 불러온다. 
-export const COUNTRIES_REQUEST = 'COUNTRIES_REQUEST'
-export const COUNTRIES_SUCCESS = 'COUNTRIES_SUCCESS'
-export const COUNTRIES_FAILURE = 'COUNTRIES_FAILURE'
-
-function fetchAllCountries(nextPageUrl) {
-  return {
-    [CALL_API]: {
-      types: [ COUNTRIES_REQUEST, COUNTRIES_SUCCESS, COUNTRIES_FAILURE ],
-      endpoint: nextPageUrl,
-      schema: Schemas.COUNTRY_ARRAY
-    }
-  }
-}
-
-// 레드북이 등록된 모든 나라를 가져온다.
-export function loadAllCounties() {
+/**
+ * 로그아웃한다. 
+ */
+export function logOutUser(){
+  
+  Parse.User.logOut();
+  
   return (dispatch, getState) => {
-
-    const {
-      nextPageUrl = `/countries`,
-      pageCount = 0
-    } = getState().pagination.countries || {}
-
-    if (pageCount > 0 && !nextPage) {
-      return null
-    }
-
-    return dispatch(fetchAllCountries(nextPageUrl))
-  }
+    return dispatch({
+      type: 'UPDATE_LOGIN_USER',
+      login: {}
+    });
+  };
 }
-
-export function loadCounty(name) {
-  return (dispatch, getState) => {
-
-    const {
-      nextPageUrl = `/countries`,
-      pageCount = 0
-    } = getState().pagination.countries || {}
-
-    if (pageCount > 0 && !nextPage) {
-      return null
-    }
-
-    return dispatch(fetchCountry(name, nextPageUrl))
-  }
-}
+/* END OF setNewRedBookCityName */
 
 
 
@@ -84,31 +39,17 @@ export function loadCounty(name) {
 export const REDBOOKS_REQUEST = 'REDBOOKS_REQUEST'
 export const REDBOOKS_SUCCESS = 'REDBOOKS_SUCCESS'
 export const REDBOOKS_FAILURE = 'REDBOOKS_FAILURE'
-
-function fetchAllRedBooks(nextPageUrl) {
-  return {
-    [CALL_API]: {
-      types: [ REDBOOKS_REQUEST, REDBOOKS_SUCCESS, REDBOOKS_FAILURE ],
-      endpoint: nextPageUrl,
-      schema: Schemas.REDBOOK_ARRAY
-    }
-  }
-}
-
-// 레드북이 등록된 모든 나라를 가져온다.
 export function loadAllRedBooks() {
   return (dispatch, getState) => {
-
-    const {
-      nextPageUrl = `/redbooks`,
-      pageCount = 0
-    } = getState().pagination.redBooks || {}
-
-    if (pageCount > 0 && !nextPage) {
-      return null
-    }
-
-    return dispatch(fetchAllRedBooks(nextPageUrl))
+    return dispatch(function() {
+      return {
+        [PARSE]: {
+          method: 'fetchRedBook',
+          types: [ REDBOOKS_REQUEST, REDBOOKS_SUCCESS, REDBOOKS_FAILURE ],
+          schema: Schemas.REDBOOK_ARRAY
+        }
+      }
+    }())
   }
 }
 
@@ -116,93 +57,24 @@ export function loadAllRedBooks() {
 export const NOTES_REQUEST = 'NOTES_REQUEST'
 export const NOTES_SUCCESS = 'NOTES_SUCCESS'
 export const NOTES_FAILURE = 'NOTES_FAILURE'
-
-function fetchNotesOfRedBook(redBookId, nextPageUrl) {
-  return {
-    redBookId,
-    [CALL_API]: {
-      types: [ NOTES_REQUEST, NOTES_SUCCESS, NOTES_FAILURE ],
-      endpoint: nextPageUrl,
-      schema: Schemas.NOTE_ARRAY
-    }
-  }
-}
-
-// 레드북이 등록된 최근 노트 20개를 가져온다. 
 export function loadNotesByRedBookId (redBookId) {
 
   return (dispatch, getState) => {
-
-    const {
-      nextPageUrl = `/notes?uname=${redBookId}`,
-      pageCount = 0
-    } = getState().pagination.notes || {}
-
-    if (pageCount > 0 && !nextPage) {
-      return null
-    }
-
-    return dispatch(fetchNotesOfRedBook(redBookId, nextPageUrl))
+    return dispatch(function(){
+      return {
+        redBookId,
+        [PARSE]: {
+          method: 'fetchNote',
+          params: { 
+            redBookId : redBookId
+          },
+          types: [ NOTES_REQUEST, NOTES_SUCCESS, NOTES_FAILURE ],
+          schema: Schemas.NOTE_ARRAY
+        }
+      }
+    }())
   }
 }
-
-
-// 노트에 커맨트를 추가한다. 
-export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST'
-export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS'
-export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE'
-
-function addNoteComment(noteId, commentText){
-
-  return {
-    [CALL_API]: {
-      method: 'POST',
-      data: { noteId, commentText},
-      types: [ ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE ],
-      endpoint: '/notes/comment',
-      schema: Schemas.COMMENT
-    }
-  }
-
-}
-
-export function submitNoteComment (noteId, commentText) {
-  return (dispatch, getState) => {
-    return dispatch(addNoteComment(noteId, commentText));
-  }
-}
-
-/**
- * 레드북에 노트를 추가한다. 
- * START OF submitRedBookNote
- */
-export const ADD_NOTE_REQUEST = 'ADD_NOTE_REQUEST'
-export const ADD_NOTE_SUCCESS = 'ADD_NOTE_SUCCESS'
-export const ADD_NOTE_FAILURE = 'ADD_NOTE_FAILURE'
-
-function addRedBookNote(redBookId, redBookUname, noteText){
-
-  return {
-    redBookUname,
-    [CALL_API]: {
-      method: 'POST',
-      data: { redBookId, noteText },
-      types: [ ADD_NOTE_REQUEST, ADD_NOTE_SUCCESS, ADD_NOTE_FAILURE ],
-      endpoint: '/notes',
-      schema: Schemas.NOTE
-    }
-  }
-
-}
-
-export function submitRedBookNote (redBookId, noteText, redBookUname){
-
-  return (dispatch, getState) => {
-    return dispatch(addRedBookNote(redBookId, redBookUname, noteText));
-  } 
-}
-/* END OF submitRedBookNote */
-
 
 /**
  * 사용자의 현재 위치를 로그인 정보에 업데이트 한다.
@@ -245,13 +117,107 @@ export function findingKeyWord(keyword) {
 /**
  * 데이터 변경 사항을 저장한다. 
  */
- export function setNewRedBookCityName(cityData){
+export function updateDataForNewRedBook(data){
   return (dispatch, getState) => {
     return dispatch({
-      type: 'SET_NEW_RED_BOOK_CITY_NAME',
-      cityName: cityData[0].label
+      type: 'UPDATE_DATA_FOR_NEW_BOOK',
+      data: data
     });
   }
- }
+}
 /* END OF setNewRedBookCityName */
 
+
+/**
+ * 새로운 레드북을 만든다. 
+ */
+export const ADD_REDBOOK_REQUEST = 'ADD_REDBOOK_REQUEST'
+export const ADD_REDBOOK_SUCCESS = 'ADD_REDBOOK_SUCCESS'
+export const ADD_REDBOOK_FAILURE = 'ADD_REDBOOK_FAILURE'
+export function addRedBook(noteText){
+  
+  return (dispatch, getState) => {
+
+    let { newRedBook } = getState();
+    newRedBook.creator = Parse.User.current();
+
+    return dispatch(function(){
+      return {
+        [PARSE]: {
+          method: 'addRedBook',
+          params: {
+            'RedBook': newRedBook,
+            'Note': {
+              comments: [],
+              content: noteText,
+              author: Parse.User.current()
+            }
+          },
+          types: [ ADD_REDBOOK_REQUEST, ADD_REDBOOK_SUCCESS, ADD_REDBOOK_FAILURE ],
+          schema: Schemas.REDBOOK
+        }
+      }
+    }())
+  }
+}
+/* END OF addRedBook */
+
+
+/**
+ * 레드북에 노트를 추가한다. 
+ */
+export const ADD_NOTE_REQUEST = 'ADD_NOTE_REQUEST'
+export const ADD_NOTE_SUCCESS = 'ADD_NOTE_SUCCESS'
+export const ADD_NOTE_FAILURE = 'ADD_NOTE_FAILURE'
+export function addRedBookNote (redBookId, noteText){
+
+  return (dispatch, getState) => {
+    return dispatch(function(){
+      return {
+        redBookId,
+        [PARSE]: {
+          method: 'addNote',
+          params: {
+            Note: {
+              comments: [],
+              content: noteText,
+              author: Parse.User.current()
+            },
+            redBookId: redBookId 
+          },
+          types: [ ADD_NOTE_REQUEST, ADD_NOTE_SUCCESS, ADD_NOTE_FAILURE ],
+          schema: Schemas.NOTE
+        }
+      }
+    }());
+  } 
+}
+/* END OF addRedBookNote */
+
+/**
+ *  노트에 커맨트를 추가한다.
+ */ 
+export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST'
+export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS'
+export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE'
+export function addNoteComment (noteId, commentText) {
+  return (dispatch, getState) => {
+    return dispatch(function(){
+      return {
+        [PARSE]: {
+          method: 'addComment',
+          params: {
+            Comment: {
+              text: commentText,
+              author: Parse.User.current()
+            }, 
+            noteId: noteId
+          },
+          types: [ ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE ],
+          schema: Schemas.COMMENT
+        }
+      }
+    }());
+  }
+}
+/* END OF addNoteComment */
