@@ -8,12 +8,15 @@ export default class NoteCommentList extends Component {
 
   renderCommentList = () => {
 
-    const { comments, isOpenComment, loginUser, onAddComment } = this.props
+    const { comments, isOpenComment, loginUser, onAddComment, onDeleteComment } = this.props
 
     return <div className="NoteCommentList">
 
       {comments.map( (comment,i) => {
-        return <NoteComment key={i} comment={comment}></NoteComment>
+        return <NoteComment 
+          key={i} comment={comment} 
+          onDeleteComment={onDeleteComment.bind(null, comment.id)}
+          />
       })}
 
       <NoteCommentForm 
@@ -41,5 +44,6 @@ NoteCommentList.propTypes = {
   loginUser: PropTypes.object.isRequired,
   comments: PropTypes.array.isRequired,
   isOpenComment: PropTypes.bool.isRequired,
-  onAddComment: PropTypes.func.isRequired
+  onAddComment: PropTypes.func.isRequired,
+  onDeleteComment: PropTypes.func.isRequired
 }

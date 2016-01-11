@@ -27,7 +27,8 @@ function entities(state = { redBooks: {}, notes:{} }, action) {
     }
   }
 
-  if( action.response && action.type === 'ADD_COMMENT_SUCCESS'){
+  if( action.response && ( action.type === 'ADD_COMMENT_SUCCESS' 
+                        || action.type === 'DELETE_COMMENT_SUCCESS')){
 
     const { comments, noteId } = action.response;
     const notes = state.notes[noteId];

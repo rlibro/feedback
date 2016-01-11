@@ -5,7 +5,7 @@ export default class RedBookNoteList extends Component {
 
   render(){
 
-    const { notes, ids, loginUser, onAddComment, onDeleteNote } = this.props
+    const { notes, ids, loginUser, onAddComment, onDeleteNote, onDeleteComment} = this.props
 
     return <div id="RedBookNoteList" className="">
       { ids.map( (id, i) => {
@@ -15,7 +15,9 @@ export default class RedBookNoteList extends Component {
         return <RedBookNote 
           key={i} note={note} loginUser={loginUser}
           onDeleteNote={onDeleteNote}
-          onAddComment={onAddComment} />
+          onAddComment={onAddComment} 
+          onDeleteComment={onDeleteComment}
+          />
       }) }
     </div>
   }
@@ -26,5 +28,6 @@ RedBookNoteList.propTypes = {
   ids: PropTypes.array.isRequired,
   notes: PropTypes.object.isRequired,
   onAddComment: PropTypes.func.isRequired,
-  onDeleteNote: PropTypes.func.isRequired
+  onDeleteNote: PropTypes.func.isRequired,
+  onDeleteComment: PropTypes.func.isRequired
 }

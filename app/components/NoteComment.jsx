@@ -3,6 +3,12 @@ import moment from 'moment'
 
 export default class NoteComment extends Component {
 
+  renderDeleteButton = () => {
+    return <div className="option">
+      <a className="option" href="#" onClick={this.props.onDeleteComment}>삭제</a>
+    </div>
+  };
+
   render(){
 
     const { comment } = this.props;
@@ -20,10 +26,14 @@ export default class NoteComment extends Component {
           { moment(comment.createdAt).fromNow() }
         </div>
       </div>
+
+      {this.renderDeleteButton()}
+      
     </div>
   }
 }
 
 NoteComment.propTypes = {
-  comment: PropTypes.object.isRequired
+  comment: PropTypes.object.isRequired,
+  onDeleteComment: PropTypes.func.isRequired
 }

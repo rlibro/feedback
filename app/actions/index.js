@@ -169,7 +169,7 @@ export function addRedBook(noteText){
 export const ADD_NOTE_REQUEST = 'ADD_NOTE_REQUEST'
 export const ADD_NOTE_SUCCESS = 'ADD_NOTE_SUCCESS'
 export const ADD_NOTE_FAILURE = 'ADD_NOTE_FAILURE'
-export function addRedBookNote (redBookId, noteText){
+export function addNote (redBookId, noteText){
 
   return (dispatch, getState) => {
     return dispatch(function(){
@@ -200,7 +200,7 @@ export function addRedBookNote (redBookId, noteText){
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST'
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS'
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE'
-export function addNoteComment (noteId, commentText) {
+export function addComment (noteId, commentText) {
   return (dispatch, getState) => {
     return dispatch(function(){
       return {
@@ -221,7 +221,6 @@ export function addNoteComment (noteId, commentText) {
   }
 }
 /* END OF addNoteComment */
-
 
 
 
@@ -249,3 +248,29 @@ export function deleteNote (noteId, redBookId) {
   }
 }
 /* END OF deleteNote */
+
+
+/**
+ *  댓글을 삭제한다.
+ */ 
+export const DELETE_COMMENT_REQUEST = 'DELETE_COMMENT_REQUEST'
+export const DELETE_COMMENT_SUCCESS = 'DELETE_COMMENT_SUCCESS'
+export const DELETE_COMMENT_FAILURE = 'DELETE_COMMENT_FAILURE'
+export function deleteComment (commentId, noteId) {
+  return (dispatch, getState) => {
+    return dispatch(function(){
+      return {
+        [PARSE]: {
+          method: 'deleteComment',
+          params: {
+            commentId: commentId,
+            noteId: noteId
+          },
+          types: [ DELETE_COMMENT_REQUEST, DELETE_COMMENT_SUCCESS, DELETE_COMMENT_FAILURE ],
+          schema: Schemas.COMMENT
+        }
+      }
+    }());
+  }
+}
+/* END OF deleteComment */

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { loadNotesByRedBookId, deleteNote, addNoteComment, addRedBookNote } from '../actions'
+import { loadNotesByRedBookId, deleteNote, deleteComment, addComment, addNote } from '../actions'
 import { pushPath as pushState, replacePath } from 'redux-simple-router'
 import RedBookCover from '../components/RedBookCover'
 import RedBookNoteForm from '../components/RedBookNoteForm'
@@ -11,8 +11,6 @@ function loadData(props) {
   const { redBook } = props
 
   if( redBook ){
-
-    console.log('RedBookPage loadNotes', redBook);
     props.loadNotesByRedBookId( redBook.id )  
   }
   
@@ -21,12 +19,10 @@ function loadData(props) {
 class RedBookPage extends Component {
   
   componentWillMount() {
-
     loadData(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
-
     if( nextProps.redBook && !this.props.redBook){
       loadData(nextProps)
     }
@@ -50,13 +46,15 @@ class RedBookPage extends Component {
         onCloseRedBook={this.handleCloseRedBook} />
       <RedBookNoteForm 
         loginUser={loginUser}
-        onSubmitNote={this.handleSubmitNote.bind(null, redBook.id)} />
+        onAddNote={this.handleAddNote.bind(null, redBook.id)} />
       <RedBookNoteList
         loginUser={loginUser}
         notes={entities.notes} 
         ids={ids}
         onDeleteNote={this.handleDeleteNote}
-        onAddComment={this.handleAddComment}/>
+        onAddComment={this.handleAddComment}
+        onDeleteComment={this.handleDeleteComment}
+        />
       <div className="dimmed"></div>
     </div>
   };
@@ -79,28 +77,33 @@ class RedBookPage extends Component {
     }
   };
 
+  handleAddNote = (redBookId, noteText) => {
+    this.props.addNote(redBookId, noteText, this.props.redBook.uname)    
+  };
+
+  handleAddComment = (noteId, commentText) => {
+    this.props.addComment(noteId, commentText)
+  };
+
   handleDeleteNote = (noteId) => {
     this.props.deleteNote(noteId, this.props.redBook.id);
   };
 
-  handleAddComment = (noteId, commentText) => {
-    
-    this.props.addNoteComment(noteId, commentText)
-
+  handleDeleteComment = (noteId, commentId) => {
+    this.props.deleteComment(commentId, noteId)
   };
 
-  handleSubmitNote = (redBookId, noteText) => {
-    this.props.addRedBookNote(redBookId, noteText, this.props.redBook.uname)    
-  };
+  
 }
 
 RedBookPage.propTypes = {
   pushState: PropTypes.func.isRequired,
   replacePath: PropTypes.func.isRequired,
   loadNotesByRedBookId: PropTypes.func.isRequired,
-  addRedBookNote: PropTypes.func.isRequired,
-  addNoteComment: PropTypes.func.isRequired,
-  deleteNote: PropTypes.func.isRequired
+  addNote: PropTypes.func.isRequired,
+  addComment: PropTypes.func.isRequired,
+  deleteNote: PropTypes.func.isRequired,
+  deleteComment: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {
@@ -134,9 +137,10 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps, {
   loadNotesByRedBookId,
-  addRedBookNote,
-  addNoteComment,
+  addNote,
+  addComment,
   deleteNote,
+  deleteComment,
   pushState,
   replacePath
 })(RedBookPage)

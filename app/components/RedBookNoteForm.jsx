@@ -16,7 +16,7 @@ export default class RedBookNoteForm extends Component {
       <textarea ref="textarea" className="text" autoFocus={true} placeholder="이 도시에서 경험한 유용한 정보를 공유하세요!"></textarea>
         
       <div className="note-form-footer">
-        <button onClick={this.handleSubmitNote}>게시</button>
+        <button onClick={this.handleAddNote}>게시</button>
       </div>
     </div>
   };
@@ -42,11 +42,11 @@ export default class RedBookNoteForm extends Component {
     
   }
 
-  handleSubmitNote = (e) => {
+  handleAddNote = (e) => {
 
     const node = findDOMNode(this.refs.textarea);
     const text = node.value.trim();
-    this.props.onSubmitNote(text);
+    this.props.onAddNote(text);
     node.value = '';
     e.preventDefault()
   };
@@ -55,5 +55,5 @@ export default class RedBookNoteForm extends Component {
 
 RedBookNoteForm.propTypes = {
   loginUser: PropTypes.object.isRequired,
-  onSubmitNote: PropTypes.func.isRequired
+  onAddNote: PropTypes.func.isRequired
 }

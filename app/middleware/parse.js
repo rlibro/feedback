@@ -208,6 +208,60 @@ const parseAPI = {
 
     });
     
+  },
+
+  deleteComment: function(schema, params){
+    
+    let note = new Note();
+    note.id = params.noteId;
+
+    let query = new Parse.Query(Comment);
+
+    // 1. 일단 댓글을 찾아서 지워!      
+    return query
+    .get(params.commentId) 
+    .then(function(comment){
+
+      return comment
+      .destroy()
+      .then(function(){
+
+        // 2. 그리고 노트에 걸린 모든 댓글 찾아!
+        const promise = new Parse.Promise();
+        const commentQuery = new Parse.Query(Comment);
+        commentQuery.equalTo('parent', note);
+        
+        commentQuery.find({
+          success: function(comments){
+
+            // 3. 모든 댓글을 모아서 노트의 comments로 저장한 뒤에 반환해! 
+            comments.forEach( function(savedComment, i, a){
+              let savedJsonComment = savedComment.toJSON();
+              clearObjectId(savedJsonComment, 'author');
+              a[i] = savedJsonComment;
+            });
+
+            note.set('comments', comments);
+            note
+            .save()
+            .then(function(){
+
+              promise.resolve({
+                comments: comments,
+                noteId: params.noteId,
+              });
+
+            })
+          }
+        })
+
+        return promise;
+
+      })
+
+    })
+
+
   }
 }
 
