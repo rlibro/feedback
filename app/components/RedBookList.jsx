@@ -12,7 +12,9 @@ export default class RedBookList extends Component {
       return <li className="RedBook create-book" onClick={onCreateRedBook.bind(this,location)}>
         <h3>You are in {location.cityName}</h3>
         <h4>Be the pioneer of {location.countryName}</h4>
-        <i className="fa fa-plus" />
+        <div className="sign">
+          <i className="fa fa-plus-circle" />
+        </div>
       </li>
     }
     return false;
@@ -122,11 +124,12 @@ export default class RedBookList extends Component {
     const { redBooks: {isFetching}, loginUser } = this.props;
     
     if( isFetching ){
-      return <div>
-        <h2>Now RedBooks are loading...</h2>
-        <div className="dimmed">
-          <i className="fa fa-circle-o-notch fa-spin"></i>
+      return <div className="RedBookList">
+        <div className="loading">
+          <h2> <i className="fa fa-circle-o-notch fa-spin"></i> loading...</h2>
+
         </div>
+        <div className="dimmed"></div>
       </div>
     } 
 

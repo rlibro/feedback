@@ -9,6 +9,7 @@ import Header from '../components/Header'
 import CurrentLocation from '../components/CurrentLocation'
 import Explore from '../components/Explore'
 import RedBookList from '../components/RedBookList'
+import Footer from '../components/Footer'
 
 function loadData(props) {
   props.loadAllRedBooks()
@@ -58,10 +59,10 @@ class App extends Component {
           loginUser={loginUser} />
 
         {this.renderErrorMessage()}
-
+{/*
         {<Explore 
           onFindThisKeyWord={this.props.findingKeyWord}
-          />}
+          />}*/}
 
         <RedBookList 
           loginUser={loginUser}
@@ -72,6 +73,8 @@ class App extends Component {
           />
 
         {children}
+
+        <Footer />
       </div>
     )
   }

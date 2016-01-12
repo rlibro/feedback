@@ -186,6 +186,7 @@ textarea:focus, input:focus{
 .wrap-RedBookList {
   .RedBookList-byLocation {
     overflow: auto;
+    padding-top: 20px;
   }
 
   hr {
@@ -195,7 +196,16 @@ textarea:focus, input:focus{
   }
 }
 
-.RedBookList {}
+.RedBookList {
+
+  .loading {
+    margin: 20px 0;
+    text-align: center;
+  }
+  .dimmed {
+    z-index: 10;
+  }
+}
 
 .RedBook {
   float: left;
@@ -222,8 +232,14 @@ textarea:focus, input:focus{
     background-color: #ff7872;
     text-align: center;
 
-    img {
-      margin-top: 10px;
+    &:hover {
+      background-color: #f17165;
+    }
+
+    .sign {
+      margin: 0 auto;
+      font-size: 32px;
+      margin-top: 28px;
       width: 85px;
       height: 85px;
     }
@@ -596,6 +612,28 @@ textarea:focus, input:focus{
 
 }
 
+.Footer {
+  clear: both;
+  text-align: center;
+
+  .copyright {
+    i {
+      color: #ff4842;
+    }
+    a {
+      color: #ff4842;
+      text-decoration: underline;
+    }
+    span {
+      font-size: 14px;
+    }
+  }
+
+  .facebook a {
+    color: #3b5998;
+  }
+}
+
 
 @media screen and (min-width: 820px) /* Desktop */ {
 }
@@ -674,9 +712,21 @@ textarea:focus, input:focus{
       width: 54px;
       height: 54px;
       text-align: center;
+      cursor: pointer;
+
+      &:hover {
+        i {
+          margin-left: 0px;
+        }
+      }
 
       i {
-        font-size: 24px;
+        margin-top: 10px;
+        margin-left: -50px;
+        color: #fff;
+        font-size: 32px;
+        transition: margin-left;
+        transition-duration: 0.6s;
       }
     }
 
@@ -684,6 +734,7 @@ textarea:focus, input:focus{
       display: block;
       float: left;
       margin-left: 0px;
+      padding-top: 3px;
     }
 
     .account-menu {
@@ -691,6 +742,10 @@ textarea:focus, input:focus{
         display: none;
       }
     }
+  }
+
+  .CurrentLocation {
+    display: none;
   }
 
   .Explore {

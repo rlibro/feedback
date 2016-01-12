@@ -38,7 +38,7 @@ export default class Header extends Component {
     return <header className="Header">
     
       <div className="stack-menu">
-        <i className="fa fa-bars"/>
+        <i className="fa fa-book"/>
       </div>
       <h1 className="logo">  
         <a href="/">
