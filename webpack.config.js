@@ -103,11 +103,9 @@ if(TARGET === 'build' || TARGET === 'stats') {
     devtool: 'source-map',
     module: {
       loaders: [
-        // Extract CSS during build
         {
-          test: /\.css$/,
-          loader: ExtractTextPlugin.extract('style', 'css'),
-          include: PATHS.app
+          test: /\.less$/,
+          loader: 'style!css!less'
         }
       ]
     },
