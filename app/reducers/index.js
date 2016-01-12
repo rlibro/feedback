@@ -126,13 +126,16 @@ function login(state = {}, action) {
   return state
 }
 
-function finding(state = {}, action) {
-  // console.log( 'FFF ==> ', action,  state)
+function appState(state = {sidebar: false}, action) {
 
-  // if (action.response && action.response.entities) {
-    
-  //   return merge({}, state, action.response.entities)
-  // }
+  switch(action.type){
+
+    case 'UPDATE_APP_STATE':
+      
+      return merge({}, state, action.state);
+  }
+  
+
   return state
 }
 
@@ -181,7 +184,7 @@ const rootReducer = combineReducers({
   pagination,
   errorMessage,
   login,
-  finding,
+  appState,
   routing: routeReducer
 })
 

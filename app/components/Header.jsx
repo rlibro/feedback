@@ -24,7 +24,6 @@ export default class Header extends Component {
           <img src={loginUser.picture}/>
         </div>
         <ul className="sub-menu">
-          <li><a href="/mynote">MY NOTES</a></li>
           <li><a href="#" onClick={this.handleFacebookLogout}><i className="fa fa-sign-out"></i> Logout</a></li>
         </ul>
       </li>
@@ -33,11 +32,18 @@ export default class Header extends Component {
   };
   
   render() {
-    const { loginUser } = this.props;
+    const { loginUser, appState:{sidebar} } = this.props;
+
+    let klassName;
+    if( sidebar ){
+      klassName = 'stack-menu opened'
+    }else {
+      klassName = 'stack-menu'
+    }
 
     return <header className="Header">
     
-      <div className="stack-menu">
+      <div className={klassName} onClick={this.handleToggleSideBar}>
         <i className="fa fa-book"/>
       </div>
       <h1 className="logo">  
@@ -51,10 +57,15 @@ export default class Header extends Component {
     </header>
   }
 
-  handleFacebookLogin = (e) => {
-    
-    this.props.onLogin();
+  handleToggleSideBar = (e) => {
+    this.props.onUpdateAppState({
+      sidebar: !this.props.appState.sidebar
+    })
+  };
 
+
+  handleFacebookLogin = (e) => {
+    this.props.onLogin();
   };
 
   handleFacebookLogout = (e) => {
@@ -76,6 +87,8 @@ export default class Header extends Component {
 
 Header.propTypes = {
   loginUser: PropTypes.object.isRequired,
+  appState: PropTypes.object.isRequired,
+  onUpdateAppState: PropTypes.func.isRequired,
   onLogin: PropTypes.func.isRequired,
   onLogOut: PropTypes.func.isRequired
 }

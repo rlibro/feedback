@@ -3,9 +3,10 @@ import { connect } from 'react-redux'
 import { pushPath as pushState } from 'redux-simple-router'
 import { loadAllRedBooks, updateCurrentUserLocation, updateLoginUserInfo, findingKeyWord, logOutUser } from '../actions'
 
-import { resetErrorMessage, facebookLogin } from '../actions'
+import { resetErrorMessage, facebookLogin, updateAppState } from '../actions'
 
 import Header from '../components/Header'
+import SideBar from '../components/SideBar'
 import CurrentLocation from '../components/CurrentLocation'
 import Explore from '../components/Explore'
 import RedBookList from '../components/RedBookList'
@@ -41,7 +42,7 @@ class App extends Component {
   }
 
   render() {
-    const { children, loginUser, countries, redBooks, entities, path} = this.props
+    const { children, loginUser, countries, redBooks, entities, path, appState} = this.props
     
     let klass = (path !== '/')? 'sub':''
 
@@ -49,14 +50,21 @@ class App extends Component {
       <div id="app" className={klass}>
         <Header 
           loginUser={loginUser}
+          appState={appState}
           onLogin={this.handleFacebookLogin}
           onLogOut={this.handleLogOut}
+          onUpdateAppState={this.props.updateAppState}
           onUpdateCurrentUserLocation={this.props.updateCurrentUserLocation}
           />
 
         <CurrentLocation 
           onUpdateCurrentUserLocation={this.props.updateCurrentUserLocation}
           loginUser={loginUser} />
+
+        <SideBar 
+          appState={appState}
+          loginUser={loginUser}
+        />
 
         {this.renderErrorMessage()}
 {/*
@@ -166,6 +174,7 @@ function mapStateToProps(state) {
 
   return {
     path: state.routing.path,
+    appState: state.appState,
     errorMessage: state.errorMessage,
     loginUser: state.login,
     countries: state.pagination.countries,
@@ -180,6 +189,7 @@ export default connect(mapStateToProps, {
   pushState,
   findingKeyWord,
   loadAllRedBooks,
+  updateAppState,
   updateCurrentUserLocation,
   updateLoginUserInfo,
   logOutUser

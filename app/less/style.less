@@ -183,6 +183,10 @@ textarea:focus, input:focus{
   }
 }
 
+.SideBar {
+  left: -220px;
+}
+
 .wrap-RedBookList {
   .RedBookList-byLocation {
     overflow: auto;
@@ -644,6 +648,14 @@ textarea:focus, input:focus{
     margin: 0;
   }
 
+  .CurrentLocation {
+    display: none;
+  }
+
+  .wrap-RedBookList {
+    background-color: #fff;
+  }
+
   .RedBook {
     width: 48%;
     min-width: 240px;
@@ -714,6 +726,12 @@ textarea:focus, input:focus{
       text-align: center;
       cursor: pointer;
 
+      &.opened {
+        i {
+          margin-left: 0px;
+        }
+      }
+
       &:hover {
         i {
           margin-left: 0px;
@@ -726,7 +744,7 @@ textarea:focus, input:focus{
         color: #fff;
         font-size: 32px;
         transition: margin-left;
-        transition-duration: 0.6s;
+        transition-duration: 0.3s;
       }
     }
 
@@ -744,8 +762,34 @@ textarea:focus, input:focus{
     }
   }
 
-  .CurrentLocation {
-    display: none;
+  .SideBar {
+
+    &.opened{
+      left: 0px;
+    }
+
+    position: absolute;
+    transition: left;
+    transition-duration: 0.6s;
+    top: 54px;
+    width: 220px;
+    min-height: 580px;
+    padding: 5px 0;
+
+    -webkit-background-clip: padding-box;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
+
+    .account-menu {
+      text-align: center;
+    }
+
+    .Footer {
+      display: block;
+    }
   }
 
   .Explore {
@@ -801,6 +845,10 @@ textarea:focus, input:focus{
       }
     }
 
+  }
+
+  .Footer {
+    display: none;
   }
 
 }

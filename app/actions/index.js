@@ -82,7 +82,22 @@ export function logOutUser(userInfo){
     });
   };
 }
-/* END OF setNewRedBookCityName */
+/* END OF logOutUser */
+
+
+/**
+ * 사이드바 정보 업데이트. 
+ */
+export function updateAppState(state){
+  
+  return (dispatch, getState) => {
+    return dispatch({
+      type: 'UPDATE_APP_STATE',
+      state: state
+    });
+  };
+}
+/* END OF logOutUser */
 
 
 
