@@ -39,37 +39,6 @@ var common = {
   plugins: []
 };
 
-if(TARGET === 'server') {
-
-  console.log("> starting server ...")
-
-  module.exports = merge(common, {
-    devtool: 'eval-source-map',
-    entry: [
-      './app'
-    ],
-    output: {
-      path: '/',
-    },
-    plugins: [
-      new webpack.HotModuleReplacementPlugin()
-    ],
-    module: {
-      loaders: [
-        {
-          test: /\.jsx?$/,
-          loaders: ['babel'],
-          include: PATHS.app
-        },
-        {
-          test: /\.less$/,
-          loader: 'style!css!less'
-        }
-      ]
-    }
-  });
-}
-
 if(TARGET === 'start' || !TARGET) {
   module.exports = merge(common, {
     devtool: 'eval-source-map',
