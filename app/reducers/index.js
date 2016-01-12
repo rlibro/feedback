@@ -154,23 +154,60 @@ function pageForNewRedBook(state = {}, action) {
   return state
 }
 
-function pageForRedBook(state = {stateLoaded: 'READY', count:0}, action) {
+function pageForRedBook(state = {
+  stateLoaded: 'READY', 
+  stateAddComment:'READY',
+  stateDeleteComment:'READY',
+  count:0}, action) {
+
+  // API 호출 응답을 먼저 받아야하기 때문에 응답 결과를 갖는 액션은 Skip 한다.
+  if( action.entities ) {
+    return;
+  }
 
   switch(action.type){
 
+    // 댓글 추가
+    case 'ADD_COMMENT_REQUEST':
+      state.stateAddComment = 'REQUESTING';
+      return merge({}, state);
+
+    case 'ADD_COMMENT_SUCCESS':
+      state.stateAddComment = 'READY';
+      return merge({}, state);
+
+    case 'ADD_COMMENT_FAILURE':
+      state.stateAddComment = 'FAIL';
+      return merge({}, state);
+
+    // 댓글 삭제 
+    case 'DELETE_COMMENT_REQUEST':
+      state.stateDeleteComment = 'REQUESTING';
+      return merge({}, state);
+
+    case 'DELETE_COMMENT_SUCCESS':
+      state.stateDeleteComment = 'READY';
+      return merge({}, state);
+
+    case 'DELETE_COMMENT_FAILURE':
+      state.stateDeleteComment = 'FAIL';
+      return merge({}, state);
+
+
+    // 레드북 패치
     case 'REDBOOKS_REQUEST':
-      state.stateLoaded = 'REQUESTING'
+      state.stateRedBook = 'REQUESTING'
       return merge({}, state);
 
     case 'REDBOOKS_SUCCESS':
-
-      state.stateLoaded = 'OK'
+      state.stateRedBook = 'LOADED'
       state.count = state.count + 1;
+
       return merge({}, state);
 
     case 'REDBOOKS_FAILURE':
 
-      state.stateLoaded = 'FAIL'
+      state.stateRedBook = 'FAIL'
       return merge({}, state);
   }
   
@@ -178,14 +215,15 @@ function pageForRedBook(state = {stateLoaded: 'READY', count:0}, action) {
 }
 
 const rootReducer = combineReducers({
-  pageForNewRedBook,
-  pageForRedBook,
   entities,
   pagination,
   errorMessage,
   login,
+  routing: routeReducer,
   appState,
-  routing: routeReducer
+  pageForNewRedBook,
+  pageForRedBook
+  
 })
 
 export default rootReducer

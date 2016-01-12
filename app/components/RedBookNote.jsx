@@ -18,12 +18,14 @@ export default class RedBookNote extends Component {
 
   render() {
 
-    const { note, loginUser, onLogin, onAddComment, onDeleteNote, onDeleteComment} = this.props;
+    const { loginUser, pageForRedBook, note} = this.props;
+    const { onLogin, onAddComment, onDeleteNote, onDeleteComment} = this.props;
     const { isOpenComment, isOpenContext } = this.state;
 
-    const contentText = note.content
-                        .replace(/(.*)\n(.*)/g, '<p>$1<br/></p><p>$2</p>')
-                        .replace(/\s/g, '<span></span>')
+    const contentText = 
+      note.content
+        .replace(/(.*)\n(.*)/g, '<p>$1<br/></p><p>$2</p>')
+        .replace(/\s/g, '<span></span>')
 
     return <div className="RedBookNote">
       <div className="note-header">
@@ -54,6 +56,7 @@ export default class RedBookNote extends Component {
       <NoteCommentList 
         loginUser={loginUser}
         comments={note.comments || []} 
+        pageForRedBook={pageForRedBook}
         onLogin={onLogin}
         isOpenComment={isOpenComment}
         onAddComment={onAddComment.bind(null, note.id)} 
@@ -77,6 +80,7 @@ export default class RedBookNote extends Component {
 
 RedBookNote.propTypes = {
   loginUser: PropTypes.object.isRequired,
+  pageForRedBook: PropTypes.object.isRequired,
   note: PropTypes.object.isRequired,
   onLogin: PropTypes.func.isRequired,
   onAddComment: PropTypes.func.isRequired,

@@ -7,7 +7,7 @@ import RedBookNoteForm from '../components/RedBookNoteForm'
 import RedBookNoteList from '../components/RedBookNoteList'
 
 
-function loadData(props) {
+function loadNotes(props) {
   const { redBook } = props
 
   if( redBook ){
@@ -18,49 +18,104 @@ function loadData(props) {
 
 class RedBookPage extends Component {
 
+  /**
+   * 최소에 한번만 호출된다
+   */ 
   componentWillMount(){
 
     if( this.props.redBook){
-      loadData(this.props);  
+      loadNotes(this.props);  
     } else {
-      console.log('페이지로 바로 접근한 경우에는 다음 업데이트때 책이 로드된다.!!')
+      // console.log('페이지로 바로 접근한 경우에는 다음 업데이트때 책이 로드된다.!!')
     }
     
   }
 
+  /**
+   * 상태가 변경되었을 경우는 레드북이 업데이트 된 경우다. 
+   * 하지만 사용자가 직접 URL을 입력해 들어왔을 경우, 
+   * 실제 레드북 정보가 없을수 있으므로 이럴때 무조건 홈으로 이동시켜버린다.
+   */
   shouldComponentUpdate(nextProps, nextState) {
+    const { redBook, pageForRedBook: {stateRedBook} } = nextProps;
   
-    if( nextProps.pageForRedBook.stateLoaded === 'OK' ) {
-      if( !nextProps.redBook ){
-
-        // 해당 정보북이 없으면 홈페이지로 이동시켜!
-        this.props.pushState('/');
-        return false;
-      }
+    if( stateRedBook === 'LOADED' && !redBook ) {
+      this.props.replacePath('/')
+      return false;
     }
     return true;
-
   }
 
+  /**
+   * 최소 렌더링시에는 발생하지 않고 상태값이 변경되었을때만 렌더링 직전에 호출된다. 
+   * 따라서 새롭게 로드된 레드북이 있다면 노트 정보도 로드하자! 
+   * 단, 레드북이 없을수도 있다! 있는 경우에만 로드하자!
+   */
   componentWillUpdate(nextProps, nextState){
 
     if( nextProps.redBook && !this.props.redBook){
-      console.log('componentWillUpdate : 레드북 노트를 로드해줘~!!', nextProps.redBook, nextState)
-      loadData(nextProps)
+      loadNotes(nextProps)
     }
     
   }
 
-  renderListOfNotes = () => {
+  renderLoadingRedBook = () => {
 
-    const { notes, entities, redBook, countryName, cityName, loginUser } = this.props;
+    const { pageForRedBook: { cityName } } = this.props;
 
-    if( !notes ){
-      return <h2><i>{cityName} 정보북을 로드중입니다. </i></h2>
-    }
+    return <div className="RedBookPage">
+      <div className="loading">
+        <p>Now loading {cityName} infomation</p>
+      </div>
+    </div>
+  };
 
+  renderLoadingNotes = () => {
+    return <div className="RedBookNoteList">
+      <div className="loading">
+        <p><i className="fa fa-spinner fa-pulse"></i> Now loading notes, <br/>please wait a moment</p>
+      </div>
+    </div>
+  };
+
+  renderNoteList = () => {
+
+    const { redBook, loginUser, notes, entities, pageForRedBook } = this.props;
     const ids = notes.ids || [];
 
+    return <RedBookNoteList
+        loginUser={loginUser}
+        pageForRedBook={pageForRedBook}
+        notes={entities.notes} 
+        ids={ids}
+        onLogin={this.handleFacebookLogin}
+        onDeleteNote={this.handleDeleteNote}
+        onAddComment={this.handleAddComment}
+        onDeleteComment={this.handleDeleteComment}
+        />
+  };
+
+  renderRedBookNoteByState = () => {
+    const { notes } = this.props;
+
+    if( !notes || notes.isFetching ) {
+      return this.renderLoadingNotes();
+    } else {
+      return this.renderNoteList();  
+    }
+        
+  };
+
+  /**
+   * 렌더링 함수는 무조건 호출되기 때문에 레드북이 없으면 렌더링 하지 않는다.
+   */
+  render() {
+    const { loginUser, redBook } = this.props;
+
+    // 레드북
+    if( !redBook ) { return this.renderLoadingRedBook()}
+ 
+    // 일단 커버와 입력폼을 로드한다. 
     return <div className="RedBookPage">
       <RedBookCover 
         loginUser={loginUser} 
@@ -69,26 +124,11 @@ class RedBookPage extends Component {
       <RedBookNoteForm 
         loginUser={loginUser}
         onAddNote={this.handleAddNote.bind(null, redBook.id)} />
-      <RedBookNoteList
-        loginUser={loginUser}
-        notes={entities.notes} 
-        ids={ids}
-        onLogin={this.handleFacebookLogin}
-        onDeleteNote={this.handleDeleteNote}
-        onAddComment={this.handleAddComment}
-        onDeleteComment={this.handleDeleteComment}
-        />
+      
+      {this.renderRedBookNoteByState()}
+
       <div className="dimmed"></div>
     </div>
-  };
-
-  render() {
-
-    return (
-      <div>
-        {this.renderListOfNotes()}
-      </div>
-    )
   }
 
   handleFacebookLogin = () => {
@@ -140,8 +180,14 @@ function mapStateToProps(state) {
     routing: { path }
   } = state
 
+  let { pageForRedBook } = state;
+
   const uname = path.substr(1) 
   const [ cityName, countryName ] = uname.split(',');
+
+  pageForRedBook.cityName = cityName.replace('_', ' ');
+  pageForRedBook.countryName = countryName.replace('_', ' ');
+
 
   let redBookId = null;
   for ( let id in redBooks ){
@@ -152,10 +198,8 @@ function mapStateToProps(state) {
   }
 
   return {
-    pageForRedBook: state.pageForRedBook,
+    pageForRedBook: pageForRedBook,
     loginUser: state.login,
-    cityName: cityName,
-    countryName: countryName,
     redBook: redBooks[redBookId],
     notes: notesByRedBookId[redBookId],
     entities: state.entities

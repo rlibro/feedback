@@ -32,6 +32,11 @@ textarea:focus, input:focus{
   outline: 0;
 }
 
+button {
+  cursor: pointer;
+  outline: 0;
+}
+
 #root {
   width: 800px;
   margin: 0 auto;
@@ -212,13 +217,13 @@ textarea:focus, input:focus{
 .RedBookList {
 
   .loading {
-    margin: 20px 0;
-    text-align: center;
-    color: #fff;
     position: relative;
     float: left;
     width: 100%;
-    top: 100px;
+    top: 150px;    
+    margin: 20px 0;
+    text-align: center;
+    color: #fff;
     z-index: 100;
   }
   .dimmed {
@@ -324,6 +329,14 @@ textarea:focus, input:focus{
   width: 800px;
   z-index: 1000;
   margin-bottom: 50px;
+
+  .loading {
+    width: 100%;
+    text-align: center;
+    color: #eee;
+    position: absolute;
+    top: 170px;
+  }
 
   .dimmed {
     z-index: -1;
@@ -434,6 +447,16 @@ textarea:focus, input:focus{
     }
   }
 
+}
+
+.RedBookNoteList {
+  position: relative;
+  overflow: auto;
+
+  .loading {
+    position: static;
+    padding: 10px;
+  }
 }
 
 .RedBookNote {
@@ -599,7 +622,14 @@ textarea:focus, input:focus{
     }
   }
 
+  &:hover {
+    .option {
+      display: block;
+    }
+  }
+
   .option {
+    display: none;
     position: absolute;
     top: 0px;
     right: 0px;
@@ -608,7 +638,9 @@ textarea:focus, input:focus{
     line-height: 30px;
     text-align: right;
 
-    a {
+    button {
+      border: none;
+      background-color: #f6f7f8;
       font-size: 14px;
       color: #999;
       text-align: center;
@@ -651,6 +683,7 @@ textarea:focus, input:focus{
     width: 50px;
     background-color: #fff;
     border-radius: 3px;
+    text-align: center;
   }
 
 }
@@ -695,6 +728,7 @@ textarea:focus, input:focus{
   .wrap-RedBookList {
     background-color: #fff;
     padding-top: 5px;
+    top: 0;
   }
 
   .RedBook {
@@ -868,7 +902,7 @@ textarea:focus, input:focus{
   }
 
   .wrap-RedBookList {
-    margin-top: 59px;
+    margin-top: 54px;
 
     .RedBookList-byLocation {
       padding-top: 5px;
@@ -891,6 +925,10 @@ textarea:focus, input:focus{
     z-index: 1000;
     margin: 0 5px;
     min-width: 310px;
+
+    .loading {
+      top: 120px;
+    }
   }
 
 

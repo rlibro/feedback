@@ -27,6 +27,9 @@ function clearObjectId(obj, key){
   if( key ){
     obj[key].id = obj[key].objectId;
 
+    delete obj[key].__type;
+    delete obj[key].authData;
+    delete obj[key].email;
     delete obj[key].objectId;
     delete obj[key].sessionToken;
     delete obj[key].type;
@@ -73,7 +76,6 @@ const parseAPI = {
       results.forEach(function(note, i, a){
 
         const camelizedJson = camelizeKeys(note.toJSON());
-
         clearObjectId(camelizedJson, 'author');
 
         a[i] = camelizedJson;
@@ -157,6 +159,7 @@ const parseAPI = {
           comments.forEach( function(savedComment, i, a){
             let savedJsonComment = savedComment.toJSON();
             clearObjectId(savedJsonComment, 'author');
+            delete savedJsonComment.parent;
             a[i] = savedJsonComment;
           });
 
@@ -242,6 +245,7 @@ const parseAPI = {
             comments.forEach( function(savedComment, i, a){
               let savedJsonComment = savedComment.toJSON();
               clearObjectId(savedJsonComment, 'author');
+              delete savedJsonComment.parent;
               a[i] = savedJsonComment;
             });
 
@@ -314,6 +318,11 @@ export default store => next => action => {
 
   // 요청 액션을 실행하고
   next(actionWith({ type: requestType }))
+
+  // For Debugging
+  if( requestType === 'DELETE_COMMENT_REQUEST') {
+    //return;
+  }
 
   // 성공과 실패에 대한 응답은 Promise 패턴으로 처리한다. 
   return parseAPI[method](schema, params).then(

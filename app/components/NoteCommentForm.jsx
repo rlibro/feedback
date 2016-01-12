@@ -2,6 +2,14 @@ import React, { Component, PropTypes } from 'react';
 
 export default class NoteCommentForm extends Component {
 
+  constructor(props){
+    super(props)
+
+    this.state = {
+      commentText: ''
+    }
+  }
+
   renderLogin = () => {
     return <div className="NoteCommentForm"> 
       댓글을 남기시려면 
@@ -10,7 +18,44 @@ export default class NoteCommentForm extends Component {
     </div>
   };
 
-  renderForm = () => {
+  renderCommentReady = () => {
+    return <div>
+      <input className="text" 
+        type="text" 
+        placeholder="댓글을 입력하세요." 
+        autoFocus={true}
+        onKeyPress={this.handleCheckEnter} />
+      <button className="send" 
+        onClick={this.handleSendComment}>입력</button>
+    </div>
+  };
+
+  renderCommentRequesting = () => {
+
+    return <div>
+      <input className="text" type="text" disabled
+        value={this.state.commentText}/>
+      <div className="send">
+        <i className="fa fa-spinner fa-pulse"></i>
+      </div>
+    </div>
+
+  };
+
+  renderCommentByState = (stateComment) => {
+
+    if( stateComment === 'READY') {
+      return this.renderCommentReady();
+    } 
+
+    if (stateComment === 'REQUESTING') {
+      return this.renderCommentRequesting();
+    }
+
+  };
+
+
+  renderForm = (stateComment) => {
     const { loginUser } = this.props;
 
     return <div className="NoteCommentForm">
@@ -18,26 +63,16 @@ export default class NoteCommentForm extends Component {
       <div className="profile photo">
         <img src={loginUser.picture} />
       </div>
-      
-      <input className="text" 
-        type="text" 
-        placeholder="댓글을 입력하세요." 
-        autoFocus={true}
-        onKeyPress={this.handleCheckEnter} />
-
-      <button 
-        className="send" 
-        onClick={this.handleSendComment}>입력</button>
-    
+      {this.renderCommentByState(stateComment)}
     </div>
 
   };
 
   render() {
 
-    const { loginUser } = this.props;
+    const { loginUser, pageForRedBook:{ stateAddComment } } = this.props;
 
-    return loginUser.id ? this.renderForm() : this.renderLogin();
+    return loginUser.id ? this.renderForm(stateAddComment) : this.renderLogin();
   }
 
   handleCheckEnter = (e) => {
@@ -47,8 +82,11 @@ export default class NoteCommentForm extends Component {
   };
 
   handleSendComment = (e) => {
+    this.setState({
+      commentText: e.target.value
+    });
+
     this.props.onAddComment(e.target.value);
-    e.target.value = '';
   };
 
   handleFacebookLogin = (e) => {
@@ -59,6 +97,7 @@ export default class NoteCommentForm extends Component {
 
 NoteCommentForm.propTypes = {
   loginUser: PropTypes.object.isRequired,
+  pageForRedBook: PropTypes.object.isRequired,
   isOpenComment: PropTypes.bool.isRequired,
   onAddComment: PropTypes.func.isRequired,
   onLogin: PropTypes.func.isRequired
