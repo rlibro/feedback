@@ -4,8 +4,15 @@ import moment from 'moment'
 export default class NoteComment extends Component {
 
   renderDeleteButton = () => {
+
+    const { comment, loginUser } = this.props;
+
+    if( comment.author.id !== loginUser.id ){
+      return false;
+    }
+
     return <div className="option">
-      <a className="option" href="#" onClick={this.props.onDeleteComment}>삭제</a>
+      <a className="option" href="#" onClick={this.props.onDeleteComment}><i className="fa fa-times"/></a>
     </div>
   };
 
@@ -19,7 +26,7 @@ export default class NoteComment extends Component {
       </div>
       <div className="comment-container">
         <p className="content">
-          <span className="name">{comment.author.name}</span>
+          <span className="name">{comment.author.username}</span>
           <span>{comment.text}</span>
         </p>
         <div className="date">
@@ -35,5 +42,6 @@ export default class NoteComment extends Component {
 
 NoteComment.propTypes = {
   comment: PropTypes.object.isRequired,
+  loginUser: PropTypes.object.isRequired,
   onDeleteComment: PropTypes.func.isRequired
 }

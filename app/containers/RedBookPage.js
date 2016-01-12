@@ -56,7 +56,6 @@ class RedBookPage extends Component {
     const { notes, entities, redBook, countryName, cityName, loginUser } = this.props;
 
     if( !notes ){
-
       return <h2><i>{cityName} 정보북을 로드중입니다. </i></h2>
     }
 
@@ -79,9 +78,7 @@ class RedBookPage extends Component {
         onAddComment={this.handleAddComment}
         onDeleteComment={this.handleDeleteComment}
         />
-      <div className="dimmed">
-        <i className="fa fa-circle-o-notch fa-spin"></i>
-      </div>
+      <div className="dimmed"></div>
     </div>
   };
 

@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import { findDOMNode } from 'react-dom';
 
 export default class Header extends Component {
 
@@ -46,7 +47,7 @@ export default class Header extends Component {
       <div className={klassName} onClick={this.handleToggleSideBar}>
         <i className="fa fa-book"/>
       </div>
-      <h1 className="logo">  
+      <h1 className="logo" ref="logo">  
         <a href="/">
           <span>RedBook</span>
         </a>
@@ -60,7 +61,11 @@ export default class Header extends Component {
   handleToggleSideBar = (e) => {
     this.props.onUpdateAppState({
       sidebar: !this.props.appState.sidebar
-    })
+    });
+
+
+    const node = findDOMNode(this.refs.logo);
+    node.focus();
   };
 
 

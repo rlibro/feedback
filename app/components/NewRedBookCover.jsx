@@ -23,25 +23,25 @@ export default class NewRedBookCover extends Component {
     return <div style={style} className="NewRedBookCover RedBookCover">
       <div className="shadow"></div>
       <div className="cover-title-header">
-        <h2 className="city-name">{newRedBook.cityName|| 'Please Select City'}</h2>
+        <h2 className="city-name">{newRedBook.cityName}</h2>
         <h4 className="country-name">{newRedBook.countryName}</h4>
       </div>
     </div>
   }
 
   componentDidMount(){
-    const { newRedBook: {countryName} } = this.props;
+    const { newRedBook: {countryName, cityName} } = this.props;
      
-    this.loadFlickImage(countryName);
+    this.loadFlickImage(cityName,countryName);
   }
 
-  loadFlickImage = (keyword) =>{
+  loadFlickImage = (cityName,countryName) =>{
         
     const flickr = 'http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?';
 
     $.getJSON(flickr,{
-      tags: keyword,
-      tagmode: 'any',
+      tags: `${cityName},${countryName}`,
+      tagmode: 'all',
       format: 'json'
     }, function(data){
 

@@ -39,10 +39,6 @@ textarea:focus, input:focus{
 
 }
 
-.sub .wrap-RedBookList {
-  display: none;
-}
-
 /**
  * 레드북 헤더
  */
@@ -153,6 +149,15 @@ textarea:focus, input:focus{
   }
 }
 
+.wrap-SideBar {
+  clear: right;
+}
+
+.SideBar {
+  display: none;
+  left: -280px;
+}
+
 .Explore {
   margin: 40px;
   text-align: center;
@@ -183,20 +188,24 @@ textarea:focus, input:focus{
   }
 }
 
-.SideBar {
-  left: -220px;
+.sub .wrap-RedBookList {
+  display: none;
 }
-
 .wrap-RedBookList {
+  position: relative;
+  top: -10px;
+
   .RedBookList-byLocation {
     overflow: auto;
-    padding-top: 20px;
+  }
+  .RedBookList {
+    overflow: auto;
   }
 
   hr {
     clear: both;
     display: block;
-    margin: 15px 0;
+    margin: 5px 0 10px 0;
   }
 }
 
@@ -205,6 +214,12 @@ textarea:focus, input:focus{
   .loading {
     margin: 20px 0;
     text-align: center;
+    color: #fff;
+    position: relative;
+    float: left;
+    width: 100%;
+    top: 100px;
+    z-index: 100;
   }
   .dimmed {
     z-index: 10;
@@ -262,7 +277,7 @@ textarea:focus, input:focus{
   width: 100%;
   height: 100%;
   opacity: 0.7;
-  z-index: -1;
+  z-index: 1;
 }
 
 .NewRedBookPage {
@@ -309,6 +324,10 @@ textarea:focus, input:focus{
   width: 800px;
   z-index: 1000;
   margin-bottom: 50px;
+
+  .dimmed {
+    z-index: -1;
+  }
 }
 
 .RedBookCover {
@@ -579,6 +598,26 @@ textarea:focus, input:focus{
       font-size: 14px;
     }
   }
+
+  .option {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: right;
+
+    a {
+      font-size: 14px;
+      color: #999;
+      text-align: center;
+
+      &:hover {
+        color: #222;       
+      }
+    }
+  }
 }
 
 .NoteCommentForm {
@@ -619,6 +658,7 @@ textarea:focus, input:focus{
 .Footer {
   clear: both;
   text-align: center;
+  padding: 20px 0;
 
   .copyright {
     i {
@@ -654,6 +694,7 @@ textarea:focus, input:focus{
 
   .wrap-RedBookList {
     background-color: #fff;
+    padding-top: 5px;
   }
 
   .RedBook {
@@ -663,6 +704,7 @@ textarea:focus, input:focus{
     &.create-book {
       margin-top: 0px;
       margin-left: 5px;
+      margin-right: 5px;
     }
 
     &.left, &.right {
@@ -674,9 +716,10 @@ textarea:focus, input:focus{
       margin-top: 0px;
       margin-bottom: 5px;
     }
+
   }
 
-  .RedBookPage {
+  .RedBookPage, .NewRedBookPage {
     position: absolute;
     top: 20px;
     width: 97%;
@@ -718,6 +761,8 @@ textarea:focus, input:focus{
 
   .Header {
 
+    position: fixed;
+
     .stack-menu {
       float: left;
       display: inline-block;
@@ -728,23 +773,28 @@ textarea:focus, input:focus{
 
       &.opened {
         i {
-          margin-left: 0px;
+          -webkit-transform: translate3d(0,0,0);
+          transform: translate3d(0,0,0);
         }
       }
 
       &:hover {
         i {
-          margin-left: 0px;
+          -webkit-transform: translate3d(0,0,0);
+          transform: translate3d(0,0,0);
         }
       }
 
       i {
         margin-top: 10px;
-        margin-left: -50px;
         color: #fff;
         font-size: 32px;
-        transition: margin-left;
-        transition-duration: 0.3s;
+
+        -webkit-transform: translate3d(-25px,0,0);
+        transform: translate3d(-25px,0,0);
+        -webkit-transition-duration: 0.5s; /* Safari */
+        transition-duration: 0.5s;
+
       }
     }
 
@@ -763,18 +813,26 @@ textarea:focus, input:focus{
   }
 
   .SideBar {
+    display: block;
+    position: fixed;
 
     &.opened{
-      left: 0px;
+      //left: 0px;
+      -webkit-transform: translate3d(280px,0,0);
+      transform: translate3d(280px,0,0);
     }
 
-    position: absolute;
-    transition: left;
-    transition-duration: 0.6s;
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+    -webkit-transition-duration: 0.5s; /* Safari */
+    transition-duration: 0.5s;
+
+
     top: 54px;
-    width: 220px;
-    min-height: 580px;
+    width: 280px;
+    min-height: 400px;
     padding: 5px 0;
+    z-index: 2;
 
     -webkit-background-clip: padding-box;
     background-color: #fff;
@@ -792,6 +850,13 @@ textarea:focus, input:focus{
     }
   }
 
+  .wrap-SideBar {
+    .dimmed {
+      //top: 54px;
+      z-index: 1;
+    }
+  }
+
   .Explore {
 
     p {
@@ -799,6 +864,14 @@ textarea:focus, input:focus{
     }
     .search-bar {
       width: 100%;
+    }
+  }
+
+  .wrap-RedBookList {
+    margin-top: 59px;
+
+    .RedBookList-byLocation {
+      padding-top: 5px;
     }
   }
 
@@ -811,7 +884,7 @@ textarea:focus, input:focus{
     }
   }
 
-  .RedBookPage {
+  .RedBookPage, .NewRedBookPage {
     position: absolute;
     top: 10px;
     width: 95%;

@@ -13,8 +13,9 @@ export default class NoteCommentList extends Component {
     return <div className="NoteCommentList">
 
       {comments.map( (comment,i) => {
-        return <NoteComment 
-          key={i} comment={comment} 
+        return <NoteComment key={i} 
+          comment={comment} 
+          loginUser={loginUser}
           onDeleteComment={onDeleteComment.bind(null, comment.id)}
           />
       })}

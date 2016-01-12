@@ -64,6 +64,7 @@ class App extends Component {
         <SideBar 
           appState={appState}
           loginUser={loginUser}
+          onUpdateAppState={this.props.updateAppState}
         />
 
         {this.renderErrorMessage()}

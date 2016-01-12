@@ -18,7 +18,13 @@ export default class SideBar extends Component {
       </div>
     </li>
 
+  };
 
+  renderDimmed = (sidebar) => {
+    if(sidebar){
+     return <div className="dimmed" onClick={this.handleToggleSideBar}></div>  
+    }
+    return false;
   };
 
   render(){
@@ -32,31 +38,47 @@ export default class SideBar extends Component {
       klassName = 'SideBar'
     }
 
-    return <div className={klassName}>
-      <ul className="account-menu">
-        <li>
-          <div className="photo">
-            <img src={loginUser.picture}/>
-          </div>
-          <div>
-            {loginUser.username}
-          </div>
-        </li>
-        { this.renderCurrentLocation(loginUser) }
-        <li className="separator"></li>
-        <li>
-          <a href="#" onClick={this.handleFacebookLogout}>
-            <i className="fa fa-sign-out"></i> Logout
-          </a>
-        </li>
-        
-      </ul>
-      <Footer />
+    let style = {
+      height: $(window).height() - 54
+    }
+
+    return <div className="wrap-SideBar">
+      <div className={klassName} style={style}>
+        <ul className="account-menu">
+          <li>
+            <div className="photo">
+              <img src={loginUser.picture}/>
+            </div>
+            <div>
+              {loginUser.username}
+            </div>
+          </li>
+          { this.renderCurrentLocation(loginUser) }
+          <li className="separator"></li>
+          <li>
+            <a href="#" onClick={this.handleFacebookLogout}>
+              <i className="fa fa-sign-out"></i> Logout
+            </a>
+          </li>
+          
+        </ul>
+        <Footer />
+      </div>
+
+      {this.renderDimmed(sidebar)}
+      
     </div>
   }
+
+  handleToggleSideBar = (e) => {
+    this.props.onUpdateAppState({
+      sidebar: false
+    });
+  };
 }
 
 SideBar.propTypes = {
   appState: PropTypes.object.isRequired,
+  onUpdateAppState: PropTypes.func.isRequired,
   loginUser: PropTypes.object.isRequired
 }
