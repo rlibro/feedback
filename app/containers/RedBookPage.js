@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { loadNotesByRedBookId, deleteNote, deleteComment, addComment, addNote } from '../actions'
+import { facebookLogin,updateLoginUserInfo,loadNotesByRedBookId, deleteNote, deleteComment, addComment, addNote } from '../actions'
 import { pushPath as pushState, replacePath } from 'redux-simple-router'
 import RedBookCover from '../components/RedBookCover'
 import RedBookNoteForm from '../components/RedBookNoteForm'
@@ -17,15 +17,38 @@ function loadData(props) {
 }
 
 class RedBookPage extends Component {
-  
-  componentWillMount() {
-    loadData(this.props)
+
+  componentWillMount(){
+
+    if( this.props.redBook){
+      loadData(this.props);  
+    } else {
+      console.log('페이지로 바로 접근한 경우에는 다음 업데이트때 책이 로드된다.!!')
+    }
+    
   }
 
-  componentWillReceiveProps(nextProps) {
+  shouldComponentUpdate(nextProps, nextState) {
+  
+    if( nextProps.pageForRedBook.stateLoaded === 'OK' ) {
+      if( !nextProps.redBook ){
+
+        // 해당 정보북이 없으면 홈페이지로 이동시켜!
+        this.props.pushState('/');
+        return false;
+      }
+    }
+    return true;
+
+  }
+
+  componentWillUpdate(nextProps, nextState){
+
     if( nextProps.redBook && !this.props.redBook){
+      console.log('componentWillUpdate : 레드북 노트를 로드해줘~!!', nextProps.redBook, nextState)
       loadData(nextProps)
     }
+    
   }
 
   renderListOfNotes = () => {
@@ -51,11 +74,14 @@ class RedBookPage extends Component {
         loginUser={loginUser}
         notes={entities.notes} 
         ids={ids}
+        onLogin={this.handleFacebookLogin}
         onDeleteNote={this.handleDeleteNote}
         onAddComment={this.handleAddComment}
         onDeleteComment={this.handleDeleteComment}
         />
-      <div className="dimmed"></div>
+      <div className="dimmed">
+        <i className="fa fa-circle-o-notch fa-spin"></i>
+      </div>
     </div>
   };
 
@@ -68,13 +94,14 @@ class RedBookPage extends Component {
     )
   }
 
+  handleFacebookLogin = () => {
+    this.props.facebookLogin(this.props.updateLoginUserInfo);    
+  };
+
   handleCloseRedBook = (e) => {
 
-    if( history.length === 2) {
-      this.props.replacePath('/')  
-    }else{
-      history.back()
-    }
+    this.props.replacePath('/')  
+
   };
 
   handleAddNote = (redBookId, noteText) => {
@@ -97,9 +124,11 @@ class RedBookPage extends Component {
 }
 
 RedBookPage.propTypes = {
+  pageForRedBook: PropTypes.object.isRequired,
   pushState: PropTypes.func.isRequired,
   replacePath: PropTypes.func.isRequired,
   loadNotesByRedBookId: PropTypes.func.isRequired,
+  facebookLogin: PropTypes.func.isRequired,
   addNote: PropTypes.func.isRequired,
   addComment: PropTypes.func.isRequired,
   deleteNote: PropTypes.func.isRequired,
@@ -115,7 +144,7 @@ function mapStateToProps(state) {
   } = state
 
   const uname = path.substr(1) 
-  const [ cityName, countryName ] = uname.split('-');
+  const [ cityName, countryName ] = uname.split(',');
 
   let redBookId = null;
   for ( let id in redBooks ){
@@ -126,6 +155,7 @@ function mapStateToProps(state) {
   }
 
   return {
+    pageForRedBook: state.pageForRedBook,
     loginUser: state.login,
     cityName: cityName,
     countryName: countryName,
@@ -136,6 +166,8 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, {
+  facebookLogin,
+  updateLoginUserInfo,
   loadNotesByRedBookId,
   addNote,
   addComment,

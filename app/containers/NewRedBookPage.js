@@ -7,13 +7,18 @@ import NewRedBookForm from '../components/NewRedBookForm'
 
 class NewRedBookPage extends Component {
 
-  constructor(props){
-    super(props);
+  shouldComponentUpdate(nextProps, nextSate) {
+  
 
     if( !this.props.loginUser.id ){
-      replacePath('/');
+      this.props.pushState('/');
+      return false;
     }
+
+    return true;
+    
   }
+
 
   componentWillReceiveProps(nextProps){
 
@@ -26,10 +31,10 @@ class NewRedBookPage extends Component {
     }
   }
 
-  componentWillUnmount(){
+  // componentWillUnmount(){
 
-    this.props.updateDataForNewRedBook(null);
-  }
+  //   this.props.updateDataForNewRedBook(null);
+  // }
 
   render(){
 
@@ -60,7 +65,28 @@ class NewRedBookPage extends Component {
   };
 
   handleCreateNewRedBook = (noteText) => {
-    this.props.addRedBook(noteText);
+
+    // newRedBook 데이터를 한번 검증해서 필요한 데이터가 다 안넘어오면 alret 으로 알려주자!
+    const {requiredInfo} = this.props;
+    const requiredFields = ['uname', 'cityName', 'countryName', 'coverImage'];
+    let invalids = [];
+
+    var isValid = requiredFields.every(function(fieldName, i){
+
+      if( !requiredInfo[fieldName] ){
+        invalids.push(fieldName);
+      }
+
+      return requiredInfo[fieldName]
+
+    })
+
+    if( isValid ){
+      this.props.addRedBook(noteText);  
+    } else {
+      alert('잠시만 기다려주세요!')
+    }
+
   };
 
   handleCoverImageForNewRedBook = (imgData) => {
@@ -71,6 +97,7 @@ class NewRedBookPage extends Component {
 }
 
 NewRedBookPage.propTypes = {
+  requiredInfo: PropTypes.object.isRequired,
   pushState: PropTypes.func.isRequired,
   replacePath: PropTypes.func.isRequired
 }
@@ -87,6 +114,7 @@ function mapStateToProps(state) {
   }
 
   return {
+    requiredInfo: state.pageForNewRedBook,
     redirect: location.uname,
     redBooks: redBooks,
     loginUser: state.login,

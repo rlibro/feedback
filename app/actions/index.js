@@ -1,15 +1,68 @@
 //import { CALL_API, Schemas } from '../middleware/api'
 import { PARSE, Schemas } from '../middleware/parse'
 
+export function facebookLogin(update){
+
+  Parse.FacebookUtils.logIn('user_location,user_friends,email', {
+    success: function(parseUser){
+
+      if( !parseUser.get('location') ) {
+
+        FB.api('/me?fields=id,name,email,location,picture{url}', function(facebookUser) {
+
+
+          //console.log('facebook 에서 로그인 정보 가져옴!', facebookUser);
+
+          FB.api(`/${facebookUser.location.id}/?fields=location`, function(res){
+
+            //console.log('facebook 에서 위치 정보 가져옴!', facebookUser);
+
+            facebookUser.location = res.location;
+            
+            parseUser.save({
+              username: facebookUser.name,
+              email: facebookUser.email,
+              location: facebookUser.location,
+              picture: facebookUser.picture.data.url
+            });
+
+            update(parseUser.toJSON());
+
+          })
+
+        });
+
+      } else {
+        update(parseUser.toJSON());
+      }
+
+    }.bind(this),
+    error: function(err){
+      console.log('이 에러가 발생하면 로그인 시도할때 Parse로 호출이 안되는걸껄?', err);
+    }
+  });
+
+}
+
 /**
  * 페이스북 로그인 정보를 저장한다. 
  */
-export function updateLoginUser(userInfo){
-  //delete userInfo.sessionToken;
-  
+export function updateLoginUserInfo(userInfo){
+
+  if( userInfo.objectId ){
+    userInfo.id = userInfo.objectId;
+    delete userInfo.objectId;
+    delete userInfo.sessionToken;
+    delete userInfo.type;
+    delete userInfo.className;
+    delete userInfo.authData;
+    delete userInfo.createdAt;
+    delete userInfo.updatedAt;
+  }
+    
   return (dispatch, getState) => {
     return dispatch({
-      type: 'UPDATE_LOGIN_USER',
+      type: 'UPDATE_LOGIN_USER_INFO',
       login: userInfo
     });
   };
@@ -20,14 +73,12 @@ export function updateLoginUser(userInfo){
 /**
  * 로그아웃한다. 
  */
-export function logOutUser(){
-  
-  Parse.User.logOut();
+export function logOutUser(userInfo){
   
   return (dispatch, getState) => {
     return dispatch({
-      type: 'UPDATE_LOGIN_USER',
-      login: {}
+      type: 'CLEAR_LOGIN_USER_INFO',
+      login: userInfo
     });
   };
 }
@@ -138,15 +189,15 @@ export function addRedBook(noteText){
   
   return (dispatch, getState) => {
 
-    let { newRedBook } = getState();
-    newRedBook.creator = Parse.User.current();
+    let { pageForNewRedBook } = getState();
+    pageForNewRedBook.creator = Parse.User.current();
 
     return dispatch(function(){
       return {
         [PARSE]: {
           method: 'addRedBook',
           params: {
-            'RedBook': newRedBook,
+            'RedBook': pageForNewRedBook,
             'Note': {
               comments: [],
               content: noteText,

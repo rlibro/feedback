@@ -14,11 +14,11 @@ export default class NewRedBookForm extends Component {
         <p className="notice">You are going to be the pioneer of {newRedBook.cityName}</p>
       </div>
   
-      <textarea ref="textarea" className="text" autoFocus={true} placeholder="Share your useful experiences of this city!">{newRedBook.noteText}</textarea>
+      <textarea tabIndex="1" ref="textarea" className="text" autoFocus={true} placeholder="Share your useful experiences of this city!">{newRedBook.noteText}</textarea>
         
       <div className="note-form-footer">
-        <button className="cancel" onClick={onCancelNewRedBook}>Cancel</button>
-        <button className="create" onClick={this.handleCreateNewRedBook}>Create</button>
+        <button tabIndex="3" className="cancel" onClick={onCancelNewRedBook}>Cancel</button>
+        <button tabIndex="2" className="create" onClick={this.handleCreateNewRedBook}>Create</button>
       </div>
     </div>
   };

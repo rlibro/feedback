@@ -91,12 +91,31 @@ const pagination = combineReducers({
 
 // 로그인 리듀서
 function login(state = {}, action) {
-  // if (action.response && action.response.entities) {
-  //   return merge({}, state, action.response.entities)
-  // }
+  
+  if( action.type === 'UPDATE_LOGIN_USER_INFO') {
+    if( action.login.facebook ){
+      state.facebook = action.login.facebook;
+    } else {
+      action.login.facebook = state.facebook ? 'LOADED': false;
+      state = action.login;
+    }
 
-  if( action.type === 'UPDATE_LOGIN_USER') {
-    return merge({}, action.login)
+    return merge({}, state)
+  }
+
+  if( action.type === 'CLEAR_LOGIN_USER_INFO') {
+
+    if( state.facebook === 'LOADED') {
+      state = {
+        facebook: true
+      }
+    } else {
+      state = {
+        facebook: false
+      }
+    }
+
+    return merge({}, state)
   }
 
   if( action.type === 'UPDATE_CURRENT_USER_LOCATION' ) {
@@ -117,7 +136,7 @@ function finding(state = {}, action) {
   return state
 }
 
-function newRedBook(state = {}, action) {
+function pageForNewRedBook(state = {}, action) {
 
   switch(action.type){
 
@@ -132,13 +151,37 @@ function newRedBook(state = {}, action) {
   return state
 }
 
+function pageForRedBook(state = {stateLoaded: 'READY', count:0}, action) {
+
+  switch(action.type){
+
+    case 'REDBOOKS_REQUEST':
+      state.stateLoaded = 'REQUESTING'
+      return merge({}, state);
+
+    case 'REDBOOKS_SUCCESS':
+
+      state.stateLoaded = 'OK'
+      state.count = state.count + 1;
+      return merge({}, state);
+
+    case 'REDBOOKS_FAILURE':
+
+      state.stateLoaded = 'FAIL'
+      return merge({}, state);
+  }
+  
+  return state
+}
+
 const rootReducer = combineReducers({
+  pageForNewRedBook,
+  pageForRedBook,
   entities,
   pagination,
   errorMessage,
   login,
   finding,
-  newRedBook,
   routing: routeReducer
 })
 

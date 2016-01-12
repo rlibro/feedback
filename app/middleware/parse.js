@@ -52,9 +52,7 @@ const parseAPI = {
       return Object.assign({}, normalize(data, schema));
          
     }, function(error) {
-
-      console.log(error);
-
+      return error.code + ', ' + error.message;
     });
   },
 
@@ -86,7 +84,7 @@ const parseAPI = {
          
     }, function(error) {
 
-      console.log(error);
+      return error.code + ', ' + error.message;
 
     })
   },
@@ -108,8 +106,8 @@ const parseAPI = {
       clearObjectId(newbook, 'creator');
 
       return Object.assign({}, normalize(newbook, schema));
-
-
+    }, function(error){
+      return error.code + ', ' + error.message;
     })
   }, 
 
@@ -129,6 +127,8 @@ const parseAPI = {
 
       return Object.assign({}, normalize(newNote, schema));
 
+    }, function(error){
+      return error.code + ', ' + error.message;
     })
   },
 
@@ -175,6 +175,8 @@ const parseAPI = {
       })
 
       return promise;
+    }, function(error){
+      return error.code + ', ' + error.message;
     })
     
   },
@@ -206,6 +208,8 @@ const parseAPI = {
 
       return promise;      
 
+    }, function(error){
+      return error.code + ', ' + error.message;
     });
     
   },
@@ -259,6 +263,8 @@ const parseAPI = {
 
       })
 
+    }, function(error){
+      return error.code + ', ' + error.message;
     })
 
 
@@ -269,6 +275,16 @@ const parseAPI = {
 
 export const PARSE = Symbol('Parse.com')
 export default store => next => action => {
+
+  /**
+   * 페이스북 로그인 예외처리 
+   * 본래 페북 로그인을 액션에서 처리하면 안되는데 딱히 넣을데가 없어서 
+   * 일단 Action에서 처함. 액션이 호출되면 미들웨어는 자동 호출되므로,..
+   * 여기에 페북 로그인인 경우엔 action 이 없다! 
+   */ 
+  if( !action ) {
+    return;
+  }
 
   const parseObject = action[PARSE]
 
@@ -307,7 +323,7 @@ export default store => next => action => {
     })),
     error => next(actionWith({
       type: failureType,
-      error: error.message || 'Something bad happened'
+      error: error || 'Something bad happened'
     }))
   )
 }

@@ -4,7 +4,9 @@ export default class NoteCommentForm extends Component {
 
   renderLogin = () => {
     return <div className="NoteCommentForm"> 
-      댓글을 남기시려면 <a href="#" className="fa fa-facebook" onClick={this.handleFacebookLogin}> 페이스북으로 로그인</a> 해주세요!;
+      댓글을 남기시려면 
+      <a href="#" className="fa fa-facebook" 
+        onClick={this.handleFacebookLogin}> 페이스북으로 로그인</a> 해주세요!
     </div>
   };
 
@@ -17,21 +19,21 @@ export default class NoteCommentForm extends Component {
         <img src={loginUser.picture} />
       </div>
       
-      <input className="text" type="text" placeholder="댓글을 입력하세요." 
+      <input className="text" 
+        type="text" 
+        placeholder="댓글을 입력하세요." 
         autoFocus={true}
         onKeyPress={this.handleCheckEnter} />
 
-      <button className="send">입력</button>
+      <button 
+        className="send" 
+        onClick={this.handleSendComment}>입력</button>
     
     </div>
 
   };
 
   render() {
-
-    // setTimeout(()=>{
-    //   window.scrollTo(0,document.body.scrollHeight);
-    // }, 10);
 
     const { loginUser } = this.props;
 
@@ -40,22 +42,24 @@ export default class NoteCommentForm extends Component {
 
   handleCheckEnter = (e) => {
     if(e.key === 'Enter') {
-      this.handleFinishEdit(e);
+      this.handleSendComment(e);
     }
   };
 
-  handleFinishEdit = (e) => {
+  handleSendComment = (e) => {
     this.props.onAddComment(e.target.value);
     e.target.value = '';
   };
 
   handleFacebookLogin = (e) => {
-    window.open(`/facebook/login?redirect=${encodeURIComponent(location.href)}`, '', 'width=600, height=550');
+    this.props.onLogin();
+    e.preventDefault();
   };
 }
 
 NoteCommentForm.propTypes = {
   loginUser: PropTypes.object.isRequired,
   isOpenComment: PropTypes.bool.isRequired,
-  onAddComment: PropTypes.func.isRequired
+  onAddComment: PropTypes.func.isRequired,
+  onLogin: PropTypes.func.isRequired
 }

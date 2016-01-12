@@ -18,7 +18,7 @@ export default class RedBookNote extends Component {
 
   render() {
 
-    const { note, loginUser, onAddComment, onDeleteNote, onDeleteComment} = this.props;
+    const { note, loginUser, onLogin, onAddComment, onDeleteNote, onDeleteComment} = this.props;
     const { isOpenComment, isOpenContext } = this.state;
 
     const contentText = note.content
@@ -32,7 +32,7 @@ export default class RedBookNote extends Component {
         </div>
         <div className="meta">
           <div className="date">{ moment(note.createdAt).format('LLL') }</div>
-          <div className="username">{ note.author.name }</div>
+          <div className="username">{ note.author.username }</div>
         </div>
         <div className="options">
           <button><i className="fa fa-angle-down" onClick={this.handleOpenContext} /></button>
@@ -54,6 +54,7 @@ export default class RedBookNote extends Component {
       <NoteCommentList 
         loginUser={loginUser}
         comments={note.comments || []} 
+        onLogin={onLogin}
         isOpenComment={isOpenComment}
         onAddComment={onAddComment.bind(null, note.id)} 
         onDeleteComment={onDeleteComment.bind(null, note.id)}
@@ -77,6 +78,7 @@ export default class RedBookNote extends Component {
 RedBookNote.propTypes = {
   loginUser: PropTypes.object.isRequired,
   note: PropTypes.object.isRequired,
+  onLogin: PropTypes.func.isRequired,
   onAddComment: PropTypes.func.isRequired,
   onDeleteNote: PropTypes.func.isRequired,
   onDeleteComment: PropTypes.func.isRequired

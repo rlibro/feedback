@@ -17,21 +17,47 @@ export default class CurrentLocation extends Component {
     window.loadedGoogle = this.onLoadedGoogle;
   }
 
+  componentWillReceiveProps(nextProps){
+
+    if( nextProps.loginUser.id !== this.props.loginUser.id ){
+      
+
+      if( !nextProps.loginUser.id ) {
+        let checkCount = this.state.checkCount;
+        checkCount++;
+
+        this.setState({
+          checkCount: checkCount,
+          message: ''
+        })
+      } else {
+
+        //console.log('CurrentLocation 에서 위치 정보 업데이트 해야함!');  
+        this.loadCurrentLocation();  
+      }
+      
+    }
+    
+  }
+
   render(){
-    return <div className="message">{this.state.message}</div>
+    return <div className="CurrentLocation">
+      <p className="message">{this.state.message}</p>
+    </div>
   }
 
   componentDidMount(){
     const {loginUser} = this.props;
 
+    //console.log('위치 정보 로드 준비!!', loginUser);
+
     if( loginUser.currentLocation ){ 
       this.setState({message: loginUser.currentLocation.cityName});
     }
 
-    if (navigator.geolocation) {
-      this.setState({message: 'finding current location...'})
-      navigator.geolocation.getCurrentPosition(this.onSuccessPosition, this.onFailPosition);
-    }
+  }
+
+  loadCurrentLocation = () => {
 
     // 구글 지도 API 로딩
     if( !this.state.loadedGoogleSDK ){
@@ -43,7 +69,13 @@ export default class CurrentLocation extends Component {
       document.head.appendChild(script);
     }
 
-  }
+    if (navigator.geolocation) {
+      this.setState({message: 'finding current location...'})
+      navigator.geolocation.getCurrentPosition(this.onSuccessPosition, this.onFailPosition);
+    }
+  
+  };
+
 
   onLoadedGoogle = () => {
     this.findLocation();    
@@ -71,6 +103,8 @@ export default class CurrentLocation extends Component {
 
 
   findLocation = () => {
+
+    //console.log('findLocation..', this.state)
 
     let { checkCount } = this.state;
     checkCount--;

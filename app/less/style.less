@@ -76,10 +76,6 @@ textarea:focus, input:focus{
   .account-menu {
     float: right;
 
-    .message {
-      color: #eee;
-    }
-
     .fb-login {
       margin-right: 10px;
       font-size: 16px;
@@ -105,7 +101,8 @@ textarea:focus, input:focus{
         height: 54px;
         margin-left: 10px;
         img {
-          margin-top: 2px;
+          width: 40px;
+          margin-top: 7px;
           border-radius: 5px;
         }  
       }
@@ -114,16 +111,27 @@ textarea:focus, input:focus{
     .sub-menu {
       display: none;
       position: absolute;
-      border: 2px solid #ff4842;
-      border-top: none;
       width: 100px;
       right: 0px;
       z-index: 1000;
+
+      top: 55px;
+      width: 100px;
+      text-align: right;
+      padding: 5px 0;
+
+      -webkit-background-clip: padding-box;
       background-color: #fff;
+      border: 1px solid rgba(0, 0, 0, .15);
+      border-radius: 3px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
 
       li {
+
         text-align: center;
         width: 100px;
+        height: 40px;
+        line-height: 40px;
         a {
           color: #000;
           display: block;
@@ -133,6 +141,16 @@ textarea:focus, input:focus{
     }
   }
 
+}
+
+.CurrentLocation {
+  position: relative;
+  float: right;
+  top: -37px;
+  right: 64px;
+  .message {
+    color: #eee;
+  }
 }
 
 .Explore {
