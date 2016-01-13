@@ -23,9 +23,9 @@ export default class RedBookCover extends Component {
         <i className="fa fa-times" onClick={onCloseRedBook}/>
       </div>
       
-{/*      <div className="controls">
+      <div className="controls">
         <button>체크인</button>
-      </div>*/}
+      </div>
     </div>
   }
 }

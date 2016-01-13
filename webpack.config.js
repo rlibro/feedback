@@ -98,7 +98,6 @@ if(TARGET === 'build' || TARGET === 'stats') {
       path: PATHS.build,
       filename: '[name].js'
     },
-    devtool: 'source-map',
     module: {
       loaders: [
         {
