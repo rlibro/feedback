@@ -9,7 +9,7 @@ export default class Header extends Component {
     }
 
     return <ul className="account-menu">
-      <li><a href="#" className="fa fa-facebook fb-login" onClick={this.handleFacebookLogin}> Login with Facebook</a></li>
+      <li><a href="#" className="fb-login" onClick={this.handleFacebookLogin}><i className="fa fa-facebook"/> Login with Facebook</a></li>
     </ul>
   };
 

@@ -51,8 +51,27 @@ Parse.Cloud.afterDelete("Comment", function(request) {
 
     },
     error: function(error) {
-      console.error("Error deleting related comments " + error.code + " : " + error.message);
+      console.error("Error deleting related comments ", error);
     }
   });
 
+});
+
+
+Parse.Cloud.afterDelete("Note", function(request) {
+  var query = new Parse.Query("Comment");
+  query.equalTo("parent", request.object);
+  query.find({
+    success: function(comments) {
+      Parse.Object.destroyAll(comments, {
+        success: function() {},
+        error: function(error) {
+          console.error("Error deleting related comments ", error);
+        }
+      });
+    },
+    error: function(error) {
+      console.error("Error finding related comments ", error);
+    }
+  });
 });
