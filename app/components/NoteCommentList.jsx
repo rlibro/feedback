@@ -8,18 +8,19 @@ export default class NoteCommentList extends Component {
 
   renderCommentList = () => {
 
-    const { loginUser, pageForRedBook, comments, isOpenComment } = this.props;
+    const { loginUser, pageForRedBook, isOpenComment } = this.props;
+    const { commentIds, entityComments } = this.props;
     const { onLogin, onAddComment, onDeleteComment } = this.props
 
     return <div className="NoteCommentList">
 
-      {comments.map( (comment,i) => {
+      {commentIds.map( (commentId,i) => {
         return <NoteComment key={i}
           index={i}
-          comment={comment}
+          comment={entityComments[commentId]}
           pageForRedBook={pageForRedBook}
           loginUser={loginUser}
-          onDeleteComment={onDeleteComment.bind(null, comment.id)}
+          onDeleteComment={onDeleteComment.bind(null, commentId)}
           />
       })}
 
@@ -48,9 +49,12 @@ export default class NoteCommentList extends Component {
 
 NoteCommentList.propTypes = {
   loginUser: PropTypes.object.isRequired,
-  pageForRedBook: PropTypes.object.isRequired,
-  comments: PropTypes.array.isRequired,
   isOpenComment: PropTypes.bool.isRequired,
+  pageForRedBook: PropTypes.object.isRequired,
+  
+  commentIds: PropTypes.array.isRequired,
+  entityComments: PropTypes.object.isRequired,
+
   onLogin: PropTypes.func.isRequired,
   onAddComment: PropTypes.func.isRequired,
   onDeleteComment: PropTypes.func.isRequired

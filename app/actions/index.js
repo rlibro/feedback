@@ -1,5 +1,12 @@
-//import { CALL_API, Schemas } from '../middleware/api'
 import { PARSE, Schemas } from '../middleware/parse'
+
+export function resetErrorMessage(){
+  return (dispatch, getState) => {
+    return dispatch({
+      type: 'RESET_ERROR_MESSAGE'
+    });
+  }
+}
 
 export function facebookLogin(update){
 
@@ -86,63 +93,6 @@ export function logOutUser(userInfo){
 
 
 /**
- * 사이드바 정보 업데이트. 
- */
-export function updateAppState(state){
-  
-  return (dispatch, getState) => {
-    return dispatch({
-      type: 'UPDATE_APP_STATE',
-      state: state
-    });
-  };
-}
-/* END OF logOutUser */
-
-
-
-// 모든 레드북을 불러온다. 
-export const REDBOOKS_REQUEST = 'REDBOOKS_REQUEST'
-export const REDBOOKS_SUCCESS = 'REDBOOKS_SUCCESS'
-export const REDBOOKS_FAILURE = 'REDBOOKS_FAILURE'
-export function loadAllRedBooks() {
-  return (dispatch, getState) => {
-    return dispatch(function() {
-      return {
-        [PARSE]: {
-          method: 'fetchRedBook',
-          types: [ REDBOOKS_REQUEST, REDBOOKS_SUCCESS, REDBOOKS_FAILURE ],
-          schema: Schemas.REDBOOK_ARRAY
-        }
-      }
-    }())
-  }
-}
-
-// 노트를 불러온다. 
-export const NOTES_REQUEST = 'NOTES_REQUEST'
-export const NOTES_SUCCESS = 'NOTES_SUCCESS'
-export const NOTES_FAILURE = 'NOTES_FAILURE'
-export function loadNotesByRedBookId (redBookId) {
-
-  return (dispatch, getState) => {
-    return dispatch(function(){
-      return {
-        redBookId,
-        [PARSE]: {
-          method: 'fetchNote',
-          params: { 
-            redBookId : redBookId
-          },
-          types: [ NOTES_REQUEST, NOTES_SUCCESS, NOTES_FAILURE ],
-          schema: Schemas.NOTE_ARRAY
-        }
-      }
-    }())
-  }
-}
-
-/**
  * 사용자의 현재 위치를 로그인 정보에 업데이트 한다.
  */
  export function updateCurrentUserLocation(location){
@@ -195,6 +145,40 @@ export function updateDataForNewRedBook(data){
 
 
 /**
+ * 사이드바 정보 업데이트. 
+ */
+export function updateAppState(state){
+  
+  return (dispatch, getState) => {
+    return dispatch({
+      type: 'UPDATE_APP_STATE',
+      state: state
+    });
+  };
+}
+/* END OF logOutUser */
+
+
+
+// 레드북을 불러온다. 
+export const REDBOOKS_REQUEST = 'REDBOOKS_REQUEST'
+export const REDBOOKS_SUCCESS = 'REDBOOKS_SUCCESS'
+export const REDBOOKS_FAILURE = 'REDBOOKS_FAILURE'
+export function fetchRedBooks() {
+  return (dispatch, getState) => {
+    return dispatch(function() {
+      return {
+        [PARSE]: {
+          method: 'fetchRedBooks',
+          types: [ REDBOOKS_REQUEST, REDBOOKS_SUCCESS, REDBOOKS_FAILURE ],
+          schema: Schemas.REDBOOK_ARRAY
+        }
+      }
+    }())
+  }
+}
+
+/**
  * 새로운 레드북을 만든다. 
  */
 export const ADD_REDBOOK_REQUEST = 'ADD_REDBOOK_REQUEST'
@@ -229,6 +213,29 @@ export function addRedBook(noteText){
 /* END OF addRedBook */
 
 
+// 노트를 불러온다. 
+export const NOTES_REQUEST = 'NOTES_REQUEST'
+export const NOTES_SUCCESS = 'NOTES_SUCCESS'
+export const NOTES_FAILURE = 'NOTES_FAILURE'
+export function fetchNotes (redBookId) {
+
+  return (dispatch, getState) => {
+    return dispatch(function(){
+      return {
+        redBookId,
+        [PARSE]: {
+          method: 'fetchNotes',
+          params: { 
+            redBookId : redBookId
+          },
+          types: [ NOTES_REQUEST, NOTES_SUCCESS, NOTES_FAILURE ],
+          schema: Schemas.NOTE_ARRAY
+        }
+      }
+    }())
+  }
+}
+
 /**
  * 레드북에 노트를 추가한다. 
  */
@@ -261,36 +268,6 @@ export function addNote (redBookId, noteText){
 /* END OF addRedBookNote */
 
 /**
- *  노트에 커맨트를 추가한다.
- */ 
-export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST'
-export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS'
-export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE'
-export function addComment (noteId, commentText) {
-  return (dispatch, getState) => {
-    return dispatch(function(){
-      return {
-        [PARSE]: {
-          method: 'addComment',
-          params: {
-            Comment: {
-              text: commentText,
-              author: Parse.User.current()
-            }, 
-            noteId: noteId
-          },
-          types: [ ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE ],
-          schema: Schemas.COMMENT
-        }
-      }
-    }());
-  }
-}
-/* END OF addNoteComment */
-
-
-
-/**
  *  노트를 삭제한다.
  */ 
 export const DELETE_NOTE_REQUEST = 'DELETE_NOTE_REQUEST'
@@ -315,6 +292,60 @@ export function deleteNote (noteId, redBookId) {
 }
 /* END OF deleteNote */
 
+
+
+
+// 댓글을 불러온다. 
+export const COMMENTS_REQUEST = 'COMMENTS_REQUEST'
+export const COMMENTS_SUCCESS = 'COMMENTS_SUCCESS'
+export const COMMENTS_FAILURE = 'COMMENTS_FAILURE'
+export function fetchComments (noteId) {
+
+  return (dispatch, getState) => {
+    return dispatch(function(){
+      return {
+        noteId,
+        [PARSE]: {
+          method: 'fetchComments',
+          params: { 
+            noteId : noteId
+          },
+          types: [ COMMENTS_REQUEST, COMMENTS_SUCCESS, COMMENTS_FAILURE ],
+          schema: Schemas.COMMENT_ARRAY
+        }
+      }
+    }())
+  }
+}
+
+/**
+ *  노트에 커맨트를 추가한다.
+ */ 
+export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST'
+export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS'
+export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE'
+export function addComment (noteId, commentText) {
+  return (dispatch, getState) => {
+    return dispatch(function(){
+      return {
+        noteId,
+        [PARSE]: {
+          method: 'addComment',
+          params: {
+            Comment: {
+              text: commentText,
+              author: Parse.User.current()
+            }, 
+            noteId: noteId
+          },
+          types: [ ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE ],
+          schema: Schemas.COMMENT
+        }
+      }
+    }());
+  }
+}
+/* END OF addNoteComment */
 
 /**
  *  댓글을 삭제한다.

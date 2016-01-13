@@ -11,8 +11,7 @@ var HtmlwebpackPlugin = require('html-webpack-plugin');
 const TARGET = process.env.npm_lifecycle_event;
 const PATHS = {
   app: path.join(__dirname, 'app'),
-  build: path.join(__dirname, 'build'),
-  less: path.join(__dirname, 'app/less')
+  build: path.join(__dirname, 'Parse/public/app')
 };
 
 var common = {
@@ -97,24 +96,26 @@ if(TARGET === 'build' || TARGET === 'stats') {
     },
     output: {
       path: PATHS.build,
-      filename: '[name].[chunkhash].js',
-      chunkFilename: '[chunkhash].js'
+      filename: '[name].js'
     },
     devtool: 'source-map',
     module: {
       loaders: [
         {
           test: /\.less$/,
-          loader: 'style!css!less'
+          loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader")
         }
       ]
     },
     plugins: [
       new Clean([PATHS.build]),
-      new ExtractTextPlugin('styles.[chunkhash].css'),
+      new ExtractTextPlugin('styles.css'),
       // Extract vendor and manifest files
+      // new webpack.optimize.CommonsChunkPlugin({
+      //   names: ['vendor', 'manifest']
+      // }),
       new webpack.optimize.CommonsChunkPlugin({
-        names: ['vendor', 'manifest']
+        names: ['vendor']
       }),
       // Setting DefinePlugin affects React library size!
       new webpack.DefinePlugin({

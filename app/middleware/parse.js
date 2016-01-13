@@ -12,6 +12,7 @@ export const Schemas = {
   NOTE: noteSchema,
   NOTE_ARRAY: arrayOf(noteSchema),
   COMMENT: commentSchema,
+  COMMENT_ARRAY: arrayOf(commentSchema),
   RESULT: resultSchema,
   RESULT_ARRAY: arrayOf(resultSchema),
 }
@@ -24,7 +25,7 @@ function clearObjectId(obj, key){
   obj.id = obj.objectId;
   delete obj.objectId;
 
-  if( key ){
+  if( key && obj[key] ){
     obj[key].id = obj[key].objectId;
 
     delete obj[key].__type;
@@ -38,7 +39,7 @@ function clearObjectId(obj, key){
 }
 
 const parseAPI = {
-  fetchRedBook: function (schema) {
+  fetchRedBooks: function (schema) {
 
     let query = new Parse.Query(RedBook);
 
@@ -59,7 +60,7 @@ const parseAPI = {
     });
   },
 
-  fetchNote: function (schema, params) {
+  fetchNotes: function (schema, params) {
 
     let noteQuery = new Parse.Query(Note);
     let commentQuery = new Parse.Query(Comment);
@@ -68,7 +69,9 @@ const parseAPI = {
     redBook.id = params.redBookId;
 
     noteQuery.equalTo('redBook', redBook);
-    noteQuery.descending('createdAt')
+    noteQuery.include('author');
+    noteQuery.descending('createdAt');
+
 
     return noteQuery.find()
     .then(function(results) {
@@ -79,6 +82,47 @@ const parseAPI = {
         clearObjectId(camelizedJson, 'author');
 
         a[i] = camelizedJson;
+      
+      });
+
+      return Object.assign({}, normalize(results, schema));
+         
+    }, function(error) {
+
+      return error.code + ', ' + error.message;
+
+    })
+  },
+
+  fetchComments: function (schema, params) {
+
+    let commentQuery = new Parse.Query(Comment);
+    let note = new Note();
+
+    note.id = params.noteId;
+
+    commentQuery.equalTo('parent', note);
+    commentQuery.include('author');
+  
+    return commentQuery.find()
+    .then(function(results) {
+
+      results.forEach(function(result, i, a){
+
+        // 댓글에서 필요한 것만 뽑아내자!
+        const author = result.get('author');
+        const data = {
+          id: result.id,
+          author: {
+            id: author.id,
+            username: author.get('username'),
+            picture: author.get('picture'),
+            facebookId: author.get('authData').facebook.id
+          },
+          text: result.get('text'),
+          createdAt: result.get('createdAt')
+        }
+        a[i] = data;
       
       });
 
@@ -134,7 +178,7 @@ const parseAPI = {
     })
   },
 
-  addComment: function(schema, params, next, actionWith, successType, failureType){
+  addComment: function(schema, params){
 
     let note = new Note();
     note.id = params.noteId;
@@ -145,39 +189,24 @@ const parseAPI = {
     // 1. 일단 댓글을 서버에 저장해!      
     return comment
     .save(params.Comment)
-    .then(function(){
+    .then(function(result){
 
-      // 2. 그리고 해당 노트에 걸린 모든 댓글 찾아!
-      const promise = new Parse.Promise();
-      const commentQuery = new Parse.Query(Comment);
-      commentQuery.equalTo('parent', note);
-      
-      commentQuery.find({
-        success: function(comments){
+      // 댓글에서 필요한 것만 뽑아내자!
+      const author = result.get('author');
+      const data = {
+        id: result.id,
+        author: {
+          id: author.id,
+          username: author.get('username'),
+          picture: author.get('picture'),
+          facebookId: author.get('authData').facebook.id
+        },
+        text: result.get('text'),
+        createdAt: result.get('createdAt')
+      }
 
-          // 3. 모든 댓글을 모아서 노트의 comments로 저장한 뒤에 반환해! 
-          comments.forEach( function(savedComment, i, a){
-            let savedJsonComment = savedComment.toJSON();
-            clearObjectId(savedJsonComment, 'author');
-            delete savedJsonComment.parent;
-            a[i] = savedJsonComment;
-          });
+      return Object.assign({}, normalize(data, schema));
 
-          note.set('comments', comments);
-          note
-          .save()
-          .then(function(){
-
-            promise.resolve({
-              comments: comments,
-              noteId: params.noteId,
-            });
-
-          })
-        }
-      })
-
-      return promise;
     }, function(error){
       return error.code + ', ' + error.message;
     })
@@ -227,45 +256,26 @@ const parseAPI = {
     // 1. 일단 댓글을 찾아서 지워!      
     return query
     .get(params.commentId) 
-    .then(function(comment){
+    .then(function(result){
 
-      return comment
-      .destroy()
-      .then(function(){
+      const promise = new Parse.Promise();
 
-        // 2. 그리고 노트에 걸린 모든 댓글 찾아!
-        const promise = new Parse.Promise();
-        const commentQuery = new Parse.Query(Comment);
-        commentQuery.equalTo('parent', note);
-        
-        commentQuery.find({
-          success: function(comments){
+      result.destroy({
 
-            // 3. 모든 댓글을 모아서 노트의 comments로 저장한 뒤에 반환해! 
-            comments.forEach( function(savedComment, i, a){
-              let savedJsonComment = savedComment.toJSON();
-              clearObjectId(savedJsonComment, 'author');
-              delete savedJsonComment.parent;
-              a[i] = savedJsonComment;
-            });
+        success: function(){
+          promise.resolve({
+            noteId: result.get('parent').id,
+            commentId: result.id
+          })
+        },
 
-            note.set('comments', comments);
-            note
-            .save()
-            .then(function(){
+        error: function(err){
+          promise.reject(err)
+        }
 
-              promise.resolve({
-                comments: comments,
-                noteId: params.noteId,
-              });
+      });
 
-            })
-          }
-        })
-
-        return promise;
-
-      })
+      return promise; 
 
     }, function(error){
       return error.code + ', ' + error.message;
@@ -320,7 +330,7 @@ export default store => next => action => {
   next(actionWith({ type: requestType }))
 
   // For Debugging
-  if( requestType === 'DELETE_COMMENT_REQUEST') {
+  if( requestType === 'REDBOOKS_REQUEST') {
     //return;
   }
 

@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { facebookLogin,updateLoginUserInfo,loadNotesByRedBookId, deleteNote, deleteComment, addComment, addNote } from '../actions'
+import { facebookLogin,updateLoginUserInfo } from '../actions'
+import { fetchNotes, addNote, deleteNote } from '../actions'
+import { fetchComments, addComment, deleteComment } from '../actions'
 import { pushPath as pushState, replacePath } from 'redux-simple-router'
 import RedBookCover from '../components/RedBookCover'
 import RedBookNoteForm from '../components/RedBookNoteForm'
@@ -11,7 +13,7 @@ function loadNotes(props) {
   const { redBook } = props
 
   if( redBook ){
-    props.loadNotesByRedBookId( redBook.id )  
+    props.fetchNotes( redBook.id )  
   }
   
 }
@@ -81,14 +83,17 @@ class RedBookPage extends Component {
   renderNoteList = () => {
 
     const { redBook, loginUser, notes, entities, pageForRedBook } = this.props;
-    const ids = notes.ids || [];
+    const noteIds = notes.ids || [];
 
     return <RedBookNoteList
         loginUser={loginUser}
         pageForRedBook={pageForRedBook}
-        notes={entities.notes} 
-        ids={ids}
+        entityNotes={entities.notes} 
+        entityComments={entities.comments} 
+        noteIds={noteIds}
+
         onLogin={this.handleFacebookLogin}
+        onFetchComments={this.handleFetchComments}
         onDeleteNote={this.handleDeleteNote}
         onAddComment={this.handleAddComment}
         onDeleteComment={this.handleDeleteComment}
@@ -141,6 +146,10 @@ class RedBookPage extends Component {
 
   };
 
+  handleFetchComments =(noteId)=>{
+    this.props.fetchComments(noteId)
+  };
+
   handleAddNote = (redBookId, noteText) => {
     this.props.addNote(redBookId, noteText, this.props.redBook.uname)    
   };
@@ -164,7 +173,7 @@ RedBookPage.propTypes = {
   pageForRedBook: PropTypes.object.isRequired,
   pushState: PropTypes.func.isRequired,
   replacePath: PropTypes.func.isRequired,
-  loadNotesByRedBookId: PropTypes.func.isRequired,
+  fetchNotes: PropTypes.func.isRequired,
   facebookLogin: PropTypes.func.isRequired,
   addNote: PropTypes.func.isRequired,
   addComment: PropTypes.func.isRequired,
@@ -209,7 +218,9 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, {
   facebookLogin,
   updateLoginUserInfo,
-  loadNotesByRedBookId,
+  fetchNotes,
+
+  fetchComments,
   addNote,
   addComment,
   deleteNote,

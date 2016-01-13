@@ -18,7 +18,7 @@ export default class RedBookNote extends Component {
 
   render() {
 
-    const { loginUser, pageForRedBook, note} = this.props;
+    const { loginUser, pageForRedBook, note, entityComments} = this.props;
     const { onLogin, onAddComment, onDeleteNote, onDeleteComment} = this.props;
     const { isOpenComment, isOpenContext } = this.state;
 
@@ -50,12 +50,13 @@ export default class RedBookNote extends Component {
         <div className="like">좋아요</div>
         <div className="dislike">싫어요</div>
         <div className="save">담기</div>
-        <div className="comments" onClick={this.handleOpenComment}>댓글({note.comments.length})</div>
+        <div className="comments" onClick={this.handleOpenComment.bind(null, note.id)}>댓글({note.comments.length})</div>
       </div>
 
       <NoteCommentList 
         loginUser={loginUser}
-        comments={note.comments || []} 
+        commentIds={note.comments || []} 
+        entityComments={entityComments}
         pageForRedBook={pageForRedBook}
         onLogin={onLogin}
         isOpenComment={isOpenComment}
@@ -65,10 +66,17 @@ export default class RedBookNote extends Component {
     </div>
   }
 
-  handleOpenComment = (e) => {
+  handleOpenComment = (noteId, e) => {
     this.setState({
       isOpenComment : !this.state.isOpenComment
-    })
+    });
+
+
+    console.log('TODO: 댓글을 패치해서 가져온다.');
+
+    this.props.onFetchComments(noteId)
+
+
   };
 
   handleOpenContext = (e) => {
@@ -82,7 +90,10 @@ RedBookNote.propTypes = {
   loginUser: PropTypes.object.isRequired,
   pageForRedBook: PropTypes.object.isRequired,
   note: PropTypes.object.isRequired,
+  entityComments: PropTypes.object.isRequired,
+
   onLogin: PropTypes.func.isRequired,
+  onFetchComments: PropTypes.func.isRequired,
   onAddComment: PropTypes.func.isRequired,
   onDeleteNote: PropTypes.func.isRequired,
   onDeleteComment: PropTypes.func.isRequired

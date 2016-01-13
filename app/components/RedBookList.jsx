@@ -126,7 +126,7 @@ export default class RedBookList extends Component {
     if( isFetching ){
       return <div className="RedBookList">
         <div className="loading">
-          <h2> <i className="fa fa-circle-o-notch fa-spin"></i> loading...</h2>
+          <h2> <i className="fa fa-circle-o-notch fa-spin" /> loading...</h2>
 
         </div>
         <div className="dimmed"></div>
@@ -136,8 +136,6 @@ export default class RedBookList extends Component {
     return <div className="wrap-RedBookList">
 
       {this.renderRedBooksByCurrentLocation(loginUser.current_location)}
-
-      <hr/>
 
       {this.renderRedBooks(loginUser.current_location)}
 

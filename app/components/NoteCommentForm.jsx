@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { findDOMNode } from 'react-dom';
 
 export default class NoteCommentForm extends Component {
 
@@ -24,6 +25,7 @@ export default class NoteCommentForm extends Component {
         type="text" 
         placeholder="댓글을 입력하세요." 
         autoFocus={true}
+        ref="cmtxt"
         onKeyPress={this.handleCheckEnter} />
       <button className="send" 
         onClick={this.handleSendComment}>입력</button>
@@ -82,11 +84,23 @@ export default class NoteCommentForm extends Component {
   };
 
   handleSendComment = (e) => {
-    this.setState({
-      commentText: e.target.value
-    });
 
-    this.props.onAddComment(e.target.value);
+    const node = findDOMNode(this.refs.cmtxt);
+    const text = node.value;
+
+    if( text.length < 1 ) {
+      alert('댓글이 비어 있습니다.');
+      node.focus();
+    
+    } else {
+
+      this.setState({
+        commentText: text
+      });
+
+      this.props.onAddComment(text);
+    }
+
   };
 
   handleFacebookLogin = (e) => {

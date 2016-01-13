@@ -5,7 +5,7 @@ import { pushPath as pushState, routeReducer } from 'redux-simple-router'
 import { combineReducers } from 'redux'
 
 // API 응답은 캐시를 위해 모두 entities에 저장한다. 
-function entities(state = { redBooks: {}, notes:{} }, action) {
+function entities(state = { redBooks: {}, notes:{}, comments:{} }, action) {
   
   if (action.response && action.response.entities) {
 
@@ -19,6 +19,9 @@ function entities(state = { redBooks: {}, notes:{} }, action) {
 
         return merge({}, state)
 
+      // 댓글이 추가 되면 노트의 댓글 목록에 아이디를 추가하고 엔터티에 저장한다.
+      case ActionTypes.ADD_COMMENT_SUCCESS: 
+        state.notes[action.noteId].comments.push(result);
 
       // 나머지는 모두 새로운 entities를 만들어 저장한다.
       default: 
@@ -27,15 +30,23 @@ function entities(state = { redBooks: {}, notes:{} }, action) {
     }
   }
 
-  if( action.response && ( action.type === 'ADD_COMMENT_SUCCESS' 
-                        || action.type === 'DELETE_COMMENT_SUCCESS')){
+  if( action.response && (action.type === 'DELETE_COMMENT_SUCCESS')){
 
-    const { comments, noteId } = action.response;
-    const notes = state.notes[noteId];
-    notes.comments = comments;
-    
+    const { commentId, noteId } = action.response;
+    let comments = state.notes[noteId].comments
+    let i=0;
+
+    for (; i< comments.length; ++i){
+      if( comments[i] === commentId ){
+        comments.splice(i,1);
+        break;
+      }
+    }
+
+    state.comments[commentId] = null;
+    delete state.comments[commentId]
+
     return merge({}, state);
-
   }
 
   if( action.response && action.type === 'DELETE_NOTE_SUCCESS') {
@@ -58,7 +69,7 @@ function entities(state = { redBooks: {}, notes:{} }, action) {
 function errorMessage(state = null, action) {
   const { type, error } = action
 
-  if (type === ActionTypes.RESET_ERROR_MESSAGE) {
+  if (type === 'RESET_ERROR_MESSAGE') {
     return null
   } else if (error) {
     return action.error

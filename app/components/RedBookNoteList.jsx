@@ -5,20 +5,22 @@ export default class RedBookNoteList extends Component {
 
   render(){
 
-    const { notes, ids, loginUser, pageForRedBook } = this.props;
-    const { onLogin, onAddComment, onDeleteNote, onDeleteComment} = this.props
+    const { entityNotes, entityComments, noteIds, loginUser, pageForRedBook } = this.props;
+    const { onLogin, onFetchComments, onAddComment, onDeleteNote, onDeleteComment} = this.props
 
     return <div className="RedBookNoteList">
-      { ids.map( (id, i) => {
+      { noteIds.map( (noteId, i) => {
         
-        const note = notes[id];
+        const note = entityNotes[noteId];
 
         return <RedBookNote key={i}
           loginUser={loginUser}
           pageForRedBook={pageForRedBook}
           note={note} 
+          entityComments={entityComments}
 
           onLogin={onLogin}
+          onFetchComments={onFetchComments}
           onDeleteNote={onDeleteNote}
           onAddComment={onAddComment} 
           onDeleteComment={onDeleteComment}
@@ -31,9 +33,13 @@ export default class RedBookNoteList extends Component {
 RedBookNoteList.propTypes = {
   loginUser: PropTypes.object.isRequired,
   pageForRedBook: PropTypes.object.isRequired,
-  ids: PropTypes.array.isRequired,
-  notes: PropTypes.object.isRequired,
+  noteIds: PropTypes.array.isRequired,
+  
+  entityNotes: PropTypes.object.isRequired,
+  entityComments: PropTypes.object.isRequired,
+
   onLogin: PropTypes.func.isRequired,
+  onFetchComments: PropTypes.func.isRequired,
   onAddComment: PropTypes.func.isRequired,
   onDeleteNote: PropTypes.func.isRequired,
   onDeleteComment: PropTypes.func.isRequired

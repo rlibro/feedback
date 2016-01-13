@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "RedBook": {
+      "applicationId": "oI9ho8CTpm5bFDliirnMFEdH3UGCzaBI8YHBtlnD"
+    },
+    "_default": {
+      "link": "RedBook"
+    }
+  }
+}

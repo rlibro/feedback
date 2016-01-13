@@ -28,7 +28,7 @@ export default class NoteComment extends Component {
     }
 
     if( stateDeleteComment === 'REQUESTING' && (index === this.state.deletingIndex) ){
-      return <div className="option">
+      return <div className="option on">
         <button className="delete" href="#" onClick={this.handleDeleteComment.bind(this, index)}>
           <i className="fa fa-spinner fa-pulse"/>
         </button>
@@ -39,6 +39,13 @@ export default class NoteComment extends Component {
   render(){
 
     const { comment } = this.props;
+
+    console.log( comment );
+
+    if( !comment ){
+      return false;     // 로딩중입니다... 
+    } 
+
 
     return <div className="NoteComment">
       <div className="profile photo">
@@ -72,7 +79,6 @@ export default class NoteComment extends Component {
 
 NoteComment.propTypes = {
   index: PropTypes.number.isRequired,
-  comment: PropTypes.object.isRequired,
   loginUser: PropTypes.object.isRequired,
   pageForRedBook: PropTypes.object.isRequired,
   onDeleteComment: PropTypes.func.isRequired

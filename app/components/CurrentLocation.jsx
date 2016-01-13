@@ -41,7 +41,9 @@ export default class CurrentLocation extends Component {
   }
 
   render(){
-    return <div className="CurrentLocation">
+    return false;
+
+    <div className="CurrentLocation">
       <p className="message">{this.state.message}</p>
     </div>
   }
@@ -70,7 +72,7 @@ export default class CurrentLocation extends Component {
     }
 
     if (navigator.geolocation) {
-      this.setState({message: 'finding current location...'})
+      this.setState({message: 'finding location...'})
       navigator.geolocation.getCurrentPosition(this.onSuccessPosition, this.onFailPosition);
     }
   

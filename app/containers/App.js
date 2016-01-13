@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { pushPath as pushState } from 'redux-simple-router'
-import { loadAllRedBooks, updateCurrentUserLocation, updateLoginUserInfo, findingKeyWord, logOutUser } from '../actions'
-
+import { fetchRedBooks } from '../actions'
+import { updateCurrentUserLocation, updateLoginUserInfo, logOutUser } from '../actions'
 import { resetErrorMessage, facebookLogin, updateAppState } from '../actions'
 
 import Header from '../components/Header'
@@ -13,7 +13,7 @@ import RedBookList from '../components/RedBookList'
 import Footer from '../components/Footer'
 
 function loadData(props) {
-  props.loadAllRedBooks()
+  props.fetchRedBooks()
 }
 
 class App extends Component {
@@ -42,7 +42,7 @@ class App extends Component {
   }
 
   render() {
-    const { children, loginUser, countries, redBooks, entities, path, appState} = this.props
+    const { loginUser, redBooks, entities, path, appState} = this.props
     
     let klass = (path !== '/')? 'sub':''
 
@@ -81,7 +81,7 @@ class App extends Component {
           onCreateRedBook={this.handleCreateRedBook}
           />
 
-        {children}
+        {this.props.children}
 
         <Footer />
       </div>
@@ -92,8 +92,11 @@ class App extends Component {
 
     window.fbAsyncInit = function() {
 
+      // 1155091951184116 테스트 버전
+      // 1155089597851018 베포 버전
+
       Parse.FacebookUtils.init({
-        appId      : '1155091951184116',
+        appId      : '1155089597851018',  
         cookie     : true,
         xfbml      : true,
         version    : 'v2.4'
@@ -109,10 +112,9 @@ class App extends Component {
 
         //console.log('세션 유저 있어!', sessionUser.toJSON())
 
-
         this.props.updateLoginUserInfo(sessionUser.toJSON())
       } else {
-        console.log('세션 유저 없으면 아무일도 없어 그냥 로그인해!!!')
+        //console.log('세션 유저 없으면 아무일도 없어 그냥 로그인해!!!')
       }
 
     }.bind(this);
@@ -178,7 +180,6 @@ function mapStateToProps(state) {
     appState: state.appState,
     errorMessage: state.errorMessage,
     loginUser: state.login,
-    countries: state.pagination.countries,
     redBooks: state.pagination.redBooks,
     entities: state.entities
   }
@@ -188,8 +189,7 @@ export default connect(mapStateToProps, {
   facebookLogin,
   resetErrorMessage,
   pushState,
-  findingKeyWord,
-  loadAllRedBooks,
+  fetchRedBooks,
   updateAppState,
   updateCurrentUserLocation,
   updateLoginUserInfo,
