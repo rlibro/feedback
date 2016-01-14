@@ -13,9 +13,7 @@ export default class NoteCommentForm extends Component {
 
   renderLogin = () => {
     return <div className="NoteCommentForm"> 
-      댓글을 남기시려면 
-      <a href="#" className="fa fa-facebook" 
-        onClick={this.handleFacebookLogin}> 페이스북으로 로그인</a> 해주세요!
+      if you leave a comment, please <a href="#" onClick={this.handleFacebookLogin}><i className="fa fa-facebook" />  login with facebook</a>
     </div>
   };
 

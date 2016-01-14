@@ -18,7 +18,7 @@ export default class RedBookNote extends Component {
 
   render() {
 
-    const { loginUser, pageForRedBook, note, entityComments} = this.props;
+    const { loginUser, pageForRedBook, note, entityComments, pagingComments} = this.props;
     const { onLogin, onAddComment, onDeleteNote, onDeleteComment} = this.props;
     const { isOpenComment, isOpenContext } = this.state;
 
@@ -48,7 +48,7 @@ export default class RedBookNote extends Component {
       <div className="content" dangerouslySetInnerHTML={{__html: contentText}}></div>
       <div className="controls">
         <div className="like">좋아요</div>
-        <div className="comments" onClick={this.handleOpenComment.bind(null, note.id)}><i className="fa fa-comments-o"/> 댓글({note.comments.length})</div>
+        <div className="comments" onClick={this.handleToggleComment.bind(null, note.id)}><i className="fa fa-comments-o"/> 댓글({note.comments.length})</div>
       </div>
 
       <NoteCommentList 
@@ -56,6 +56,8 @@ export default class RedBookNote extends Component {
         commentIds={note.comments || []} 
         entityComments={entityComments}
         pageForRedBook={pageForRedBook}
+        pagingComments={pagingComments}
+
         onLogin={onLogin}
         isOpenComment={isOpenComment}
         onAddComment={onAddComment.bind(null, note.id)} 
@@ -64,17 +66,17 @@ export default class RedBookNote extends Component {
     </div>
   }
 
-  handleOpenComment = (noteId, e) => {
+  handleToggleComment = (noteId, e) => {
+
+    const { isOpenComment } = this.state;
+
+    if( !isOpenComment ){
+       this.props.onFetchComments(noteId) 
+    }
+
     this.setState({
-      isOpenComment : !this.state.isOpenComment
+      isOpenComment: !isOpenComment
     });
-
-
-    console.log('TODO: 댓글을 패치해서 가져온다.');
-
-    this.props.onFetchComments(noteId)
-
-
   };
 
   handleOpenContext = (e) => {

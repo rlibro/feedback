@@ -96,7 +96,16 @@ const pagination = combineReducers({
       ActionTypes.NOTES_SUCCESS,
       ActionTypes.NOTES_FAILURE
     ]
+  }),
+  commentsByNoteId: paginate({
+    mapActionToKey: action => action.noteId,
+    types: [
+      ActionTypes.COMMENTS_REQUEST,
+      ActionTypes.COMMENTS_SUCCESS,
+      ActionTypes.COMMENTS_FAILURE
+    ]
   })
+
 
 })
 

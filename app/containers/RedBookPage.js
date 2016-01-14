@@ -9,7 +9,7 @@ import RedBookNoteForm from '../components/RedBookNoteForm'
 import RedBookNoteList from '../components/RedBookNoteList'
 
 
-function loadNotes(props) {
+function fetchNotesFromServer(props) {
   const { redBook } = props
 
   if( redBook ){
@@ -22,15 +22,15 @@ class RedBookPage extends Component {
 
   /**
    * 최소에 한번만 호출된다
+   * 로드된 레드북 노트목록과 캐싱 노트 목록을 비교해서 업데이트가 필요한 경우만 
+   * 서버에서 다시 노트를 패치해온다.
    */ 
   componentWillMount(){
 
-    if( this.props.redBook){
-      loadNotes(this.props);  
-    } else {
-      // console.log('페이지로 바로 접근한 경우에는 다음 업데이트때 책이 로드된다.!!')
+    // 페이지로 바로 접근한 경우에는 레드북이 패치된 다음에 업데이트 랜더링에서 처리한다. 
+    if( this.props.redBook ){
+      fetchNotesFromServer(this.props);
     }
-    
   }
 
   /**
@@ -56,7 +56,7 @@ class RedBookPage extends Component {
   componentWillUpdate(nextProps, nextState){
 
     if( nextProps.redBook && !this.props.redBook){
-      loadNotes(nextProps)
+      fetchNotesFromServer(nextProps)
     }
     
   }
@@ -73,24 +73,36 @@ class RedBookPage extends Component {
   };
 
   renderLoadingNotes = () => {
-    return <div className="RedBookNoteList">
-      <div className="loading">
-        <p><i className="fa fa-spinner fa-pulse"></i> Now loading notes, <br/>please wait a moment</p>
+    const { notes } = this.props;
+
+    if( !notes || notes.isFetching ) {
+
+      return <div className="RedBookNoteList">
+        <div className="loading">
+          <p><i className="fa fa-spinner fa-pulse"></i> Now loading notes, <br/>please wait a moment</p>
+        </div>
       </div>
-    </div>
+
+    } else {
+      return false;
+    }
   };
 
   renderNoteList = () => {
 
-    const { redBook, loginUser, notes, entities, pageForRedBook } = this.props;
-    const noteIds = notes.ids || [];
+    const { redBook, loginUser, notes, entities, pagingCommentsByNoteId, pageForRedBook } = this.props;
+    if( !notes ){
+      return false;
+    }
+
 
     return <RedBookNoteList
         loginUser={loginUser}
         pageForRedBook={pageForRedBook}
         entityNotes={entities.notes} 
         entityComments={entities.comments} 
-        noteIds={noteIds}
+        noteIds={notes.ids}
+        pagingCommentsByNoteId={pagingCommentsByNoteId}
 
         onLogin={this.handleFacebookLogin}
         onFetchComments={this.handleFetchComments}
@@ -98,17 +110,6 @@ class RedBookPage extends Component {
         onAddComment={this.handleAddComment}
         onDeleteComment={this.handleDeleteComment}
         />
-  };
-
-  renderRedBookNoteByState = () => {
-    const { notes } = this.props;
-
-    if( !notes || notes.isFetching ) {
-      return this.renderLoadingNotes();
-    } else {
-      return this.renderNoteList();  
-    }
-        
   };
 
   /**
@@ -130,7 +131,8 @@ class RedBookPage extends Component {
         loginUser={loginUser}
         onAddNote={this.handleAddNote.bind(null, redBook.id)} />
       
-      {this.renderRedBookNoteByState()}
+      {this.renderNoteList()}
+      {this.renderLoadingNotes()}
 
       <div className="dimmed"></div>
     </div>
@@ -184,7 +186,7 @@ RedBookPage.propTypes = {
 function mapStateToProps(state) {
 
   const {
-    pagination: { notesByRedBookId },
+    pagination: { notesByRedBookId, commentsByNoteId },
     entities: { redBooks },
     routing: { path }
   } = state
@@ -211,6 +213,7 @@ function mapStateToProps(state) {
     loginUser: state.login,
     redBook: redBooks[redBookId],
     notes: notesByRedBookId[redBookId],
+    pagingCommentsByNoteId: commentsByNoteId,
     entities: state.entities
   }
 }

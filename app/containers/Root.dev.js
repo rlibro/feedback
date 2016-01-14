@@ -3,6 +3,7 @@ import { Provider } from 'react-redux'
 import { Router, Route } from 'react-router'
 
 import App from './App'
+import UserProfilePage from './UserProfilePage'
 import RedBookPage from './RedBookPage'
 import NewRedBookPage from './NewRedBookPage'
 import DevTools from './DevTools'
@@ -18,6 +19,7 @@ export default class Root extends Component {
         <div id="wrap">
           <Router history={history}>
             <Route path="/" component={App}>
+              <Route path="/profile" component={UserProfilePage}/>
               <Route path="/:RedBookUID" component={RedBookPage}/>
               <Route path="/redbooks/:countryName" component={NewRedBookPage}/>
             </Route>

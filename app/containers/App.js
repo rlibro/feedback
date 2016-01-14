@@ -53,6 +53,8 @@ class App extends Component {
           appState={appState}
           onLogin={this.handleFacebookLogin}
           onLogOut={this.handleLogOut}
+
+          onPushState={this.props.pushState}
           onUpdateAppState={this.props.updateAppState}
           onUpdateCurrentUserLocation={this.props.updateCurrentUserLocation}
           />
@@ -64,6 +66,9 @@ class App extends Component {
         <SideBar 
           appState={appState}
           loginUser={loginUser}
+
+          onLogin={this.handleFacebookLogin}
+          onLogOut={this.handleLogOut}
           onUpdateAppState={this.props.updateAppState}
         />
 
@@ -96,7 +101,7 @@ class App extends Component {
       // 1155089597851018 베포 버전
 
       Parse.FacebookUtils.init({
-        appId      : '1155089597851018',  
+        appId      : '1155091951184116',  
         cookie     : true,
         xfbml      : true,
         version    : 'v2.4'

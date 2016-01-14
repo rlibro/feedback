@@ -6,11 +6,22 @@ import moment from 'moment'
 
 export default class NoteCommentList extends Component {
 
+  render() {
+
+    const { commentIds, isOpenComment } = this.props;
+
+    if( isOpenComment ){
+      return this.renderCommentList()
+    }else{
+      return false  
+    }
+  }
+
   renderCommentList = () => {
 
     const { loginUser, pageForRedBook, isOpenComment } = this.props;
     const { commentIds, entityComments } = this.props;
-    const { onLogin, onAddComment, onDeleteComment } = this.props
+    const { onLogin, onAddComment, onDeleteComment } = this.props;
 
     return <div className="NoteCommentList">
 
@@ -24,6 +35,8 @@ export default class NoteCommentList extends Component {
           />
       })}
 
+      {this.renderLodingState()}
+
       <NoteCommentForm 
         loginUser={loginUser}
         pageForRedBook={pageForRedBook}
@@ -34,17 +47,17 @@ export default class NoteCommentList extends Component {
     </div>
   };
 
-  render() {
+  renderLodingState = () => {
+    const { pagingComments } = this.props;
 
-    const { comments, isOpenComment } = this.props
-
-    if( isOpenComment ){
-      return this.renderCommentList()
-    }else{
-      return false  
+    if( pagingComments.isFetching ){
+      return <div className="loading">
+        <p><i className="fa fa-spinner fa-pulse"/> loading... </p>
+      </div>
     }
-    
-  }
+    return false;
+
+  };
 }
 
 NoteCommentList.propTypes = {

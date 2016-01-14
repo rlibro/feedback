@@ -4,6 +4,42 @@ import _ from 'lodash';
 
 export default class RedBookList extends Component {
 
+  /**
+   * 레드북 목록을 가져오거나 사용자의 위치정보가 업데이트 된 경우에만 다시 그림
+   */
+  shouldComponentUpdate(nextProps, nextState) {
+    const { redBooks, loginUser } = nextProps;
+  
+    if( (redBooks !== this.props.redBooks) || (loginUser && loginUser.current_location) ) {   
+      return true;
+    }
+
+    return false;
+  }
+
+  render() {
+
+    const { redBooks: {isFetching}, loginUser } = this.props;
+    
+    if( isFetching ){ return this.renderLoadingState() } 
+    else {
+      return <div className="wrap-RedBookList">
+        {this.renderRedBooksByCurrentLocation(loginUser.current_location)}
+        {this.renderRedBooks(loginUser.current_location)}
+      </div>
+    }
+  }
+
+  renderLoadingState = () =>{
+    return <div className="RedBookList">
+      <div className="loading">
+        <h2> <i className="fa fa-circle-o-notch fa-spin" /> loading...</h2>
+
+      </div>
+      <div className="dimmed"></div>
+    </div>
+  };
+
   renderNewRedBookCard = (hasThisCity, location) => {
 
     const { onCreateRedBook } = this.props;
@@ -81,6 +117,7 @@ export default class RedBookList extends Component {
     return false;
   };
 
+  // 사용자의 위치가 업데이트되면 원래 목록에서도 빼줘야한다.
   renderRedBooks = (location) => {
 
     const { redBooks, entities, onOpenRedBook } = this.props;
@@ -118,29 +155,6 @@ export default class RedBookList extends Component {
     }) }</ul>
 
   };
-
-  render() {
-
-    const { redBooks: {isFetching}, loginUser } = this.props;
-    
-    if( isFetching ){
-      return <div className="RedBookList">
-        <div className="loading">
-          <h2> <i className="fa fa-circle-o-notch fa-spin" /> loading...</h2>
-
-        </div>
-        <div className="dimmed"></div>
-      </div>
-    } 
-
-    return <div className="wrap-RedBookList">
-
-      {this.renderRedBooksByCurrentLocation(loginUser.current_location)}
-
-      {this.renderRedBooks(loginUser.current_location)}
-
-    </div>
-  }
 
 }
 

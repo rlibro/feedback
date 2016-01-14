@@ -1,28 +1,99 @@
+// Parse.Cloud.afterSave("Note", function(request) {
+//   var query = new Parse.Query("RedBook");
 
-// Use Parse.Cloud.define to define as many cloud functions as you want.
-// For example:
-Parse.Cloud.define("hello", function(request, response) {
-  response.success("Hello world!");
-});
+//   query.get(request.object.get("redBook").id, {
+//     success: function(redBook) {
+
+//       var notes = redBook.get('notes');
+//       var i=0, isNew = true;
+//       for(; i< notes.length; ++i){
+//         if( notes[i] === request.object.id) {
+//           isNew = false;
+//           break;
+//         }
+//       }
+
+//       if( isNew ){
+//         notes.push(request.object.id);
+//         redBook.set("notes", notes);
+//         redBook.save()        
+//       }
+
+//     },
+//     error: function(error) {
+//       console.error("Got an error afterSave Note: ", error);
+//     }
+//   });
+// });
 
 
-Parse.Cloud.define("addComment", function(request, response) {
-  response.success("Hello world!");
+Parse.Cloud.afterDelete("Note", function(request) {
+
+  // 관련 댓글도 모두 삭제한다. 
+  var query = new Parse.Query("Comment");
+  query.equalTo("parent", request.object);
+  query.find({
+    success: function(comments) {
+      Parse.Object.destroyAll(comments, {
+        success: function() {},
+        error: function(error) {
+          console.error("레드북에서 노트를 지우고 난뒤에 관련 댓글 지우다 에러났다!", error);
+        }
+      });
+    },
+    error: function(error) {
+      console.error("Error finding related comments ", error);
+    }
+  });
+
+  // // 일단 레드북 노트목록에서도 ID를 제거하고, 
+  // var redQuery = new Parse.Query("RedBook");
+  // redQuery.get(request.object.get("redBook").id, {
+  //   success: function(redBook) {
+
+  //     var notes = redBook.get('notes');
+  //     var i=0, isUpdate=false;
+
+  //     for( ; i < notes.length; ++i ){
+  //       if( notes[i] === request.object.id ){
+  //         notes.splice(i, 1);
+  //         isUpdate=true;
+  //         break;
+  //       }
+  //     }
+
+  //     if( isUpdate ){
+  //       redBook.set("notes", notes);
+  //       redBook.save()  
+  //     }
+  //},
+  //   error: function(error) {
+  //     console.error("노트를 지우다 에러났어!" + error);
+  //   }
+  // }); 
 });
 
 
 Parse.Cloud.afterSave("Comment", function(request) {
   var query = new Parse.Query("Note");
-  var cmtId = request.object.id;
-
+  
   query.get(request.object.get("parent").id, {
     success: function(note) {
 
       var comments = note.get('comments');
-      comments.push(cmtId);
+      var i=0, isNew = true;
+      for(; i< comments.length; ++i){
+        if( comments[i] === request.object.id) {
+          isNew = false;
+          break;
+        }
+      }
 
-      note.set("comments", comments);
-      note.save();
+      if( isNew ){
+        comments.push(request.object.id);
+        note.set("comments", comments);
+        note.save();      
+      }
 
     },
     error: function(error) {
@@ -33,45 +104,32 @@ Parse.Cloud.afterSave("Comment", function(request) {
 
 Parse.Cloud.afterDelete("Comment", function(request) {
   var query = new Parse.Query("Note");
-  var cmtId = request.object.id;
 
   query.get(request.object.get("parent").id, {
     success: function(note) {
 
-      var comments = note.get('comments');
-      var i=0; 
-      for( ; i<comments.length; ++i ){
-        if( comments[i] === cmtId ){
-          comments.splice(i, 1);
-          break;
+      if( note ){
+        var comments = note.get('comments');
+        var i=0, isUpdate=false;
+
+        for( ; i<comments.length; ++i ){
+          if( comments[i] === request.object.id ){
+            comments.splice(i, 1);
+            isUpdate=true;
+            break;
+          }
+        }
+
+        if( isUpdate ){
+          note.set("comments", comments);
+          note.save();  
         }
       }
-      note.set("comments", comments);
-      note.save();
-
     },
     error: function(error) {
-      console.error("Error deleting related comments ", error);
+      console.error("Error deleting related comments - ", JSON.stringify(error));
     }
   });
 
 });
 
-
-Parse.Cloud.afterDelete("Note", function(request) {
-  var query = new Parse.Query("Comment");
-  query.equalTo("parent", request.object);
-  query.find({
-    success: function(comments) {
-      Parse.Object.destroyAll(comments, {
-        success: function() {},
-        error: function(error) {
-          console.error("Error deleting related comments ", error);
-        }
-      });
-    },
-    error: function(error) {
-      console.error("Error finding related comments ", error);
-    }
-  });
-});

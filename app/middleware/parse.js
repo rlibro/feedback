@@ -116,8 +116,7 @@ const parseAPI = {
           author: {
             id: author.id,
             username: author.get('username'),
-            picture: author.get('picture'),
-            facebookId: author.get('authData').facebook.id
+            picture: author.get('picture')
           },
           text: result.get('text'),
           createdAt: result.get('createdAt')
@@ -140,21 +139,20 @@ const parseAPI = {
     const redBook = new RedBook();
     const note    = new Note();
 
-    return redBook
-    .save(params.RedBook)
-    .then(function(book){
+    redBook.set(params.RedBook);
+    note.set(params.Note);
+    note.set('redBook', redBook);
+    
+    return note.save()
+    .then(function(note){
+      let savedBook = note.get('redBook').toJSON();
+      clearObjectId(savedBook, 'creator');
+      return Object.assign({}, normalize(savedBook, schema));
 
-      params.Note.redBook = book;
-      note.save(params.Note);
-
-      let newbook = book.toJSON();
-
-      clearObjectId(newbook, 'creator');
-
-      return Object.assign({}, normalize(newbook, schema));
     }, function(error){
       return error.code + ', ' + error.message;
-    })
+    });
+
   }, 
 
   addNote: function(schema, params){
@@ -330,8 +328,8 @@ export default store => next => action => {
   next(actionWith({ type: requestType }))
 
   // For Debugging
-  if( requestType === 'REDBOOKS_REQUEST') {
-    //return;
+  if( requestType === 'COMMENTS_REQUEST') {
+  //  return;
   }
 
   // 성공과 실패에 대한 응답은 Promise 패턴으로 처리한다. 

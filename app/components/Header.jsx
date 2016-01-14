@@ -2,6 +2,32 @@ import React, { Component, PropTypes } from 'react'
 import { findDOMNode } from 'react-dom';
 
 export default class Header extends Component {
+  
+  render() {
+    const { loginUser, appState:{sidebar} } = this.props;
+
+    let klassName;
+    if( sidebar ){
+      klassName = 'stack-menu opened'
+    }else {
+      klassName = 'stack-menu'
+    }
+
+    return <header className="Header">
+    
+      <div className={klassName} onClick={this.handleToggleSideBar}>
+        <i className="fa fa-book"/>
+      </div>
+      <h1 className="logo" ref="logo">  
+        <a href="/" onClick={this.handleHome}>
+          <span>RedBook</span>
+        </a>
+      </h1>
+      { this.renderLoginUserInfo(loginUser) }
+      { this.renderFaceBookLogin(loginUser) }
+    
+    </header>
+  }
 
   renderFaceBookLogin = (loginUser) => {
     if( !loginUser.facebook || loginUser.facebook === 'LOADED' ) {
@@ -25,38 +51,13 @@ export default class Header extends Component {
           <img src={loginUser.picture}/>
         </div>
         <ul className="sub-menu">
+          <li><a href="#" onClick={this.handleProfile}><i className="fa fa-cog"></i> Profile</a></li>
           <li><a href="#" onClick={this.handleFacebookLogout}><i className="fa fa-sign-out"></i> Logout</a></li>
         </ul>
       </li>
       
     </ul>
   };
-  
-  render() {
-    const { loginUser, appState:{sidebar} } = this.props;
-
-    let klassName;
-    if( sidebar ){
-      klassName = 'stack-menu opened'
-    }else {
-      klassName = 'stack-menu'
-    }
-
-    return <header className="Header">
-    
-      <div className={klassName} onClick={this.handleToggleSideBar}>
-        <i className="fa fa-book"/>
-      </div>
-      <h1 className="logo" ref="logo">  
-        <a href="/">
-          <span>RedBook</span>
-        </a>
-      </h1>
-      { this.renderLoginUserInfo(loginUser) }
-      { this.renderFaceBookLogin(loginUser) }
-    
-    </header>
-  }
 
   handleToggleSideBar = (e) => {
     this.props.onUpdateAppState({
@@ -78,6 +79,16 @@ export default class Header extends Component {
     e.preventDefault();
   };
 
+  handleHome = (e) => {
+    this.props.onPushState('/');
+    e.preventDefault();
+  };
+
+  handleProfile = (e) => {
+    this.props.onPushState('/profile');
+    e.preventDefault();
+  };
+
   fetchUserInfo = () => {
     
     const { onUpdateLoginUser } = this.props;
@@ -93,6 +104,7 @@ export default class Header extends Component {
 Header.propTypes = {
   loginUser: PropTypes.object.isRequired,
   appState: PropTypes.object.isRequired,
+  onPushState: PropTypes.func.isRequired,
   onUpdateAppState: PropTypes.func.isRequired,
   onLogin: PropTypes.func.isRequired,
   onLogOut: PropTypes.func.isRequired
