@@ -100,6 +100,7 @@ button {
       }
 
       .photo {
+        cursor: pointer;
         width: 54px;
         height: 54px;
         margin-left: 10px;
@@ -118,7 +119,7 @@ button {
       right: 0px;
       z-index: 1000;
 
-      top: 55px;
+      top: 54px;
       width: 100px;
       text-align: right;
       padding: 5px 0;
@@ -829,6 +830,63 @@ button {
   }
 }
 
+.UserProfilePage {
+  .propfile {
+    border-bottom: 1px solid #dedede;
+    text-align: center;
+    padding: 20px 0;
+
+    .photo {
+      img {
+        border-radius: 5px;
+      }
+    }
+
+    .user-field {
+      margin-top: 10px;
+      button {
+        background-color: #fff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        border: solid 1px #ccc;
+        font-size: 13px;
+        outline: none;
+      }
+
+      input[type='text'] {
+        font-size: 13px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      .warning { 
+        padding: 5px 0;
+        font-size: 13px;
+        color: red;
+      }
+    }
+  }
+
+  .gps-location {
+    border-bottom: 1px solid #dedede;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .check-in-city {
+    border-bottom: 1px solid #dedede;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .check-in-state {
+    margin-top: 10px;
+  }
+
+}
+
+
 .Footer {
   clear: both;
   text-align: center;
@@ -1025,6 +1083,15 @@ button {
     .account-menu {
       text-align: center;
 
+      .photo {
+        width: 50px;
+        margin: 0 auto;
+        cursor: pointer;
+        img {
+          border-radius: 5px;
+        }
+      }
+
       .separator {
         border-bottom: 1px solid #e9eaed;
         margin: 5px 7px 6px;
@@ -1061,6 +1128,10 @@ button {
     .search-bar {
       width: 100%;
     }
+  }
+
+  .UserProfilePage {
+    margin-top: 54px;
   }
 
   .wrap-RedBookList {

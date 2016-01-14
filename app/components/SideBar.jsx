@@ -39,7 +39,7 @@ export default class SideBar extends Component {
     if( !loginUser.id ){ return false }
 
     return <li className="profile">
-      <div className="photo">
+      <div className="photo" onClick={this.handleProfile}>
         <img src={loginUser.picture}/>
       </div>
       <div>
@@ -104,21 +104,37 @@ export default class SideBar extends Component {
     });
   };
 
+  handleProfile = (e) => {
+    this.props.onPushState('/profile');
+    this.props.onUpdateAppState({
+      sidebar: false
+    });
+
+  };
+
   handleFacebookLogin = (e) => {
     this.props.onLogin();
+    this.props.onUpdateAppState({
+      sidebar: false
+    });
+
   };
 
   handleFacebookLogout = (e) => {
     this.props.onLogOut();
     e.preventDefault();
+    this.props.onUpdateAppState({
+      sidebar: false
+    });
   };
 
 }
 
 SideBar.propTypes = {
   appState: PropTypes.object.isRequired,
-  onUpdateAppState: PropTypes.func.isRequired,
   loginUser: PropTypes.object.isRequired,
   onLogin: PropTypes.func.isRequired,
-  onLogOut: PropTypes.func.isRequired
+  onLogOut: PropTypes.func.isRequired,
+  onUpdateAppState: PropTypes.func.isRequired,
+  onPushState: PropTypes.func.isRequired
 }

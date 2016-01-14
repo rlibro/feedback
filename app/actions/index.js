@@ -96,11 +96,10 @@ export function facebookLogin(update){
 
             facebookUser.location = res.location;
             
-            debugger;
             parseUser.save({
               facebookId: facebookUser.id,
               username: facebookUser.name,
-              email: facebookUser.email,
+              //email: facebookUser.email,
               location: facebookUser.location,
               picture: facebookUser.picture.data.url
             });

@@ -67,6 +67,7 @@ class App extends Component {
           appState={appState}
           loginUser={loginUser}
 
+          onPushState={this.props.pushState}
           onLogin={this.handleFacebookLogin}
           onLogOut={this.handleLogOut}
           onUpdateAppState={this.props.updateAppState}

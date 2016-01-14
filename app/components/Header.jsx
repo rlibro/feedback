@@ -47,7 +47,7 @@ export default class Header extends Component {
 
     return <ul className="account-menu">
       <li>
-        <div className="photo">
+        <div className="photo" onClick={this.handleProfile}>
           <img src={loginUser.picture}/>
         </div>
         <ul className="sub-menu">
