@@ -47,7 +47,7 @@ export default class RedBookNote extends Component {
       </div>
       <div className="content" dangerouslySetInnerHTML={{__html: contentText}}></div>
       <div className="controls">
-        <div className="like">좋아요</div>
+        <div className="like"><i className="fa fa-thumbs-o-up"/> 추천</div>
         <div className="comments" onClick={this.handleToggleComment.bind(null, note.id)}><i className="fa fa-comments-o"/> 댓글({note.comments.length})</div>
       </div>
 

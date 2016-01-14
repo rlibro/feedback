@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { facebookLogin,updateLoginUserInfo } from '../actions'
+import { facebookLogin, updateLoginUserInfo, checkInHere, checkOutHere } from '../actions'
 import { fetchNotes, addNote, deleteNote } from '../actions'
 import { fetchComments, addComment, deleteComment } from '../actions'
 import { pushPath as pushState, replacePath } from 'redux-simple-router'
@@ -61,6 +61,34 @@ class RedBookPage extends Component {
     
   }
 
+  /**
+   * 렌더링 함수는 무조건 호출되기 때문에 레드북이 없으면 렌더링 하지 않는다.
+   */
+  render() {
+    const { loginUser, redBook } = this.props;
+
+    // 레드북
+    if( !redBook ) { return this.renderLoadingRedBook()}
+ 
+    // 일단 커버와 입력폼을 로드한다. 
+    return <div className="RedBookPage">
+      <RedBookCover 
+        loginUser={loginUser} 
+        redBook={redBook}
+        onCheckInHere={this.props.checkInHere}
+        onCheckOutHere={this.props.checkOutHere}
+        onCloseRedBook={this.handleCloseRedBook} />
+      <RedBookNoteForm 
+        loginUser={loginUser}
+        onAddNote={this.handleAddNote.bind(null, redBook.id)} />
+      
+      {this.renderNoteList()}
+      {this.renderLoadingNotes()}
+
+      <div className="dimmed"></div>
+    </div>
+  }
+
   renderLoadingRedBook = () => {
 
     const { pageForRedBook: { cityName } } = this.props;
@@ -112,32 +140,6 @@ class RedBookPage extends Component {
         />
   };
 
-  /**
-   * 렌더링 함수는 무조건 호출되기 때문에 레드북이 없으면 렌더링 하지 않는다.
-   */
-  render() {
-    const { loginUser, redBook } = this.props;
-
-    // 레드북
-    if( !redBook ) { return this.renderLoadingRedBook()}
- 
-    // 일단 커버와 입력폼을 로드한다. 
-    return <div className="RedBookPage">
-      <RedBookCover 
-        loginUser={loginUser} 
-        redBook={redBook}
-        onCloseRedBook={this.handleCloseRedBook} />
-      <RedBookNoteForm 
-        loginUser={loginUser}
-        onAddNote={this.handleAddNote.bind(null, redBook.id)} />
-      
-      {this.renderNoteList()}
-      {this.renderLoadingNotes()}
-
-      <div className="dimmed"></div>
-    </div>
-  }
-
   handleFacebookLogin = () => {
     this.props.facebookLogin(this.props.updateLoginUserInfo);    
   };
@@ -167,7 +169,6 @@ class RedBookPage extends Component {
   handleDeleteComment = (noteId, commentId) => {
     this.props.deleteComment(commentId, noteId)
   };
-
   
 }
 
@@ -221,13 +222,16 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, {
   facebookLogin,
   updateLoginUserInfo,
+  checkInHere,
+  checkOutHere,
+  
   fetchNotes,
-
   fetchComments,
   addNote,
   addComment,
   deleteNote,
   deleteComment,
+
   pushState,
   replacePath
 })(RedBookPage)

@@ -143,6 +143,16 @@ function login(state = {}, action) {
     return merge({}, state)
   }
 
+  if( action.type === 'CHECKIN_SUCCESS') {
+    state.currentCity = action.response.city.uname;
+    return merge({}, state)
+  }
+
+  if( action.type === 'CHECKOUT_SUCCESS') {
+    state.currentCity = '';
+    return merge({}, state)
+  }
+
   return state
 }
 

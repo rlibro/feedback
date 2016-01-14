@@ -28,8 +28,10 @@ export default class RedBookCover extends Component {
     return <div style={style} className="RedBookCover">
       <div className="shadow"></div>
       <div className="cover-title-header">
-        <h2 className="city-name">{redBook.cityName}</h2>
-        <h4 className="country-name">{redBook.countryName}</h4>
+        <div className="title">
+          <h2 className="city-name">{redBook.cityName}</h2>
+          <h4 className="country-name">{redBook.countryName}</h4>
+        </div>
       </div>
       <div className="button-close">
         <i className="fa fa-times" onClick={onCloseRedBook}/>
@@ -38,23 +40,32 @@ export default class RedBookCover extends Component {
     </div>
   }
 
-  renderCheckIn =()=>{
-    const { loginUser: {current_location}, redBook } = this.props;
-
+  renderCheckIn = () =>{
+    const { loginUser, redBook } = this.props;
+    const { current_location, currentCity} = loginUser;
 
     if( current_location && current_location.countryName === redBook.countryName ){
-      return <div className="controls">
-        <button>체크인</button>
-      </div>      
+
+      if( currentCity === redBook.uname ){
+        return <div className="check-in">
+          <button onClick={this.props.onCheckOutHere}>Check-Out</button>
+        </div>       
+      } else {
+        return <div className="check-in">
+          <button onClick={this.props.onCheckInHere.bind(null, redBook.id, redBook.uname, current_location.latlng)}>Check-In</button>
+        </div> 
+      }
+     
     }else{
       return false;
     }
-
   };
 }
 
 RedBookCover.propTypes = {
   loginUser: PropTypes.object.isRequired,
   redBook: PropTypes.object.isRequired,
-  onCloseRedBook: PropTypes.func.isRequired
+  onCloseRedBook: PropTypes.func.isRequired,
+  onCheckInHere: PropTypes.func.isRequired,
+  onCheckOutHere: PropTypes.func.isRequired
 }

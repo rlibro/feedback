@@ -18,12 +18,28 @@ export default class RedBook extends Component {
         <h3>{redBook.cityName}</h3>
         <h4>{redBook.countryName}</h4>
       </a>
+      {this.renderYouAreHere()}
     </li>
   }
+
+  renderYouAreHere = () => {
+
+    if( !this.props.loginUser.id ) { return false}
+
+    const { loginUser:{currentCity}, redBook:{uname} } = this.props;
+
+    if( currentCity === uname) {
+      return <div className="youarehere">
+        <i className="fa fa-map-signs"/> You are here!
+      </div>
+    }
+   
+  };
 }
 
 RedBook.propTypes = {
   klassName: PropTypes.string.isRequired,
+  loginUser: PropTypes.object.isRequired,
   redBook : PropTypes.object.isRequired,
   onOpenRedBook : PropTypes.func.isRequired
 }

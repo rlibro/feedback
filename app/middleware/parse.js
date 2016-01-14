@@ -14,12 +14,13 @@ export const Schemas = {
   COMMENT: commentSchema,
   COMMENT_ARRAY: arrayOf(commentSchema),
   RESULT: resultSchema,
-  RESULT_ARRAY: arrayOf(resultSchema),
+  RESULT_ARRAY: arrayOf(resultSchema)
 }
 
 const RedBook = Parse.Object.extend('RedBook');
 const Note = Parse.Object.extend('Note');
 const Comment = Parse.Object.extend('Comment');
+const CheckIn = Parse.Object.extend('CheckIn');
 
 function clearObjectId(obj, key){
   obj.id = obj.objectId;
@@ -278,9 +279,60 @@ const parseAPI = {
     }, function(error){
       return error.code + ', ' + error.message;
     })
+  },
 
+  checkInHere: function(schema, params){
 
+    let checkIn = new CheckIn();
+    let geoPoint = new Parse.GeoPoint({
+      latitude: params.geo.lat,
+      longitude: params.geo.lng
+    });
+    let redBook = new RedBook();
+    redBook.id  = params.redBookId;
+
+    let user = Parse.User.current();
+    user.set('currentCity', params.uname);
+    user.save();
+
+    checkIn.set('person', params.person);
+    checkIn.set('city', redBook);
+    checkIn.set('geo', geoPoint);
+
+    return checkIn
+    .save()
+    .then(function(saved){
+
+      let savedJSON = saved.toJSON();
+      savedJSON.id = saved.id;
+      delete savedJSON.objectId;
+
+      return savedJSON;
+      
+    }, function(error){
+      return error.code + ', ' + error.message;
+    })
+    
+  },
+
+  checkOutHere: function(schema, params){
+
+    let user = params.person;
+    user.set('currentCity', '');
+    
+    return user
+    .save()
+    .then(function(user){
+
+      return 'OK' 
+
+    }, function(error){
+      return error.code + ', ' + error.message;
+    });
+    
   }
+
+
 }
 
 

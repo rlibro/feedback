@@ -8,6 +8,50 @@ export function resetErrorMessage(){
   }
 }
 
+export const CHECKIN_REQUEST = 'CHECKIN_REQUEST'
+export const CHECKIN_SUCCESS = 'CHECKIN_SUCCESS'
+export const CHECKIN_FAILURE = 'CHECKIN_FAILURE'
+export function checkInHere( redBookId, uname, latlng ){
+  return (dispatch, getState) => {
+    return dispatch(function() {
+      return {
+        [PARSE]: {
+          method: 'checkInHere',
+          types: [ CHECKIN_REQUEST, CHECKIN_SUCCESS, CHECKIN_FAILURE ],
+          params: {
+            redBookId: redBookId,
+            uname: uname,
+            person: Parse.User.current(),
+            geo: latlng
+          },
+          schema: 'NONE'
+        }
+      }
+    }())
+  }
+}
+
+export const CHECKOUT_REQUEST = 'CHECKOUT_REQUEST'
+export const CHECKOUT_SUCCESS = 'CHECKOUT_SUCCESS'
+export const CHECKOUT_FAILURE = 'CHECKOUT_FAILURE'
+export function checkOutHere( redBookId ){
+  return (dispatch, getState) => {
+    return dispatch(function() {
+      return {
+        [PARSE]: {
+          method: 'checkOutHere',
+          types: [ CHECKOUT_REQUEST, CHECKOUT_SUCCESS, CHECKOUT_FAILURE ],
+          params: {
+            person: Parse.User.current()
+          },
+          schema: 'NONE'
+        }
+      }
+    }())
+  }
+}
+
+
 export function facebookLogin(update){
 
   Parse.FacebookUtils.logIn('user_location,user_friends,email', {
@@ -54,7 +98,7 @@ export function facebookLogin(update){
 /**
  * 페이스북 로그인 정보를 저장한다. 
  */
-export function updateLoginUserInfo(userInfo){
+export function updateLoginUserInfo(userInfo, curLoc){
 
   if( userInfo.objectId ){
     userInfo.id = userInfo.objectId;
@@ -66,7 +110,7 @@ export function updateLoginUserInfo(userInfo){
     delete userInfo.createdAt;
     delete userInfo.updatedAt;
   }
-    
+
   return (dispatch, getState) => {
     return dispatch({
       type: 'UPDATE_LOGIN_USER_INFO',

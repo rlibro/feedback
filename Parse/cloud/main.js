@@ -1,3 +1,27 @@
+// 체크인 하면, 유저 정보에 현재 
+
+Parse.Cloud.afterSave("CheckIn", function(request) {
+  
+  var query = new Parse.Query(Parse.User);
+  
+  query.get(request.object.get("person").id, {
+    success: function(user) {
+
+      var redQuery = new Parse.Query('RedBook');
+      redQuery.get(request.object.get('city').id)
+      .then(function(redBook){
+
+        user.set('currentCity', redBook.get('uname'));
+        user.save();
+      })
+    },
+    error: function(error) {
+      console.error("Got an error " + error.code + " : " + error.message);
+    }
+  });
+});
+
+
 // Parse.Cloud.afterSave("Note", function(request) {
 //   var query = new Parse.Query("RedBook");
 

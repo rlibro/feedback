@@ -59,7 +59,7 @@ export default class RedBookList extends Component {
 
   renderRedBooksByCurrentLocation = (location) => {
 
-    let { entities : { redBooks }, onOpenRedBook, onCreateRedBook } = this.props;
+    let { entities : { redBooks }, onOpenRedBook, onCreateRedBook, loginUser } = this.props;
     let hasThisCity = false;
 
     if( location && location.cityName ){
@@ -106,7 +106,9 @@ export default class RedBookList extends Component {
               className += ' alt'
             }
 
-            return <RedBook key={i} redBook={redBook} klassName={className}
+            return <RedBook key={i}  klassName={className}
+              redBook={redBook}
+              loginUser={loginUser}
               onOpenRedBook={onOpenRedBook} />
         })}
         </ul>
@@ -120,7 +122,7 @@ export default class RedBookList extends Component {
   // 사용자의 위치가 업데이트되면 원래 목록에서도 빼줘야한다.
   renderRedBooks = (location) => {
 
-    const { redBooks, entities, onOpenRedBook } = this.props;
+    const { loginUser, redBooks, entities, onOpenRedBook } = this.props;
     const { isFetching } = redBooks;
     var ids = redBooks.ids || [];
 
@@ -147,8 +149,9 @@ export default class RedBookList extends Component {
           break;
       }
 
-      return <RedBook key={i} redBook={redBook} 
-              klassName={className}
+      return <RedBook key={i} klassName={className} 
+              redBook={redBook} 
+              loginUser={loginUser}
               onOpenRedBook={onOpenRedBook} />
     
 
