@@ -1,12 +1,15 @@
 import { Schema, arrayOf, normalize } from 'normalizr'
 import { camelizeKeys } from 'humps'
 
+const userSchema = new Schema('users', { idAttribute: 'id' })
 const redBookSchema = new Schema('redBooks', { idAttribute: 'id' })
 const noteSchema = new Schema('notes', {  idAttribute: 'id'})
 const commentSchema = new Schema('comments', {idAttribute: 'id'})
 const resultSchema = new Schema('findings', {  idAttribute: 'id'})
 
 export const Schemas = {
+  USER: userSchema,
+  USER_ARRAY: arrayOf(userSchema),
   REDBOOK: redBookSchema,
   REDBOOK_ARRAY: arrayOf(redBookSchema),
   NOTE: noteSchema,
@@ -40,6 +43,29 @@ function clearObjectId(obj, key){
 }
 
 const parseAPI = {
+
+  fetchCityPeoples: function(schema, params){
+
+    let query = new Parse.Query(Parse.User);
+    query.equalTo('currentCity', params.uname);
+
+    return query.find()
+    .then(function(data){
+
+      data.forEach(function(o, i, a){
+        const camelizedJson = o.toJSON();
+        clearObjectId(camelizedJson);
+        a[i] = camelizedJson;
+      });
+
+      return Object.assign({}, normalize(data, schema));
+
+    }, function(error) {
+      return error.code + ', ' + error.message;
+    });    
+  },
+
+
   fetchRedBooks: function (schema) {
 
     let query = new Parse.Query(RedBook);
@@ -198,7 +224,7 @@ const parseAPI = {
           id: author.id,
           username: author.get('username'),
           picture: author.get('picture'),
-          facebookId: author.get('authData').facebook.id
+          facebookId: author.get('facebookId')
         },
         text: result.get('text'),
         createdAt: result.get('createdAt')
@@ -331,7 +357,6 @@ const parseAPI = {
     });
     
   }
-
 
 }
 

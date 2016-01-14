@@ -8,6 +8,28 @@ export function resetErrorMessage(){
   }
 }
 
+// 이도시에 있는 사람을 불러온다. 
+export const CITY_PEOPLES_REQUEST = 'CITY_PEOPLES_REQUEST'
+export const CITY_PEOPLES_SUCCESS = 'CITY_PEOPLES_SUCCESS'
+export const CITY_PEOPLES_FAILURE = 'CITY_PEOPLES_FAILURE'
+export function fetchCityPeoples(uname) {
+  return (dispatch, getState) => {
+    return dispatch(function() {
+      return {
+        uname,
+        [PARSE]: {
+          method: 'fetchCityPeoples',
+          types: [ CITY_PEOPLES_REQUEST, CITY_PEOPLES_SUCCESS, CITY_PEOPLES_FAILURE ],
+          schema: Schemas.USER_ARRAY,
+          params: {
+            uname: uname
+          }
+        }
+      }
+    }())
+  }
+}
+
 export const CHECKIN_REQUEST = 'CHECKIN_REQUEST'
 export const CHECKIN_SUCCESS = 'CHECKIN_SUCCESS'
 export const CHECKIN_FAILURE = 'CHECKIN_FAILURE'
@@ -15,6 +37,8 @@ export function checkInHere( redBookId, uname, latlng ){
   return (dispatch, getState) => {
     return dispatch(function() {
       return {
+        uname: uname,
+        userId: Parse.User.current().id,
         [PARSE]: {
           method: 'checkInHere',
           types: [ CHECKIN_REQUEST, CHECKIN_SUCCESS, CHECKIN_FAILURE ],
@@ -34,10 +58,12 @@ export function checkInHere( redBookId, uname, latlng ){
 export const CHECKOUT_REQUEST = 'CHECKOUT_REQUEST'
 export const CHECKOUT_SUCCESS = 'CHECKOUT_SUCCESS'
 export const CHECKOUT_FAILURE = 'CHECKOUT_FAILURE'
-export function checkOutHere( redBookId ){
+export function checkOutHere( uname ){
   return (dispatch, getState) => {
     return dispatch(function() {
       return {
+        uname: uname,
+        userId: Parse.User.current().id,
         [PARSE]: {
           method: 'checkOutHere',
           types: [ CHECKOUT_REQUEST, CHECKOUT_SUCCESS, CHECKOUT_FAILURE ],
@@ -70,7 +96,9 @@ export function facebookLogin(update){
 
             facebookUser.location = res.location;
             
+            debugger;
             parseUser.save({
+              facebookId: facebookUser.id,
               username: facebookUser.name,
               email: facebookUser.email,
               location: facebookUser.location,

@@ -143,6 +143,7 @@ class App extends Component {
     const { loginUser } = this.props;
     Parse.User.logOut();
     this.props.logOutUser();
+    this.props.pushState('/');
   };
 
   handleDismissClick = (e) => { 
@@ -156,7 +157,7 @@ class App extends Component {
   };
 
   handleOpenRedBook = (redBook, e) => {
-    this.props.pushState(`/${redBook.uname}`)
+    this.props.pushState(`/guide/${redBook.uname}`)
     e.preventDefault()
   };
 

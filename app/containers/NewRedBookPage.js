@@ -25,7 +25,7 @@ class NewRedBookPage extends Component {
     if( nextProps.redBooks !== this.props.redBooks ) {
 
       setTimeout(function(){
-        this.props.replacePath(`/${this.props.redirect}`);
+        this.props.replacePath(`/guide/${this.props.redirect}`);
       }.bind(this), 400)    
       
     }

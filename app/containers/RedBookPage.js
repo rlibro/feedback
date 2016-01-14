@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { facebookLogin, updateLoginUserInfo, checkInHere, checkOutHere } from '../actions'
+import { facebookLogin, updateLoginUserInfo } from '../actions'
 import { fetchNotes, addNote, deleteNote } from '../actions'
 import { fetchComments, addComment, deleteComment } from '../actions'
 import { pushPath as pushState, replacePath } from 'redux-simple-router'
@@ -39,7 +39,11 @@ class RedBookPage extends Component {
    * 실제 레드북 정보가 없을수 있으므로 이럴때 무조건 홈으로 이동시켜버린다.
    */
   shouldComponentUpdate(nextProps, nextState) {
-    const { redBook, pageForRedBook: {stateRedBook} } = nextProps;
+    const { redBook, pageForRedBook: {stateRedBook} , childPath} = nextProps;
+
+    if( childPath.indexOf('people') > 1 ){
+      return true;
+    }
   
     if( stateRedBook === 'LOADED' && !redBook ) {
       this.props.replacePath('/')
@@ -66,18 +70,20 @@ class RedBookPage extends Component {
    */
   render() {
     const { loginUser, redBook } = this.props;
+    let klassName = 'RedBookPage';
 
     // 레드북
     if( !redBook ) { return this.renderLoadingRedBook()}
- 
+    if( this.props.children ) { klassName = 'RedBookPage open-child' }
+
     // 일단 커버와 입력폼을 로드한다. 
-    return <div className="RedBookPage">
+    return <div className={klassName}>
       <RedBookCover 
         loginUser={loginUser} 
         redBook={redBook}
-        onCheckInHere={this.props.checkInHere}
-        onCheckOutHere={this.props.checkOutHere}
+        onPushState={this.props.pushState}
         onCloseRedBook={this.handleCloseRedBook} />
+
       <RedBookNoteForm 
         loginUser={loginUser}
         onAddNote={this.handleAddNote.bind(null, redBook.id)} />
@@ -86,6 +92,8 @@ class RedBookPage extends Component {
       {this.renderLoadingNotes()}
 
       <div className="dimmed"></div>
+
+      {this.props.children}
     </div>
   }
 
@@ -181,7 +189,8 @@ RedBookPage.propTypes = {
   addNote: PropTypes.func.isRequired,
   addComment: PropTypes.func.isRequired,
   deleteNote: PropTypes.func.isRequired,
-  deleteComment: PropTypes.func.isRequired
+  deleteComment: PropTypes.func.isRequired,
+  children: PropTypes.node
 }
 
 function mapStateToProps(state) {
@@ -193,8 +202,14 @@ function mapStateToProps(state) {
   } = state
 
   let { pageForRedBook } = state;
+  let uname;
+  if( path.indexOf('people') > 1) {
+    uname = /\/guide\/(.*)\/people/.exec(path)[1];  
+  } else {
+    uname = path.split('/')[2];
+  }
 
-  const uname = path.substr(1) 
+   
   const [ cityName, countryName ] = uname.split(',');
 
   pageForRedBook.cityName = cityName.replace('_', ' ');
@@ -210,6 +225,7 @@ function mapStateToProps(state) {
   }
 
   return {
+    childPath: path,
     pageForRedBook: pageForRedBook,
     loginUser: state.login,
     redBook: redBooks[redBookId],
@@ -222,9 +238,7 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, {
   facebookLogin,
   updateLoginUserInfo,
-  checkInHere,
-  checkOutHere,
-  
+ 
   fetchNotes,
   fetchComments,
   addNote,

@@ -5,7 +5,7 @@ import { pushPath as pushState, routeReducer } from 'redux-simple-router'
 import { combineReducers } from 'redux'
 
 // API 응답은 캐시를 위해 모두 entities에 저장한다. 
-function entities(state = { redBooks: {}, notes:{}, comments:{} }, action) {
+function entities(state = { redBooks: {}, notes:{}, comments:{}, users:{} }, action) {
   
   if (action.response && action.response.entities) {
 
@@ -62,6 +62,14 @@ function entities(state = { redBooks: {}, notes:{}, comments:{} }, action) {
     return merge({}, state);   
   }
 
+  // 로그인한 유저정보도 기본으로 유저 목록에 넣어야한다.
+  if( action.type === 'UPDATE_LOGIN_USER_INFO' && action.login.id ) {
+
+    state.users[action.login.id] = action.login;
+    return merge({}, state);
+    
+  }
+
   return state
 }
 
@@ -104,7 +112,16 @@ const pagination = combineReducers({
       ActionTypes.COMMENTS_SUCCESS,
       ActionTypes.COMMENTS_FAILURE
     ]
+  }),
+  peoplesByUname: paginate({
+    mapActionToKey: action => action.uname,
+    types: [
+      ActionTypes.CITY_PEOPLES_REQUEST,
+      ActionTypes.CITY_PEOPLES_SUCCESS,
+      ActionTypes.CITY_PEOPLES_FAILURE
+    ]
   })
+
 
 
 })
@@ -197,7 +214,38 @@ function pageForRedBook(state = {
 
   switch(action.type){
 
-    // 댓글 추가
+    
+    // 체크인
+    case 'CHECKIN_SUCCESS':
+      state.stateCheckIn = 'READY';
+      return merge({}, state);
+    case 'CHECKIN_FAILURE':
+      state.stateCheckIn = 'FAIL';
+      return merge({}, state);
+    case 'CHECKIN_REQUEST':
+      state.stateCheckIn = 'REQUESTING';
+      return merge({}, state);
+
+    case 'CHECKOUT_SUCCESS':
+      state.stateCheckOut = 'READY';
+      return merge({}, state);
+    case 'CHECKOUT_FAILURE':
+      state.stateCheckOut = 'FAIL';
+      return merge({}, state);
+    case 'CHECKOUT_REQUEST':
+      state.stateCheckOut = 'REQUESTING';
+      return merge({}, state);
+
+
+
+    case 'ADD_COMMENT_SUCCESS':
+      state.stateAddComment = 'READY';
+      return merge({}, state);
+
+    case 'ADD_COMMENT_FAILURE':
+      state.stateAddComment = 'FAIL';
+      return merge({}, state);
+
     case 'ADD_COMMENT_REQUEST':
       state.stateAddComment = 'REQUESTING';
       return merge({}, state);
@@ -210,7 +258,6 @@ function pageForRedBook(state = {
       state.stateAddComment = 'FAIL';
       return merge({}, state);
 
-    // 댓글 삭제 
     case 'DELETE_COMMENT_REQUEST':
       state.stateDeleteComment = 'REQUESTING';
       return merge({}, state);
@@ -223,8 +270,6 @@ function pageForRedBook(state = {
       state.stateDeleteComment = 'FAIL';
       return merge({}, state);
 
-
-    // 레드북 패치
     case 'REDBOOKS_REQUEST':
       state.stateRedBook = 'REQUESTING'
       return merge({}, state);

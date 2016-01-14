@@ -30,6 +30,14 @@ export default function paginate({ types, mapActionToKey }) {
           isFetching: true
         })
       case successType:
+
+        if( successType === 'CITY_PEOPLES_SUCCESS'){
+          return merge({}, state, {
+            isFetching: false,
+            ids: action.response.result
+          })
+        }
+
         return merge({}, state, {
           isFetching: false,
           ids: union(state.ids, action.response.result),
@@ -72,6 +80,29 @@ export default function paginate({ types, mapActionToKey }) {
 
       return merge({}, state); 
     }
+
+    // 체크인하면 아이디를 기록하고,
+    if( action.type === 'CHECKIN_SUCCESS' && state[action.uname]){
+      state[action.uname].ids.unshift(action.userId);
+      return merge({}, state); 
+    }
+
+    // 체크아웃하면 아이디를 빼준다.
+    if( action.type === 'CHECKOUT_SUCCESS' && state[action.uname]){
+
+      let peoples = state[action.uname].ids;
+
+      for (let i=0; i < peoples.length; ++i){
+      
+        if( peoples[i] === action.userId ){
+          peoples.splice(i, 1);
+          break;
+        }
+      }
+
+      return merge({}, state); 
+    }
+
 
 
     // 레드북이 추가되면 페이지 네이션에 아이디를 넣는다.  
