@@ -45,7 +45,7 @@ export default class RedBookNoteForm extends Component {
       return <div className="RedBookNoteForm">
         <div className="note-form-header">
           <button onClick={this.handleFormMode.bind(this,'NOTE')} className="on">정보</button>
-          <button onClick={this.handleFormMode.bind(this,'CHECKIN')}>장소</button>
+          {/*<button onClick={this.handleFormMode.bind(this,'CHECKIN')}>장소</button>*/}
         </div>  
         <textarea ref="textarea" className="text" autoFocus={true} placeholder="Share your exprience in this city!"></textarea>
           

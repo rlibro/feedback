@@ -15,4 +15,10 @@ UI 개발할때는 서버 로직 보다는 React+Redux 개발이 많으므로 �
 빌드는 다음 명령을 이용한다. 
 
     $> npm run build
+
+## Parse 서버에 배포 방법 
+
+    $> NODE_ENV=production npm run build  (프로덕션 모드로 빌드)
+    $> cd Parse
+    $/Parse> parse deploy
     

@@ -1,7 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import { findDOMNode } from 'react-dom';
-import Select from 'react-select';
-
 
 export default class NewRedBookForm extends Component {
 

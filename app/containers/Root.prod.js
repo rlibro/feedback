@@ -3,8 +3,10 @@ import { Provider } from 'react-redux'
 import { Router, Route } from 'react-router'
 
 import App from './App'
+import UserProfilePage from './UserProfilePage'
 import RedBookPage from './RedBookPage'
 import NewRedBookPage from './NewRedBookPage'
+import CityPeoplePage from './CityPeoplePage'
 
 export default class Root extends Component {
   
@@ -16,7 +18,10 @@ export default class Root extends Component {
         <div id="wrap">
           <Router history={history}>
             <Route path="/" component={App}>
-              <Route path="/:RedBookUID" component={RedBookPage}/>
+              <Route path="/profile" component={UserProfilePage}/>
+              <Route path="/guide/:uname" component={RedBookPage}>
+                <Route path="/guide/:uname/people" component={CityPeoplePage}/>
+              </Route>
               <Route path="/redbooks/:countryName" component={NewRedBookPage}/>
             </Route>
           </Router>

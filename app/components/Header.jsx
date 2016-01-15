@@ -20,7 +20,7 @@ export default class Header extends Component {
       </div>
       <h1 className="logo" ref="logo">  
         <a href="/" onClick={this.handleHome}>
-          <span>RedBook</span>
+          <span>rlibro</span>
         </a>
       </h1>
       { this.renderLoginUserInfo(loginUser) }
@@ -51,7 +51,6 @@ export default class Header extends Component {
           <img src={loginUser.picture}/>
         </div>
         <ul className="sub-menu">
-          <li><a href="#" onClick={this.handleProfile}><i className="fa fa-cog"></i> Profile</a></li>
           <li><a href="#" onClick={this.handleFacebookLogout}><i className="fa fa-sign-out"></i> Logout</a></li>
         </ul>
       </li>

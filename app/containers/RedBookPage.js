@@ -203,6 +203,7 @@ function mapStateToProps(state) {
 
   let { pageForRedBook } = state;
   let uname;
+
   if( path.indexOf('people') > 1) {
     uname = /\/guide\/(.*)\/people/.exec(path)[1];  
   } else {

@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import { pushPath as pushState, replacePath } from 'redux-simple-router'
 import { checkInHere, checkOutHere } from '../actions'
 import { fetchCityPeoples } from '../actions'
+import { findDOMNode } from 'react-dom'
+import _ from 'lodash'
 
 function fetchPeoplesFromServer(props){
 
@@ -45,14 +47,13 @@ class CityPeoplePage extends Component {
 
       <div className="headline">
         <h2>We are here!</h2>
-        <p>if you need my help, contact me!</p>
       </div>
+
+      { this.renderCheckIn() }
 
       <div className="button-close">
         <i className="fa fa-times" onClick={this.hanldeCloseRedBook}/>
       </div>
-
-      {this.renderCheckIn()}
 
       <hr/>
 
@@ -66,15 +67,12 @@ class CityPeoplePage extends Component {
 
     if( current_location && current_location.countryName === redBook.countryName ){
 
-      if( currentCity === redBook.uname ){
-        return <div className="check-in">
-          <button onClick={this.props.checkOutHere.bind(null, redBook.uname)}>Check-Out</button>
-        </div>       
-      } else {
-        return <div className="check-in">
-          <button onClick={this.props.checkInHere.bind(null, redBook.id, redBook.uname, current_location.latlng)}>Check-In</button>
+      if( currentCity !== redBook.uname ){
+        return <div className="join-us">
+          <button onClick={this.handleJoinUs.bind(this, redBook.id, redBook.uname, current_location.latlng)}><i ref="join"/>join us!</button>
         </div> 
       }
+      return false;
      
     }else{
       return false;
@@ -110,17 +108,84 @@ class CityPeoplePage extends Component {
     }
 
     return ids.map(function(id, i){
-      const user = users[id];
+      let user = users[id];
+      let isNoState = _.every(user.state, function(value){
+        return !value
+      });
 
-      return <div key={i}>
-        <div className="photo">
-          <img src={user.picture}/>
+      let klassName = 'people';
+      if( i % 2 === 1 ) {
+        klassName = 'people alt';
+      }
+
+      return <div key={i} className={klassName}>
+        <div className="proflie">
+          <div className="photo">
+            <img src={user.picture}/>
+          </div>
+          {this.renderUserProfile(user, isNoState)}
+          <div className="note">{user.note}</div>
         </div>
-        <a href={`http://facebook.com/${user.facebookId}`} target="blank">{user.username}</a>
+
+        { this.renderCheckInStateByPerson(user, isNoState) }
+      </div>
+        
+    }.bind(this))
+
+  };
+
+  renderUserProfile = (user, isNoState) => {
+    let state = user.state;
+    if( !state || isNoState ){
+      return <div className="name">
+        {user.username}
       </div>
 
-    })
+    }else{
+      return <div className="name">
+        <a href={`http://facebook.com/${user.facebookId}`} target="blank">
+        <i className="fa fa-facebook" /> {user.username}
+        </a>
+      </div>
+    }
 
+
+  };
+
+  renderCheckInStateByPerson = (user, isNoState) => {
+
+    let state = user.state;
+
+    if( !state || isNoState) {
+      
+      return <div className="state">
+        <div className="sign">Don't touch me!</div>
+      </div>
+
+    } else {
+      return <div className="state">
+
+        { _.map( state, function(value, key, user){
+          let klassName = `fa fa-${key}`
+
+          if( value ) {
+            return <div className="sign" key={key}><i className={klassName}/></div>
+          }
+
+        })}
+
+      </div>
+
+    }
+  
+  };
+
+  handleJoinUs = (redBookId, uname, latlng, e) => {
+      
+    const node = findDOMNode(this.refs.join);
+    node.className = 'fa fa-spinner fa-pulse';
+
+    this.props.checkInHere(redBookId, uname, latlng);
   };
 
 
