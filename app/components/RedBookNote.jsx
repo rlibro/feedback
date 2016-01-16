@@ -25,7 +25,7 @@ export default class RedBookNote extends Component {
     const contentText = 
       note.content
         .replace(/(.*)\n(.*)/g, '<p>$1<br/></p><p>$2</p>')
-        .replace(/\s/g, '<span></span>')
+        .replace(/\s\s/g, '<span></span>')
 
     return <div className="RedBookNote">
       <div className="note-header">

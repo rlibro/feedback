@@ -1,5 +1,6 @@
-// 체크인 하면, 유저 정보에 현재 
+require('cloud/app.js');
 
+// 체크인 하면, 유저 정보에 현재 
 Parse.Cloud.afterSave("CheckIn", function(request) {
   
   var query = new Parse.Query(Parse.User);

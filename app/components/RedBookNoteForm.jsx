@@ -7,6 +7,7 @@ export default class RedBookNoteForm extends Component {
     super(props);
 
     this.state = {
+      lineCount: 0,
       formMode: 'NOTE'
     }
   }
@@ -37,8 +38,17 @@ export default class RedBookNoteForm extends Component {
 
   renderFormByMode = () => {
 
-    const { formMode } = this.state;
+    const { formMode, lineCount } = this.state;
     const { loginUser } = this.props;
+    let style = {height:'72px'}
+
+    if( 3 < lineCount ) {
+      style = {
+        height: `${18 + (18 * lineCount)}px`
+      }
+    } 
+
+    console.log('--->', lineCount, 18 * lineCount );
     
 
     if( formMode === 'NOTE') {
@@ -47,7 +57,11 @@ export default class RedBookNoteForm extends Component {
           <button onClick={this.handleFormMode.bind(this,'NOTE')} className="on">Note</button>
           {/*<button onClick={this.handleFormMode.bind(this,'CHECKIN')}>장소</button>*/}
         </div>  
-        <textarea ref="textarea" className="text" autoFocus={true} placeholder="Share your exprience in this city!"></textarea>
+        <textarea ref="textarea" className="text" style={style}
+                  onKeyDown={this.handleKeyDown} 
+                  autoFocus={true} 
+                  placeholder="Share your exprience in this city!">
+        </textarea>
           
         <div className="note-form-footer">
           <button onClick={this.handleAddNote}>Post</button>
@@ -100,6 +114,22 @@ export default class RedBookNoteForm extends Component {
     this.setState({
       formMode: mode
     });
+  };
+
+  handleKeyDown = (e) => {
+
+    if(e.key === 'Enter' || e.key === 'Backspace') {
+
+      const node = findDOMNode(this.refs.textarea);
+      const text = node.value;
+
+      var lines = text.split('\n');
+      this.setState({
+        lineCount: lines.length
+      });
+
+    }
+
   };
 
   handleCheckIn = (e) => {
