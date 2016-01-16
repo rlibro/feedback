@@ -28,8 +28,6 @@ export default class RedBookNoteForm extends Component {
 
   render() {
 
-    //console.log( 'RedBookNoteForm --> ', this.props.loginUser )
-
     const { loginUser } = this.props;
     return loginUser.id ? this.renderFormByMode() : false;
     
@@ -46,10 +44,9 @@ export default class RedBookNoteForm extends Component {
       style = {
         height: `${18 + (18 * lineCount)}px`
       }
-    } 
+    }
 
-    console.log('--->', lineCount, 18 * lineCount );
-    
+    console.log('--->', lineCount, style.height)
 
     if( formMode === 'NOTE') {
       return <div className="RedBookNoteForm">
@@ -123,9 +120,14 @@ export default class RedBookNoteForm extends Component {
       const node = findDOMNode(this.refs.textarea);
       const text = node.value;
 
-      var lines = text.split('\n');
+      var lineCount = text.split('\n').length;
+
+      if( e.key === 'Backspace' ) {
+        lineCount--;
+      }
+
       this.setState({
-        lineCount: lines.length
+        lineCount: lineCount
       });
 
     }
