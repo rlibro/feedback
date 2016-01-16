@@ -50,6 +50,7 @@ button {
  * 레드북 헤더
  */
 .Header {
+  position: relative;
   background-color: #ff4842;
   height: 54px;
   line-height: 54px;
@@ -74,6 +75,29 @@ button {
       display: inline-block;
       height: 54px;
     }
+    .service-name {
+      position: relative;
+      top: -4px;
+    }
+  }
+
+  .beta {
+    font-size: 12px;
+    position: absolute;
+    font-weight: normal;
+    top: -16px;
+    left: 65px;
+  }
+
+
+  .tagline {
+    color: #fff;
+    font-size: 11px;
+    position: absolute;
+    left: 12px;
+    top: 37px;
+    line-height: 12px;
+    font-weight: normal;
   }
 
   .account-menu {
@@ -265,6 +289,16 @@ button {
     background-color: #ff7872;
     text-align: center;
 
+    h4 {
+      font-size: 15px;
+    }
+
+    p {
+      padding-top: 10px;
+      font-size: 12px;
+    }
+
+
     &:hover {
       background-color: #f17165;
     }
@@ -347,6 +381,24 @@ button {
     width: 800px;
     height: 360px;
   }
+
+  .button-refresh {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+
+    i {
+      font-size: 30px;
+      padding: 8px;
+      opacity: 0.7;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+  }
 }
 
 .RedBookPage {
@@ -427,22 +479,24 @@ button {
     margin: 0 auto;
     position: absolute;
     text-align: center;
-    bottom: 5px;
-    right: 5px;
+    bottom: 15px;
+    right: 10px;
 
     button {
       padding: 10px 15px;
       margin: 0 5px;
       border-radius: 5px;
-      background-color: transparent;
+      background-color: #2a2a2a;
       border: 1px solid #FFF;
       color: #FFF;
       font-size: 14px;
       outline: none;
+      opacity: 0.8;
+
 
       &:hover {
-        background-color: #2a2a2a;
-        opacity: 0.8;
+        background-color: transparent;
+        opacity: 1;
       }
     }
   }
@@ -1051,6 +1105,11 @@ button {
   .facebook a {
     color: #3b5998;
   }
+
+  .feedback a {
+   color: #222;
+   text-decoration: underline; 
+  }
 }
 
 
@@ -1081,6 +1140,7 @@ button {
       margin-top: 0px;
       margin-left: 5px;
       margin-right: 5px;
+
     }
 
     &.left, &.right {
@@ -1200,6 +1260,19 @@ button {
       top: -5px;
       left: -10px;
     }
+
+    .beta {
+      top: -14px;
+      left: 50px;
+    }
+
+
+    .tagline {
+      left: -4px;
+      top: 40px;
+      width: 120px;
+    }
+
 
     .account-menu {
       li .message, li .photo, li .fb-login {

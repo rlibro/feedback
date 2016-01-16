@@ -20,9 +20,12 @@ export default class Header extends Component {
       </div>
       <h1 className="logo" ref="logo">  
         <a href="/" onClick={this.handleHome}>
-          <span>rlibro</span>
+          <span className="service-name">rlibro</span>
+          <span className="beta">beta</span>
         </a>
+        <span className="tagline">social travel guide</span>
       </h1>
+
       { this.renderLoginUserInfo(loginUser) }
       { this.renderFaceBookLogin(loginUser) }
     

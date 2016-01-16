@@ -6,7 +6,8 @@ logs
 node_modules
 
 # Parse Project
-Parse
+Parse*
+Parse/public*
 
 # IDE Configuration
 *.iml

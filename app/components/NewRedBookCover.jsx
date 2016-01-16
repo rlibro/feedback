@@ -6,6 +6,7 @@ export default class NewRedBookCover extends Component {
     super(props);
 
     this.state = {
+      images: [],
       imageSrc: false
     };
   }
@@ -25,6 +26,9 @@ export default class NewRedBookCover extends Component {
       <div className="cover-title-header">
         <h2 className="city-name">{newRedBook.cityName}</h2>
         <h4 className="country-name">{newRedBook.countryName}</h4>
+      </div>
+      <div className="button-refresh">
+        <i className="fa fa-refresh" onClick={this.handleRefresh}/>
       </div>
     </div>
   }
@@ -49,6 +53,8 @@ export default class NewRedBookCover extends Component {
       var imageSrc = data.items[rnd]['media']['m'].replace('_m', '_b');
 
       this.setState({
+        images: data.items,
+        seedRnd: rnd,
         imageSrc: imageSrc
       });
 
@@ -63,6 +69,27 @@ export default class NewRedBookCover extends Component {
     if( this.state.imageSrc ){
       return <img src={this.state.imageSrc} />
     }
+
+  };
+
+  handleRefresh = () => {
+
+    let {seedRnd, images} = this.state;
+
+    if( seedRnd < images.length-1 ) {
+      seedRnd++;
+    } else {
+      seedRnd = 0;
+    }
+
+    var imageSrc = images[seedRnd]['media']['m'].replace('_m', '_b');
+    this.setState({
+      seedRnd: seedRnd,
+      imageSrc: imageSrc
+    });
+
+    this.props.setCoverImageForNewRedBook({coverImage:imageSrc});
+
 
   };
 }

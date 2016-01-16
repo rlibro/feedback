@@ -129,7 +129,7 @@ class UserProfilePage extends Component {
           <tbody>
             <tr>
               <td className="sign"><i className="fa fa-exchange"/></td>
-              <td className="meaning">I want exchange money</td>
+              <td className="meaning">I wanna exchange money</td>
             </tr>
             <tr>
               <td className="sign"><i className="fa fa-companion"/></td>
@@ -137,7 +137,7 @@ class UserProfilePage extends Component {
             </tr>
             <tr>
               <td className="sign"><i className="fa fa-coffee"/></td>
-              <td className="meaning">I want to talk with somebody</td>
+              <td className="meaning">I wanna talk with someone</td>
             </tr>
           </tbody>
         </table>

@@ -44,13 +44,13 @@ export default class RedBookNoteForm extends Component {
     if( formMode === 'NOTE') {
       return <div className="RedBookNoteForm">
         <div className="note-form-header">
-          <button onClick={this.handleFormMode.bind(this,'NOTE')} className="on">정보</button>
+          <button onClick={this.handleFormMode.bind(this,'NOTE')} className="on">Note</button>
           {/*<button onClick={this.handleFormMode.bind(this,'CHECKIN')}>장소</button>*/}
         </div>  
         <textarea ref="textarea" className="text" autoFocus={true} placeholder="Share your exprience in this city!"></textarea>
           
         <div className="note-form-footer">
-          <button onClick={this.handleAddNote}>게시</button>
+          <button onClick={this.handleAddNote}>Post</button>
         </div>
       </div>
     }
@@ -58,7 +58,7 @@ export default class RedBookNoteForm extends Component {
     if( formMode === 'CHECKIN'){
       return <div className="RedBookNoteForm">
         <div className="note-form-header">
-          <button onClick={this.handleFormMode.bind(this,'NOTE')}>정보</button>
+          <button onClick={this.handleFormMode.bind(this,'NOTE')}>Note</button>
           <button onClick={this.handleFormMode.bind(this,'CHECKIN')} className="on">장소</button>
         </div>  
         <div className="checkin-options">

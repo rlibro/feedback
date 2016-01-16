@@ -69,7 +69,7 @@ class CityPeoplePage extends Component {
 
       if( currentCity !== redBook.uname ){
         return <div className="join-us">
-          <button onClick={this.handleJoinUs.bind(this, redBook.id, redBook.uname, current_location.latlng)}><i ref="join"/>join us!</button>
+          <button onClick={this.handleJoinUs.bind(this, redBook.id, redBook.uname, current_location.latlng)}><i ref="join"/>join this city!</button>
         </div> 
       }
       return false;
@@ -100,8 +100,9 @@ class CityPeoplePage extends Component {
     if( ids.length === 0){
 
       return <div className="nobody-here">
-        <p>현재 이곳에 머물고 있는 사람이 없습니다.</p>
-        <p>이곳에서 다른 사람과 교류해보세요.</p>
+        <p>Now nobody stay in here.</p>
+        <p>if you wanna communicate others</p>
+        <p>please make sure your GPS on and join this city</p>
         {this.renderCheckIn()}
       </div>
 

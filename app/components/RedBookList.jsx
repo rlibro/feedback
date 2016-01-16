@@ -46,8 +46,8 @@ export default class RedBookList extends Component {
 
     if( !hasThisCity ){
       return <li className="RedBook create-book" onClick={onCreateRedBook.bind(this,location)}>
-        <h3>You are in {location.cityName}</h3>
-        <h4>Be the pioneer of {location.countryName}</h4>
+        <h4>You are in {location.cityName}</h4>
+        <p>Be the pioneer of {location.countryName}</p>
         <div className="sign">
           <i className="fa fa-plus-circle" />
         </div>
