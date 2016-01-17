@@ -274,7 +274,7 @@ const parseAPI = {
 
     let note = new Note();
     note.id = params.noteId;
-    
+
     return note
     .save({content: params.newText})
     .then(function(redBookNote){
@@ -424,7 +424,7 @@ export default store => next => action => {
   next(actionWith({ type: requestType }))
 
   // For Debugging
-  if( requestType === 'COMMENTS_REQUEST') {
+  if( requestType === 'ADD_NOTE_REQUEST') {
   //  return;
   }
 

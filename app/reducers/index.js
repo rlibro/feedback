@@ -205,6 +205,9 @@ function pageForRedBook(state = {
   stateLoaded: 'READY', 
   stateAddComment:'READY',
   stateDeleteComment:'READY',
+  addNote: {
+    state: 'READY'
+  },
   updateNote: {
     id: null, 
     state: 'READY'
@@ -217,22 +220,37 @@ function pageForRedBook(state = {
   }
 
   switch(action.type){
-    case 'UPDATE_NOTE_REQUEST': 
 
+    // 노트 쓰기
+    case 'ADD_NOTE_REQUEST': 
+      state.addNote = {
+        state: 'REQUESTING'
+      }
+      return merge({}, state);
+    case 'ADD_NOTE_SUCCESS': 
+      state.addNote = {
+        state: 'SUCCESS'
+      }
+      return merge({}, state);
+    case 'RESET_ADD_NOTE': 
+      state.addNote = {
+        state: 'READY'
+      }
+      return merge({}, state);
+
+    // 노트수정
+    case 'UPDATE_NOTE_REQUEST': 
       state.updateNote = {
         id: action.noteId,
         state: 'REQUESTING'
       }
       return merge({}, state);
-
     case 'UPDATE_NOTE_SUCCESS': 
-
       state.updateNote = {
         id: action.noteId,
         state: 'SUCCESS'
       }
       return merge({}, state);
-
     case 'RESET_UPDATE_NOTE': 
       state.updateNote = {
         id: null,
@@ -251,6 +269,7 @@ function pageForRedBook(state = {
       state.stateCheckIn = 'REQUESTING';
       return merge({}, state);
 
+    // 체크 아웃
     case 'CHECKOUT_SUCCESS':
       state.stateCheckOut = 'READY';
       return merge({}, state);
@@ -261,52 +280,37 @@ function pageForRedBook(state = {
       state.stateCheckOut = 'REQUESTING';
       return merge({}, state);
 
-
-
+    // 댓글 쓰기
     case 'ADD_COMMENT_SUCCESS':
       state.stateAddComment = 'READY';
       return merge({}, state);
-
     case 'ADD_COMMENT_FAILURE':
       state.stateAddComment = 'FAIL';
       return merge({}, state);
-
     case 'ADD_COMMENT_REQUEST':
       state.stateAddComment = 'REQUESTING';
       return merge({}, state);
 
-    case 'ADD_COMMENT_SUCCESS':
-      state.stateAddComment = 'READY';
-      return merge({}, state);
-
-    case 'ADD_COMMENT_FAILURE':
-      state.stateAddComment = 'FAIL';
-      return merge({}, state);
-
+    // 댓글 삭제
     case 'DELETE_COMMENT_REQUEST':
       state.stateDeleteComment = 'REQUESTING';
       return merge({}, state);
-
     case 'DELETE_COMMENT_SUCCESS':
       state.stateDeleteComment = 'READY';
       return merge({}, state);
-
     case 'DELETE_COMMENT_FAILURE':
       state.stateDeleteComment = 'FAIL';
       return merge({}, state);
 
+    // 레드북 생성
     case 'REDBOOKS_REQUEST':
       state.stateRedBook = 'REQUESTING'
       return merge({}, state);
-
     case 'REDBOOKS_SUCCESS':
       state.stateRedBook = 'LOADED'
       state.count = state.count + 1;
-
       return merge({}, state);
-
     case 'REDBOOKS_FAILURE':
-
       state.stateRedBook = 'FAIL'
       return merge({}, state);
   }

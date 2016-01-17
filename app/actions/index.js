@@ -402,6 +402,14 @@ export function resetUpdateNote (){
   };
 }
 
+export function resetAddNote (){
+  return (dispatch, getState) => {
+    return dispatch({
+      type: 'RESET_ADD_NOTE'
+    });
+  };
+}
+
 
 
 // 댓글을 불러온다. 

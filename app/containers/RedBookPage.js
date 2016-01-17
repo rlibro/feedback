@@ -1,7 +1,10 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { facebookLogin, updateLoginUserInfo } from '../actions'
-import { fetchNotes, addNote, deleteNote, updateNote, resetUpdateNote } from '../actions'
+import { fetchNotes, 
+         addNote, resetAddNote,
+         updateNote, resetUpdateNote,
+         deleteNote } from '../actions'
 import { fetchComments, addComment, deleteComment } from '../actions'
 import { pushPath as pushState, replacePath } from 'redux-simple-router'
 import RedBookCover from '../components/RedBookCover'
@@ -78,7 +81,7 @@ class RedBookPage extends Component {
    * 렌더링 함수는 무조건 호출되기 때문에 레드북이 없으면 렌더링 하지 않는다.
    */
   render() {
-    const { loginUser, redBook } = this.props;
+    const { loginUser, redBook, pageForRedBook } = this.props;
     let klassName = 'RedBookPage';
 
     // 레드북
@@ -95,7 +98,10 @@ class RedBookPage extends Component {
 
       <RedBookNoteForm 
         loginUser={loginUser}
-        onAddNote={this.handleAddNote.bind(null, redBook.id)} />
+        pageForRedBook={pageForRedBook}
+        onAddNote={this.handleAddNote.bind(null, redBook.id)} 
+        onAddNoteDone={this.handleAddNoteDone}
+      />
       
       {this.renderNoteList()}
       {this.renderLoadingNotes()}
@@ -176,6 +182,10 @@ class RedBookPage extends Component {
 
   handleAddNote = (redBookId, noteText) => {
     this.props.addNote(redBookId, noteText, this.props.redBook.uname)    
+  };
+
+  handleAddNoteDone = () => {
+    this.props.resetAddNote();
   };
 
   handleAddComment = (noteId, commentText) => {
@@ -261,6 +271,7 @@ export default connect(mapStateToProps, {
   fetchNotes,
   fetchComments,
   addNote,
+  resetAddNote,
   addComment,
   updateNote,
   resetUpdateNote,

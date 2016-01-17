@@ -13,6 +13,22 @@ export default class RedBookNoteForm extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps){
+
+    const { pageForRedBook: { addNote } } = nextProps;
+
+    if( addNote && (addNote.state === 'SUCCESS') ) {
+      this.setState({
+        activeForm: false,
+        lineCount: 0,
+        formMode: 'NOTE'
+      });
+
+      this.props.onAddNoteDone();
+    }
+  }
+
+
   /**
    * 상태가 변경되었을 경우는 호출됨
    */
@@ -84,12 +100,20 @@ export default class RedBookNoteForm extends Component {
   renderWriteForm = () => {
 
     const { activeForm } = this.state;
+    const { pageForRedBook: { addNote } } = this.props;
 
-    if( activeForm ) {
+
+    if( activeForm && addNote.state === 'READY' ) {
       return <div className="note-form-footer">
         <button onClick={this.handleAddNote}>Post</button>
       </div>
-    }
+    } 
+
+    if( activeForm && addNote.state === 'REQUESTING' ) {
+      return <div className="note-form-footer">
+        <button onClick={this.handleAddNote} disabled><i className="fa fa-spinner fa-pulse"></i></button>
+      </div>
+    } 
   };
 
   renderFormReady = () => {
@@ -137,7 +161,6 @@ export default class RedBookNoteForm extends Component {
       this.setState({
         lineCount: lineCount
       });
-
     }
 
   };
@@ -153,5 +176,7 @@ export default class RedBookNoteForm extends Component {
 
 RedBookNoteForm.propTypes = {
   loginUser: PropTypes.object.isRequired,
-  onAddNote: PropTypes.func.isRequired
+  pageForRedBook: PropTypes.object.isRequired,
+  onAddNote: PropTypes.func.isRequired,
+  onAddNoteDone: PropTypes.func.isRequired
 }
