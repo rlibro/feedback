@@ -725,6 +725,10 @@ button {
   .controls {
     border-top: 1px solid #ccc;
 
+    .comments {
+      span { font-size: 13px; }  
+    }
+    
     border-bottom-left-radius : 5px;
     border-bottom-right-radius : 5px;
 
@@ -738,7 +742,7 @@ button {
 .ContextMenu {
   position: relative;
   top: 20px;
-  width: 50px;
+  width: auto;
   text-align: right;
   padding: 5px 0;
 
@@ -768,7 +772,8 @@ button {
     padding: 0 12px;
 
     &:hover{
-      font-weight: bold;
+      font-weight: normal;
+      background-color: #ededed;
     }
   }
 }
@@ -925,27 +930,6 @@ button {
     }
   }
 
-  .join-us {
-    position: absolute;
-    left: 170px;
-    top: 20px;
-
-    button {
-      padding: 5px 10px;
-      background-color: transparent;
-      border-radius: 5px;
-      font-size: 13px;
-      border: 1px solid #222;
-      color: #222;
-      outline: none;
-
-      &:hover{
-        opacity: 0.8;
-        background-color: #fff;
-      }
-    }
-  }
-
   .people {
     position: relative;
     border: 1px solid #ccc;
@@ -954,6 +938,11 @@ button {
     width: 240px;
     float: left;
     margin: 5px;
+
+    &.nobody {
+      float: inherit;
+      margin: 0 auto 100px auto;
+    }
 
     .photo img {
       position: absolute;
@@ -998,21 +987,19 @@ button {
         padding: 5px 10px;
         float: left;
         margin-right: 2px;
+
+        &.join {
+          background-color: #fff;
+          outline: none;
+        }
       }
     }
 
   }
 
   .nobody-here {
-    padding: 100px 0;
+    padding: 100px 0 20px 0;
     text-align: center;
-
-    .join-us {
-      position: static;
-      margin-top: 10px;
-    }
-
-
   }
 
   .loading {

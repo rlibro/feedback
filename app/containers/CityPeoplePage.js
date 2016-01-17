@@ -49,28 +49,74 @@ class CityPeoplePage extends Component {
         <h2>We are here!</h2>
       </div>
 
-      { this.renderCheckIn() }
-
       <div className="button-close">
         <i className="fa fa-times" onClick={this.hanldeCloseRedBook}/>
       </div>
 
       <hr/>
-
-      {this.renderPeoplesByState()}
+      { this.renderPeoplesByState() }
     </div>
   }
 
-  renderCheckIn = () =>{
+  renderPeoplesByState =()=> {
+
+    const {uname, peoples, redBook} = this.props;
+
+    if( !peoples || peoples.isFetching ){
+      return <div className="loading">
+        <p><i className="fa fa-spinner fa-pulse"></i> Now loading peoples in this city, <br/>please wait a moment</p>
+      </div>
+    } else {
+
+      if( peoples.ids.length === 0){
+
+        return <div>
+          <div className="nobody-here">
+            <p>Now nobody stay in here.</p>
+            <p>if you wanna communicate with people in here</p>
+            <p>please make sure your GPS on and move to {redBook.countryName}</p>
+          </div>
+          { this.renderJoinThisCity(true) }
+        </div>
+
+      } else {
+        return <div>
+          { this.renderJoinThisCity(false) }
+          { this.renderPeoples() }
+        </div>
+      }      
+    }
+
+  };
+
+  renderJoinThisCity = (isNobody) =>{
     const { loginUser, redBook } = this.props;
     const { current_location, currentCity } = loginUser;
+    let klassName = 'people'
+    if( isNobody ){
+      klassName = 'people nobody'
+    }
 
     if( current_location && current_location.countryName === redBook.countryName ){
 
       if( currentCity !== redBook.uname ){
-        return <div className="join-us">
-          <button onClick={this.handleJoinUs.bind(this, redBook.id, redBook.uname, current_location.latlng)}><i ref="join"/>join this city!</button>
-        </div> 
+        return <div className={klassName}>
+          <div className="proflie">
+            <div className="photo">
+              <img src={loginUser.picture}/>
+            </div>
+            <div className="name">
+              {loginUser.username}
+            </div>
+
+            <div className="note">You are in {loginUser.current_location.countryName}. <br/> if you join this city, you can communicate others</div>
+          </div>
+
+          <div className="state">
+            <button className="sign join" onClick={this.handleJoinUs.bind(this, redBook.id, redBook.uname, current_location.latlng)}>
+              <i className="fa fa-map-signs" ref="join"/> join this city!</button>
+          </div> 
+        </div>
       }
       return false;
      
@@ -79,34 +125,9 @@ class CityPeoplePage extends Component {
     }
   };
 
-  renderPeoplesByState =()=> {
-
-    const {uname, peoples} = this.props;
-
-    if( !peoples || peoples.isFetching ){
-      return <div className="loading">
-        <p><i className="fa fa-spinner fa-pulse"></i> Now loading peoples in this city, <br/>please wait a moment</p>
-      </div>
-    } else {
-      return this.renderPeoples()
-    }
-
-  };
-
   renderPeoples = () => {
 
     const { peoples: {ids}, users } = this.props;
-
-    if( ids.length === 0){
-
-      return <div className="nobody-here">
-        <p>Now nobody stay in here.</p>
-        <p>if you wanna communicate others</p>
-        <p>please make sure your GPS on and join this city</p>
-        {this.renderCheckIn()}
-      </div>
-
-    }
 
     return ids.map(function(id, i){
       let user = users[id];
@@ -128,7 +149,7 @@ class CityPeoplePage extends Component {
           <div className="note">{user.note}</div>
         </div>
 
-        { this.renderCheckInStateByPerson(user, isNoState) }
+        { this.renderJoinThisCityStateByPerson(user, isNoState) }
       </div>
         
     }.bind(this))
@@ -153,7 +174,7 @@ class CityPeoplePage extends Component {
 
   };
 
-  renderCheckInStateByPerson = (user, isNoState) => {
+  renderJoinThisCityStateByPerson = (user, isNoState) => {
 
     let state = user.state;
 

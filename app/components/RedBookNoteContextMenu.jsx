@@ -21,15 +21,14 @@ export default class RedBookNoteContextMenu extends Component {
 
   renderUserContext = () => {
     return <ul>
-      <li>이 사람 팔로우</li>
-      <li>게시물 신고</li>
+      <li><a className="option" href="#"> 게시물 신고</a></li>
     </ul>;
   };
 
   renderAuthorContext = () => {
     return <ul>
-      <li><a className="option" href="#" onClick={this.props.onEditNote}>수정</a></li>
-      <li><a className="option" href="#" onClick={this.props.onDeleteNote}>삭제</a></li>
+      <li><a className="option" href="#" onClick={this.props.onEditNote}>Edit</a></li>
+      <li><a className="option" href="#" onClick={this.props.onDeleteNote}>Del</a></li>
     </ul>;
   };
 

@@ -16,6 +16,7 @@ export default class RedBookNote extends Component {
       isEditing: false,
       isOpenContext: false,
       isOpenComment: false,
+      isInitialEditing: true,
       scrollTop: 0
     }
   }
@@ -30,6 +31,7 @@ export default class RedBookNote extends Component {
         isEditing: false,
         isOpenContext: false,
         isOpenComment: false,
+        isInitialEditing: true,
         scrollTop: 0
       });
 
@@ -41,9 +43,9 @@ export default class RedBookNote extends Component {
 
     const { loginUser, pageForRedBook, note, entityComments, pagingComments} = this.props;
     const { onLogin, onAddComment, onDeleteNote, onDeleteComment} = this.props;
-    const { isEditing, isOpenComment, isOpenContext, scrollTop } = this.state;
+    const { isEditing, isOpenComment, isOpenContext, scrollTop, isInitialEditing } = this.state;
 
-    if( isEditing && scrollTop ){
+    if( isEditing && scrollTop && isInitialEditing ){
       setTimeout(function(){
         document.body.scrollTop = scrollTop
       }, 0)
@@ -124,11 +126,16 @@ export default class RedBookNote extends Component {
 
       } else {
 
-        setTimeout(function(){
-          const node = findDOMNode(this.refs.content);
-          const len = node.value.length * 2;
-          node.setSelectionRange(len, len);
-        }.bind(this), 0)
+        if( this.state.isInitialEditing ){
+          setTimeout(function(){
+            const node = findDOMNode(this.refs.content);
+            const len = node.value.length * 2;
+            node.setSelectionRange(len, len);
+            this.setState({
+              isInitialEditing: false
+            })
+          }.bind(this), 0)
+        }
 
         return <div className="edit-content" >
           <textarea defaultValue={note.content} style={style} ref="content"
