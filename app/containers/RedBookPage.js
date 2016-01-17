@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { facebookLogin, updateLoginUserInfo } from '../actions'
-import { fetchNotes, addNote, deleteNote } from '../actions'
+import { fetchNotes, addNote, deleteNote, updateNote, resetUpdateNote } from '../actions'
 import { fetchComments, addComment, deleteComment } from '../actions'
 import { pushPath as pushState, replacePath } from 'redux-simple-router'
 import RedBookCover from '../components/RedBookCover'
@@ -19,6 +19,15 @@ function fetchNotesFromServer(props) {
 }
 
 class RedBookPage extends Component {
+
+  constructor(props){
+    super(props);
+
+    this.state = {
+      isEditingNote: false,
+      editingNote: null
+    }
+  }
 
   /**
    * 최소에 한번만 호출된다
@@ -141,7 +150,10 @@ class RedBookPage extends Component {
         pagingCommentsByNoteId={pagingCommentsByNoteId}
 
         onLogin={this.handleFacebookLogin}
+        onPushState={this.handlePushState}
         onFetchComments={this.handleFetchComments}
+        onSaveEditingNote={this.handleSaveEditingNote}
+        onSaveEditingNoteDone={this.props.resetUpdateNote}
         onDeleteNote={this.handleDeleteNote}
         onAddComment={this.handleAddComment}
         onDeleteComment={this.handleDeleteComment}
@@ -176,6 +188,12 @@ class RedBookPage extends Component {
 
   handleDeleteComment = (noteId, commentId) => {
     this.props.deleteComment(commentId, noteId)
+  };
+
+  handleSaveEditingNote = (note, newText) => {
+
+    this.props.updateNote(this.props.redBook.id, note.id, newText);
+
   };
   
 }
@@ -244,6 +262,8 @@ export default connect(mapStateToProps, {
   fetchComments,
   addNote,
   addComment,
+  updateNote,
+  resetUpdateNote,
   deleteNote,
   deleteComment,
 

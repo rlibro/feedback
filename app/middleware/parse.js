@@ -241,7 +241,6 @@ const parseAPI = {
   deleteNote: function(schema, params){
 
     const noteQuery = new Parse.Query(Note);
-
     return noteQuery
     .get(params.noteId)
     .then(function(note){
@@ -269,6 +268,26 @@ const parseAPI = {
       return error.code + ', ' + error.message;
     });
     
+  },
+
+  updateNote: function(schema, params){
+
+    let note = new Note();
+    note.id = params.noteId;
+    
+    return note
+    .save({content: params.newText})
+    .then(function(redBookNote){
+
+      let newNote = redBookNote.toJSON();
+      clearObjectId(newNote, 'author');
+
+      return Object.assign({}, normalize(newNote, schema));
+
+    }, function(error){
+      return error.code + ', ' + error.message;
+    })
+
   },
 
   deleteComment: function(schema, params){

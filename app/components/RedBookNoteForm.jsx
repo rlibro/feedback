@@ -7,6 +7,7 @@ export default class RedBookNoteForm extends Component {
     super(props);
 
     this.state = {
+      activeForm: false,
       lineCount: 0,
       formMode: 'NOTE'
     }
@@ -38,15 +39,14 @@ export default class RedBookNoteForm extends Component {
 
     const { formMode, lineCount } = this.state;
     const { loginUser } = this.props;
-    let style = {height:'72px'}
 
-    if( 3 < lineCount ) {
+    let style = {height:'36px'}
+
+    if( 1 < lineCount ) {
       style = {
         height: `${18 + (18 * lineCount)}px`
       }
     }
-
-    console.log('--->', lineCount, style.height)
 
     if( formMode === 'NOTE') {
       return <div className="RedBookNoteForm">
@@ -55,14 +55,11 @@ export default class RedBookNoteForm extends Component {
           {/*<button onClick={this.handleFormMode.bind(this,'CHECKIN')}>장소</button>*/}
         </div>  
         <textarea ref="textarea" className="text" style={style}
-                  onKeyDown={this.handleKeyDown} 
-                  autoFocus={true} 
+                  onKeyDown={this.handleFormKeyDown}
+                  onFocus={this.handeFormFocus}
                   placeholder="Share your exprience in this city!">
         </textarea>
-          
-        <div className="note-form-footer">
-          <button onClick={this.handleAddNote}>Post</button>
-        </div>
+        {this.renderWriteForm()}
       </div>
     }
 
@@ -77,11 +74,22 @@ export default class RedBookNoteForm extends Component {
         </div>          
         <div className="note-form-footer">
           <p className="message">위 상태로 당신의 위치를 공개 하겟습니까?</p>
-          <button onClick={this.handleCheckIn}>공개</button>
+          <button>공개</button>
         </div>
       </div>    
     }
     
+  };
+
+  renderWriteForm = () => {
+
+    const { activeForm } = this.state;
+
+    if( activeForm ) {
+      return <div className="note-form-footer">
+        <button onClick={this.handleAddNote}>Post</button>
+      </div>
+    }
   };
 
   renderFormReady = () => {
@@ -113,7 +121,7 @@ export default class RedBookNoteForm extends Component {
     });
   };
 
-  handleKeyDown = (e) => {
+  handleFormKeyDown = (e) => {
 
     if(e.key === 'Enter' || e.key === 'Backspace') {
 
@@ -134,8 +142,11 @@ export default class RedBookNoteForm extends Component {
 
   };
 
-  handleCheckIn = (e) => {
-    
+  handeFormFocus = (e) => {
+    this.setState({
+      activeForm: true
+    });
+
   };
 
 }

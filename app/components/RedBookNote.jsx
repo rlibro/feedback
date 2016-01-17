@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import NoteCommentList from '../components/NoteCommentList'
 import ContextMenu from '../components/RedBookNoteContextMenu'
+import { findDOMNode } from 'react-dom';
 import moment from 'moment'
 
 import { Provider } from 'react-redux'
@@ -11,8 +12,28 @@ export default class RedBookNote extends Component {
     super(props)
 
     this.state = {
+      lineCount: 0,
+      isEditing: false,
       isOpenContext: false,
-      isOpenComment: false
+      isOpenComment: false,
+      scrollTop: 0
+    }
+  }
+
+  componentWillReceiveProps(nextProps){
+
+    const { pageForRedBook: { updateNote } } = nextProps;
+
+    if( updateNote && (updateNote.id === this.props.note.id) && (updateNote.state === 'SUCCESS') ) {
+      this.setState({
+        lineCount: 0,
+        isEditing: false,
+        isOpenContext: false,
+        isOpenComment: false,
+        scrollTop: 0
+      });
+
+      this.props.onSaveEditingNoteDone();
     }
   }
 
@@ -20,14 +41,15 @@ export default class RedBookNote extends Component {
 
     const { loginUser, pageForRedBook, note, entityComments, pagingComments} = this.props;
     const { onLogin, onAddComment, onDeleteNote, onDeleteComment} = this.props;
-    const { isOpenComment, isOpenContext } = this.state;
+    const { isEditing, isOpenComment, isOpenContext, scrollTop } = this.state;
 
-    const contentText = 
-      note.content
-        .replace(/(.*)\n(.*)/g, '<p>$1<br/></p><p>$2</p>')
-        .replace(/\s\s/g, '<span></span>')
+    if( isEditing && scrollTop ){
+      setTimeout(function(){
+        document.body.scrollTop = scrollTop
+      }, 0)
+    }
 
-    return <div className="RedBookNote">
+    return <div id={note.id} className="RedBookNote">
       <div className="note-header">
         <div className="profile photo" >
           <img src={note.author.picture} />
@@ -41,11 +63,12 @@ export default class RedBookNote extends Component {
           <ContextMenu 
             loginUser={loginUser}
             noteAuthor={note.author}
-            onDeleteNote={onDeleteNote.bind(null, note.id)}
+            onEditNote={this.handleEditNote}
+            onDeleteNote={this.handleDeleteNote}
             isOpenContext={isOpenContext} />
         </div>
       </div>
-      <div className="content" dangerouslySetInnerHTML={{__html: contentText}}></div>
+      {this.renderContentByState()}
       <div className="controls">
  {/*       <div className="like"><i className="fa fa-thumbs-o-up"/> 추천</div>*/}
         <div className="comments" onClick={this.handleToggleComment.bind(null, note.id)}><i className="fa fa-comments-o"/> Comments ({note.comments.length})</div>
@@ -66,6 +89,100 @@ export default class RedBookNote extends Component {
     </div>
   }
 
+  renderContentByState = ()=> {
+
+    const { note, pageForRedBook: {noteUpdate}} = this.props;
+    const contentText = 
+      note.content
+        .replace(/(.*)\n\n(.*)/g, '<p>$1</p><br/><p>$2</p>')
+        .replace(/(.*)\n(.*)/g, '<p>$1</p><p>$2</p>')
+        .replace(/\s\s/g, '<span></span>');
+
+    let style = {height:'36px'};
+    let lineCount = this.state.lineCount ? this.state.lineCount : note.content.split('\n').length;
+
+    if( 1 < lineCount ) {
+      style = {
+        height: `${18 + (18 * lineCount)}px`
+      }
+    }
+
+
+    if( this.state.isEditing ) {
+
+      // 수정 완료 요청
+      if( noteUpdate && ( noteUpdate.state === 'REQUESTING') && ( noteUpdate.id === note.id )) {
+        return <div className="edit-content" >
+          <textarea defaultValue={note.content} style={style} ref="content" disabled
+            tabIndex="1"></textarea>
+
+          <div className="edit-controls">
+            <button tabIndex="3" className="cancel" disabled>Cancel</button>
+            <button tabIndex="2" className="save" disabled><i className="fa fa-spinner fa-pulse"></i></button>
+          </div>
+        </div>
+
+      } else {
+
+        setTimeout(function(){
+          const node = findDOMNode(this.refs.content);
+          const len = node.value.length * 2;
+          node.setSelectionRange(len, len);
+        }.bind(this), 0)
+
+        return <div className="edit-content" >
+          <textarea defaultValue={note.content} style={style} ref="content"
+            tabIndex="1"
+            onKeyDown={this.handleFormKeyDown}
+            autoFocus={true}></textarea>
+
+          <div className="edit-controls">
+            <button tabIndex="3" className="cancel" onClick={this.handleCancelEditNote}>Cancel</button>
+            <button tabIndex="2" className="save" onClick={this.handleSaveEditNote.bind(this, note)}>Save</button>
+          </div>
+        </div>
+      }
+
+      
+    }else {
+      return <div className="content" dangerouslySetInnerHTML={{__html: contentText}}></div>  
+    }
+  };
+
+
+  handleFormKeyDown = (e) => {
+
+    if(e.key === 'Enter' || e.key === 'Backspace') {
+      
+      const text = e.target.value;
+
+      var lineCount = text.split('\n').length;
+
+      if( e.key === 'Backspace' ) {
+        lineCount--;
+      }
+
+      this.setState({
+        lineCount: lineCount
+      });
+
+    }
+
+  };
+  handleCancelEditNote = () => {
+    this.setState({
+      isEditing: false
+    });
+  };
+
+  handleSaveEditNote = (note, e) => {
+
+    const node = findDOMNode(this.refs.content);
+    const text = node.value.trim();
+    this.props.onSaveEditingNote(note, text);
+    e.preventDefault();
+  };
+
   handleToggleComment = (noteId, e) => {
 
     const { isOpenComment } = this.state;
@@ -84,6 +201,22 @@ export default class RedBookNote extends Component {
       isOpenContext : !this.state.isOpenContext
     })
   };
+
+  handleEditNote = (e) => {
+
+    this.setState({
+      isEditing: true,
+      isOpenContext: false,
+      scrollTop: document.body.scrollTop
+    });
+  };
+
+  handleDeleteNote = (e) => {
+    this.props.onDeleteNote(this.props.note.id);
+    this.setState({
+      isOpenContext: false
+    });
+  };
 }
 
 RedBookNote.propTypes = {
@@ -94,6 +227,8 @@ RedBookNote.propTypes = {
 
   onLogin: PropTypes.func.isRequired,
   onFetchComments: PropTypes.func.isRequired,
+  onSaveEditingNote: PropTypes.func.isRequired,
+  onSaveEditingNoteDone: PropTypes.func.isRequired,
   onAddComment: PropTypes.func.isRequired,
   onDeleteNote: PropTypes.func.isRequired,
   onDeleteComment: PropTypes.func.isRequired

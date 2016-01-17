@@ -573,13 +573,13 @@ button {
 
     button {
       height: 24px;
-      width: 50px;
+      width: 80px;
       border: 1px solid #ccc;
-      margin: 0 5px;
+      margin: 5px 0;
       font-size: 13px;
       background-color: #ab0000;
       border-color: #980000 #870000 #770000;
-      border-radius: 2px;
+      border-radius: 3px;
       color: #efefef;
       font-weight: bold;
     }
@@ -666,6 +666,62 @@ button {
     }
   }
 
+  .edit-content {
+    padding: 10px;
+
+    textarea {
+      width: 100%;
+      resize: none;
+      background-color: #fff;
+      border: 1px solid #a6b7c8; 
+      border-bottom: none;
+      box-sizing: border-box;
+      font-family: helvetica, arial, sans-serif;
+      font-size: 14px;
+      height: 36px;
+      line-height: 18px;
+      outline: 0;
+      margin: 13px 0 0 0px;
+      padding: 0px 5px;
+      word-wrap: break-word;
+      overflow: hidden;
+    }
+
+    .edit-controls {
+      position: relative;
+      top: -3px;
+      padding: 5px;
+      background-color: #f6f7f8;
+      border: 1px solid #a6b7c8;
+      border-top: 1px solid #ddd;
+      text-align: right;
+
+      button {
+        height: 24px;
+        width: 80px;
+        border: 1px solid #ccc;
+        margin: 0 5px;
+        font-size: 13px;
+        border-radius: 0px;
+        color: #efefef;
+        font-weight: bold;
+
+        &.cancel {
+          background-color: #fff;
+          color: #222;
+          border-color: #222;
+        }
+
+        &.save{
+          background-color: #ab0000;
+          border-color: #980000 #870000 #770000;
+        }
+
+      }
+    }
+
+  }
+
   .controls {
     border-top: 1px solid #ccc;
 
@@ -682,7 +738,7 @@ button {
 .ContextMenu {
   position: relative;
   top: 20px;
-  width: 100px;
+  width: 50px;
   text-align: right;
   padding: 5px 0;
 

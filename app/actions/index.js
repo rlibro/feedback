@@ -365,6 +365,43 @@ export function deleteNote (noteId, redBookId) {
 /* END OF deleteNote */
 
 
+/**
+ *  노트를 수정한다.
+ */ 
+export const UPDATE_NOTE_REQUEST = 'UPDATE_NOTE_REQUEST'
+export const UPDATE_NOTE_SUCCESS = 'UPDATE_NOTE_SUCCESS'
+export const UPDATE_NOTE_FAILURE = 'UPDATE_NOTE_FAILURE'
+export function updateNote (redBookId, noteId, newText) {
+  return (dispatch, getState) => {
+    return dispatch(function(){
+      return {
+        redBookId,
+        noteId,
+        [PARSE]: {
+          method: 'updateNote',
+          params: {
+            redBookId: redBookId,
+            noteId: noteId,
+            newText: newText
+          },
+          types: [ UPDATE_NOTE_REQUEST, UPDATE_NOTE_SUCCESS, UPDATE_NOTE_FAILURE ],
+          schema: Schemas.NOTE
+        }
+      }
+    }());
+  }
+}
+/* END OF deleteNote */
+
+export function resetUpdateNote (){
+
+  return (dispatch, getState) => {
+    return dispatch({
+      type: 'RESET_UPDATE_NOTE'
+    });
+  };
+}
+
 
 
 // 댓글을 불러온다. 

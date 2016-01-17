@@ -64,8 +64,7 @@ export default function paginate({ types, mapActionToKey }) {
       return merge({}, state); 
     }
 
-     // 노트가 삭제되면 해당 아이디를 제거한다.  
-
+    // 노트가 삭제되면 해당 아이디를 제거한다.  
     if ( action.type === ActionTypes.DELETE_NOTE_SUCCESS && state[action.response.redBookId]) {
 
       let notes = state[action.response.redBookId].ids;

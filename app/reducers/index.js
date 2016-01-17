@@ -205,6 +205,10 @@ function pageForRedBook(state = {
   stateLoaded: 'READY', 
   stateAddComment:'READY',
   stateDeleteComment:'READY',
+  updateNote: {
+    id: null, 
+    state: 'READY'
+  },
   count:0}, action) {
 
   // API 호출 응답을 먼저 받아야하기 때문에 응답 결과를 갖는 액션은 Skip 한다.
@@ -213,7 +217,28 @@ function pageForRedBook(state = {
   }
 
   switch(action.type){
+    case 'UPDATE_NOTE_REQUEST': 
 
+      state.updateNote = {
+        id: action.noteId,
+        state: 'REQUESTING'
+      }
+      return merge({}, state);
+
+    case 'UPDATE_NOTE_SUCCESS': 
+
+      state.updateNote = {
+        id: action.noteId,
+        state: 'SUCCESS'
+      }
+      return merge({}, state);
+
+    case 'RESET_UPDATE_NOTE': 
+      state.updateNote = {
+        id: null,
+        state: 'READY'
+      }
+      return merge({}, state);
     
     // 체크인
     case 'CHECKIN_SUCCESS':
