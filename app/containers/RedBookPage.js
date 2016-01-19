@@ -25,6 +25,7 @@ function fetchNotesFromServer(props) {
 class RedBookPage extends Component {
 
   constructor(props){
+
     super(props);
 
     this.state = {
@@ -161,7 +162,7 @@ class RedBookPage extends Component {
 
   renderNoteList = () => {
 
-    const { redBook, loginUser, notes, entities, pagingCommentsByNoteId, pageForRedBook } = this.props;
+    const { redBook, childPath, loginUser, notes, entities, pagingCommentsByNoteId, pageForRedBook } = this.props;
     if( !notes ){
       return false;
     }
@@ -174,7 +175,7 @@ class RedBookPage extends Component {
         entityComments={entities.comments} 
         noteIds={notes.ids}
         pagingCommentsByNoteId={pagingCommentsByNoteId}
-
+        
         onLogin={this.handleFacebookLogin}
         onPushState={this.handlePushState}
         onFetchComments={this.handleFetchComments}
@@ -200,8 +201,14 @@ class RedBookPage extends Component {
     this.props.fetchComments(noteId)
   };
 
-  handleAddNote = (redBookId, noteText) => {
-    this.props.addNote(redBookId, noteText, this.props.redBook.uname)    
+  handleAddNote = (redBookId, formMode, noteText, places) => {
+    this.props.addNote(redBookId, noteText, places);
+
+    if( formMode === 'PLACE') {
+      this.props.updateDataForRedBook({
+        places: []
+      });
+    }  
   };
 
   handleAddNoteDone = () => {
@@ -246,10 +253,10 @@ function mapStateToProps(state) {
   const {
     pagination: { notesByRedBookId, commentsByNoteId },
     entities: { redBooks },
-    routing: { path }
+    routing: { path },
+    pageForRedBook
   } = state
 
-  let { pageForRedBook } = state;
   let uname;
 
   if( path.indexOf('people') > 1) {
@@ -257,7 +264,6 @@ function mapStateToProps(state) {
   } else {
     uname = path.split('/')[2];
   }
-
    
   const [ cityName, countryName ] = uname.split(',');
 

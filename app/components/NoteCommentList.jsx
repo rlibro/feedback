@@ -8,7 +8,7 @@ export default class NoteCommentList extends Component {
 
   render() {
 
-    const { commentIds, isOpenComment } = this.props;
+    const { isOpenComment } = this.props;
 
     if( isOpenComment ){
       return this.renderCommentList()
@@ -19,19 +19,24 @@ export default class NoteCommentList extends Component {
 
   renderCommentList = () => {
 
-    const { loginUser, pageForRedBook, isOpenComment } = this.props;
-    const { commentIds, entityComments } = this.props;
-    const { onLogin, onAddComment, onDeleteComment } = this.props;
+    const { 
+      loginUser, 
+      pageForRedBook,
+      comments,
+      isOpenComment,
+      onLogin, onAddComment, onDeleteComment
+    } = this.props;
 
     return <div className="NoteCommentList">
 
-      {commentIds.map( (commentId,i) => {
+      {comments.map( (comment,i) => {
+
         return <NoteComment key={i}
           index={i}
-          comment={entityComments[commentId]}
+          comment={comment}
           pageForRedBook={pageForRedBook}
           loginUser={loginUser}
-          onDeleteComment={onDeleteComment.bind(null, commentId)}
+          onDeleteComment={onDeleteComment.bind(null, comment.id)}
           />
       })}
 
@@ -48,9 +53,10 @@ export default class NoteCommentList extends Component {
   };
 
   renderLodingState = () => {
-    const { pagingComments } = this.props;
 
-    if( pagingComments.isFetching ){
+    const { pageForRedBook: {isFetching} }= this.props;
+
+    if( isFetching.comment ){
       return <div className="loading">
         <p><i className="fa fa-spinner fa-pulse"/> loading... </p>
       </div>
@@ -64,9 +70,8 @@ NoteCommentList.propTypes = {
   loginUser: PropTypes.object.isRequired,
   isOpenComment: PropTypes.bool.isRequired,
   pageForRedBook: PropTypes.object.isRequired,
-  
-  commentIds: PropTypes.array.isRequired,
-  entityComments: PropTypes.object.isRequired,
+
+  comments: PropTypes.array.isRequired,
 
   onLogin: PropTypes.func.isRequired,
   onAddComment: PropTypes.func.isRequired,

@@ -7,6 +7,7 @@ import UserProfilePage from './UserProfilePage'
 import RedBookPage from './RedBookPage'
 import NewRedBookPage from './NewRedBookPage'
 import CityPeoplePage from './CityPeoplePage'
+import SingleNotePage from './SingleNotePage'
 import DevTools from './DevTools'
 
 
@@ -23,6 +24,8 @@ export default class Root extends Component {
               <Route path="/profile" component={UserProfilePage}/>
               <Route path="/guide/:uname" component={RedBookPage}>
                 <Route path="/guide/:uname/people" component={CityPeoplePage}/>
+              </Route>
+              <Route path="/notes/:noteId" component={SingleNotePage}>
               </Route>
               <Route path="/create/:uname" component={NewRedBookPage}/>
             </Route>

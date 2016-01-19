@@ -49,10 +49,7 @@ export default class RedMapPlace extends Component {
           defaultCenter={mapLocation}
           onClick={this.handleMapClick}>
           {this.state.markers.map((marker, index) => {
-
-            console.log('marker ==> ', marker, index)
             const ref = `marker_${index}`;
-
             return (
               <Marker key={ref} ref={ref}
                 {...marker}
@@ -72,12 +69,58 @@ export default class RedMapPlace extends Component {
   };
 
   renderInfoWindow = (ref, marker) => {
+    let InfoContent = <div id={marker.key} 
+      className="infoWindow" 
+      onClick={this.handleEditInfoWindowTitle.bind(this, marker)}>
+      <i className="fa fa-pencil-square-o" /> {marker.title}
+    </div>;
+
+
+    if( marker.isEditing ){
+      InfoContent = <div id={marker.key} 
+      className="infoWindow">
+      <input type="text" 
+        defaultValue={marker.title}
+        onKeyDown={this.handleKeyDownInfoWindow.bind(this, marker)}
+        onBlur={this.handleEditDoneInfoWindowTitle.bind(this, marker)}/>
+    </div>;
+
+    }
+
     return (
       <InfoWindow key={`${ref}_info_window`}
-        content={marker.title}
-        onCloseclick={this.handleCloseclick.bind(this, marker)}
-      />
+        onClick={this.handleInfoWindow}        
+        onCloseclick={this.handleCloseclick.bind(this, marker)}>{InfoContent}
+      </InfoWindow>
     )    
+  };
+
+  handleEditInfoWindowTitle = (marker) => {
+    marker.isEditing = true;
+
+    var {markers} = this.state;
+    markers = update(markers, { $set: [marker] });
+    this.setState({ markers });
+
+  };
+
+  handleKeyDownInfoWindow = (marker, e) => {
+    if(e.key === 'Enter') {
+      this.handleEditDoneInfoWindowTitle(marker, e);
+    }
+  };
+
+  handleEditDoneInfoWindowTitle = (marker, e) => {
+    marker.title = e.target.value;
+    marker.isEditing = false;
+
+    var {markers} = this.state;
+    markers = update(markers, { $set: [marker] });
+    this.setState({ markers });
+    this.props.onUpdateDataForRedBook({
+      places: markers
+    });
+
   };
 
   getAddress = (latLng, callback) => {
@@ -85,36 +128,58 @@ export default class RedMapPlace extends Component {
     const self = this;
 
     geocoder.geocode({'location': latLng}, function(results, status) {
-      
       if (status === google.maps.GeocoderStatus.OK) {
-        
         callback(results[0].formatted_address);
-
       }
     })
+  };
 
-      
+  findUniqLabel = () => {
+    let {markers} = this.state;
+
+    if( markers.length === 0 ){
+      return '1';
+    }
+
+    markers.sort(function(m1, m2){
+      return m1.label - m2.label;
+    });
+
+
+    let i=0;
+    for(; i<markers.length; ++i) {
+
+      if( markers[i].label != i+1 ){
+        return (i+1)+'';
+      }
+    }
+    return (markers.length + 1) +'';
+
   };
 
   handleMapClick =(event) =>{
-    var {markers} = this.state;
-    var self = this;
+    let {markers} = this.state;
+    let uniqLabelName = this.findUniqLabel();
+    let self = this;
+    let marker = {
+      position: event.latLng,
+      defaultAnimation: 5,
+      title: `place #${uniqLabelName}`,
+      label: uniqLabelName,
+      key: Date.now(),
+      isEditing: false 
+    };
+
+    markers = update(markers, { $push: [marker] });
+    self.setState({ markers });
 
     this.getAddress(event.latLng, function(address){
 
-      markers = update(markers, {
-        $push: [
-          {
-            position: event.latLng,
-            defaultAnimation: 5,
-            title: address,
-            label: (markers.length + 1) + '',
-            key: Date.now()
-          },
-        ],
-      });
-      self.setState({ markers });
+      marker.title = address;
 
+      self.props.onUpdateDataForRedBook({
+        places: markers
+      })
 
     });
   };
@@ -127,6 +192,9 @@ export default class RedMapPlace extends Component {
       ],
     });
     this.setState({ markers });
+    this.props.onUpdateDataForRedBook({
+      places: markers
+    })
   };
 
   handleMarkerClick = (marker) => {

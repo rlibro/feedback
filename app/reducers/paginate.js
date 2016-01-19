@@ -27,7 +27,7 @@ export default function paginate({ types, mapActionToKey }) {
     switch (action.type) {
       case requestType:
         return merge({}, state, {
-          isFetching: true
+          isFetching: true          // 이거 패칭하는거 제거해야한다....
         })
       case successType:
 

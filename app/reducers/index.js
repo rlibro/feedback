@@ -205,6 +205,13 @@ function pageForRedBook(state = {
   stateLoaded: 'READY', 
   stateAddComment:'READY',
   stateDeleteComment:'READY',
+  places: [],
+  isFetching: {
+    redbook: false,
+    note: false,
+    comment: false,
+    place: false
+  },
   addNote: {
     state: 'READY'
   },
@@ -222,7 +229,26 @@ function pageForRedBook(state = {
 
   switch(action.type){
 
+    case 'COMMENTS_REQUEST':
+    state.isFetching.comment = true;
+    return merge({}, state);
+
+    case 'COMMENTS_SUCCESS':
+    case 'COMMENTS_FAILURE':
+    state.isFetching.comment = false;
+    return merge({}, state);
+
+
+
+
     case 'UPDATE_DATE_FOR_REDBOOK':
+
+    if( action.data.places ) {
+      state.places = action.data.places;
+      return merge({}, state);
+    }
+
+
     return merge({}, state, action.data);
 
     // 노트 쓰기

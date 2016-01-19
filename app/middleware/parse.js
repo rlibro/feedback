@@ -1,5 +1,6 @@
 import { Schema, arrayOf, normalize } from 'normalizr'
 import { camelizeKeys } from 'humps'
+import _ from 'lodash'
 
 const userSchema = new Schema('users', { idAttribute: 'id' })
 const redBookSchema = new Schema('redBooks', { idAttribute: 'id' })
@@ -24,6 +25,7 @@ const RedBook = Parse.Object.extend('RedBook');
 const Note = Parse.Object.extend('Note');
 const Comment = Parse.Object.extend('Comment');
 const CheckIn = Parse.Object.extend('CheckIn');
+const Place = Parse.Object.extend('Place');
 
 function clearObjectId(obj, key){
   obj.id = obj.objectId;
@@ -121,6 +123,67 @@ const parseAPI = {
     })
   },
 
+  fetchNote: function (schema, params) {
+
+    let query = new Parse.Query(Note);
+        query.include('author');
+    
+    return query.get(params.noteId)
+    .then(function(note) {
+      
+      let promises = [];
+      let placeQuery = new Parse.Query(Place);
+      let commentQuery = new Parse.Query(Comment);
+      let entities = {
+        notes: {},
+        comments: {},
+        places:{}
+      };
+      
+      commentQuery.equalTo('parent', note);
+      placeQuery.equalTo('note', note);
+           
+      promises.push(commentQuery.find());
+      promises.push(placeQuery.find());
+
+      return Parse.Promise.when(promises)
+      .then(function(comments, places){
+
+
+        let jsonNote = note.toJSON();
+        clearObjectId(jsonNote, 'author');
+        jsonNote.redBook = note.get('redBook').id;
+        entities.notes[note.id] = jsonNote;
+
+        _.each(comments, function(comment){
+
+          let jsonComment = comment.toJSON();
+          clearObjectId(jsonComment, 'author');
+          entities.comments[comment.id] = jsonComment;
+
+        });
+
+        _.each(places, function(place){
+
+          let jsonPlace = place.toJSON();
+          clearObjectId(jsonPlace, 'author');
+          entities.places[place.id] = jsonPlace;
+
+        });
+
+
+
+        return Object.assign({}, {entities});
+      });
+
+         
+    }, function(error) {
+
+      return error.code + ', ' + error.message;
+
+    })
+  },
+
   fetchComments: function (schema, params) {
 
     let commentQuery = new Parse.Query(Comment);
@@ -199,12 +262,34 @@ const parseAPI = {
     
     return note
     .save(params.Note)
-    .then(function(redBookNote){
+    .then(function(savedNote){
 
-      let newNote = redBookNote.toJSON();
-      clearObjectId(newNote, 'author');
+      var promises = [];
+      _.each(params.Place, function(placeParam){
 
-      return Object.assign({}, normalize(newNote, schema));
+        const geoPoint = new Parse.GeoPoint({
+          latitude: placeParam.position.lat(),
+          longitude: placeParam.position.lng()
+        });
+
+        const place = new Place();
+        place.set('note', savedNote);
+        place.set('title', placeParam.title);
+        place.set('label', placeParam.label);
+        place.set('geo', geoPoint);
+
+        promises.push(place.save());
+
+      });
+
+      return Parse.Promise.when(promises)
+      .then(function(){
+
+        let newNote = savedNote.toJSON();
+        clearObjectId(newNote, 'author');
+
+        return Object.assign({}, normalize(newNote, schema));
+      });
 
     }, function(error){
       return error.code + ', ' + error.message;

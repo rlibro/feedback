@@ -57,7 +57,7 @@ export default class RedBookNoteForm extends Component {
   renderFormByMode = () => {
 
     const { lineCount } = this.state;
-    const { loginUser, pageForRedBook: {formMode} } = this.props;
+    const { pageForRedBook: {formMode} } = this.props;
 
     let style = {height:'36px'}
 
@@ -67,42 +67,60 @@ export default class RedBookNoteForm extends Component {
       }
     }
 
-    if( formMode === 'NOTE') {
-      return <div className="RedBookNoteForm">
-        <div className="note-form-header">
-          <button onClick={this.handleFormMode.bind(this,'NOTE')} className="on">Note</button>
-          <button onClick={this.handleFormMode.bind(this,'PLACE')}>Place</button>
-        </div>  
-        <textarea ref="textarea" className="text" style={style}
-                  onKeyDown={this.handleFormKeyDown}
-                  onFocus={this.handeFormFocus}
-                  placeholder="Share your exprience in this city!">
-        </textarea>
-        {this.renderWriteForm()}
-      </div>
-    }
-
-    if( formMode === 'PLACE'){
-      return <div className="RedBookNoteForm">
-        <div className="note-form-header">
-          <button onClick={this.handleFormMode.bind(this,'NOTE')}>Note</button>
-          <button onClick={this.handleFormMode.bind(this,'PLACE')} className="on">Place</button>
-        </div>  
-        <textarea ref="textarea" className="text" style={style}
-                  onKeyDown={this.handleFormKeyDown}
-                  onFocus={this.handeFormFocus}
-                  placeholder="Share your exprience in this city!">
-        </textarea>
-        <div className="note-form-footer">
-          <p className="message">위 상태로 당신의 위치를 공개 하겟습니까?</p>
-          <button>공개</button>
-        </div>
-      </div>    
-    }
-    
+    if( formMode === 'NOTE') { return this.renderNoteForm(style) }
+    if( formMode === 'PLACE'){ return this.renderPlaceForm(style) }
+      
   };
 
-  renderWriteForm = () => {
+  renderNoteForm = (style) => {
+    return <div className="RedBookNoteForm">
+      <div className="note-form-header">
+        <button onClick={this.handleFormMode.bind(this,'NOTE')} className="on">Note</button>
+        <button onClick={this.handleFormMode.bind(this,'PLACE')}>Place</button>
+      </div>  
+      <textarea ref="textarea" className="text" style={style}
+                onKeyDown={this.handleFormKeyDown}
+                onFocus={this.handeFormFocus}
+                placeholder="Share your exprience in this city!">
+      </textarea>
+      {this.renderPostButton()}
+    </div>
+  };
+
+  renderPlaceForm = (style) => {
+
+    const { pageForRedBook: {places} } = this.props;
+
+    return <div className="RedBookNoteForm">
+      <div className="note-form-header">
+        <button onClick={this.handleFormMode.bind(this,'NOTE')}>Note</button>
+        <button onClick={this.handleFormMode.bind(this,'PLACE')} className="on">Place</button>
+      </div>  
+      <textarea ref="textarea" className="text" style={style}
+                onKeyDown={this.handleFormKeyDown}
+                onFocus={this.handeFormFocus}
+                placeholder="[You can link your place like this][1]">
+      </textarea>
+      <div className="note-form-footer">
+        <div className="references">
+          <select ref="select">
+            <option value="0">select a place to reference</option>
+            {places.map(function(place, i){
+
+              let refText = `[${place.title}][${place.label}]`;
+
+              return <option key={i} value={refText}>{`[${place.label}]:${place.title}`}</option>
+            })}
+          </select>
+          <button onClick={this.handleReferncePlace}>Reference</button>
+        </div>
+        {this.renderPlacePostButton()}
+      </div>
+    </div>    
+
+  };
+
+  renderPostButton = () => {
 
     const { activeForm } = this.state;
     const { pageForRedBook: { addNote } } = this.props;
@@ -121,11 +139,41 @@ export default class RedBookNoteForm extends Component {
     } 
   };
 
+  renderPlacePostButton = () => {
+    const { pageForRedBook: { addNote } } = this.props;
+
+    if( addNote.state === 'READY' ) {
+      return <button onClick={this.handleAddNote}>Post</button>
+    } 
+
+    if( addNote.state === 'REQUESTING' ) {
+      return <button onClick={this.handleAddNote} disabled><i className="fa fa-spinner fa-pulse"></i></button>
+    } 
+  };
+
+  handleReferncePlace = (e) => {
+    const node = findDOMNode(this.refs.textarea);
+    const select = findDOMNode(this.refs.select);
+
+    if( select.selectedIndex ) {
+      node.value += '\n';
+      node.value += select.value;
+    }
+
+    select.selectedIndex = 0;
+    const lines = node.value.split('\n');
+
+    node.style.height = (18*lines.length) + 'px'
+
+  };
+
   handleAddNote = (e) => {
 
+    const { pageForRedBook: {formMode, places} } = this.props; 
     const node = findDOMNode(this.refs.textarea);
     const text = node.value.trim();
-    this.props.onAddNote(text);
+
+    this.props.onAddNote(formMode, text, places);    
     node.value = '';
     e.preventDefault()
   };

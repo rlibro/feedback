@@ -98,6 +98,65 @@ Parse.Cloud.afterDelete("Note", function(request) {
   // }); 
 });
 
+Parse.Cloud.afterSave("Place", function(request) {
+  var query = new Parse.Query("Note");
+  
+  query.get(request.object.get("note").id, {
+    success: function(note) {
+
+      var places = note.get('places');
+      var i=0, isNew = true;
+      for(; i< places.length; ++i){
+        if( places[i] === request.object.id) {
+          isNew = false;
+          break;
+        }
+      }
+
+      if( isNew ){
+        places.push(request.object.id);
+        note.set("places", places);
+        note.save();      
+      }
+
+    },
+    error: function(error) {
+      console.error("Got an places error " + error.code + " : " + error.message);
+    }
+  });
+});
+
+Parse.Cloud.afterDelete("Place", function(request) {
+  var query = new Parse.Query("Note");
+
+  query.get(request.object.get("note").id, {
+    success: function(note) {
+
+      if( note ){
+        var places = note.get('places');
+        var i=0, isUpdate=false;
+
+        for( ; i<places.length; ++i ){
+          if( places[i] === request.object.id ){
+            places.splice(i, 1);
+            isUpdate=true;
+            break;
+          }
+        }
+
+        if( isUpdate ){
+          note.set("places", places);
+          note.save();  
+        }
+      }
+    },
+    error: function(error) {
+      console.error("Error deleting related comments - ", JSON.stringify(error));
+    }
+  });
+
+});
+
 
 Parse.Cloud.afterSave("Comment", function(request) {
   var query = new Parse.Query("Note");

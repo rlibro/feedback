@@ -299,6 +299,31 @@ export function addRedBook(noteText){
 /* END OF addRedBook */
 
 
+
+// 노트를 불러온다. 
+export const NOTE_REQUEST = 'NOTE_REQUEST'
+export const NOTE_SUCCESS = 'NOTE_SUCCESS'
+export const NOTE_FAILURE = 'NOTE_FAILURE'
+export function fetchNote (noteId) {
+
+  return (dispatch, getState) => {
+    return dispatch(function(){
+      return {
+        noteId,
+        [PARSE]: {
+          method: 'fetchNote',
+          params: { 
+            noteId : noteId
+          },
+          types: [ NOTE_REQUEST, NOTE_SUCCESS, NOTE_FAILURE ],
+          schema: Schemas.NOTE
+        }
+      }
+    }())
+  }
+}
+
+
 // 노트를 불러온다. 
 export const NOTES_REQUEST = 'NOTES_REQUEST'
 export const NOTES_SUCCESS = 'NOTES_SUCCESS'
@@ -328,7 +353,7 @@ export function fetchNotes (redBookId) {
 export const ADD_NOTE_REQUEST = 'ADD_NOTE_REQUEST'
 export const ADD_NOTE_SUCCESS = 'ADD_NOTE_SUCCESS'
 export const ADD_NOTE_FAILURE = 'ADD_NOTE_FAILURE'
-export function addNote (redBookId, noteText){
+export function addNote (redBookId, noteText, places){
 
   return (dispatch, getState) => {
     return dispatch(function(){
@@ -338,10 +363,12 @@ export function addNote (redBookId, noteText){
           method: 'addNote',
           params: {
             Note: {
+              places: [],
               comments: [],
               content: noteText,
               author: Parse.User.current()
             },
+            Place: places,
             redBookId: redBookId 
           },
           types: [ ADD_NOTE_REQUEST, ADD_NOTE_SUCCESS, ADD_NOTE_FAILURE ],

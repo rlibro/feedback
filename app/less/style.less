@@ -357,8 +357,11 @@ button {
       }
     }
 
-    .note-form-footer button {
-      width: 80px;
+    .note-form-footer {
+
+      button {
+        width: 80px;
+      }
     }
 
     button.cancel {
@@ -574,19 +577,29 @@ button {
     padding: 8px;
     text-align: right;
 
-    .message {
-      display: inline-block;
-      font-size: 13px;
+    .references {
       float: left;
-      line-height: 24px;
-      padding-left: 5px;
+      select {
+        font-size: 13px;
+        height: 34px;
+        background-color: #fff;
+        outline: none;
+      }
+      button {
+        font-weight: normal;
+        color: #222;
+        background-color: #fff;
+        border: 1px solid #ababab;
+        margin: 0 5px;
+        height: 34px;
+        outline: none;
+      }
     }
 
     button {
-      height: 24px;
+      height: 34px;
       width: 80px;
       border: 1px solid #ccc;
-      margin: 5px 0;
       font-size: 13px;
       background-color: #ab0000;
       border-color: #980000 #870000 #770000;

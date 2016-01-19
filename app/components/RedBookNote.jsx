@@ -41,9 +41,9 @@ export default class RedBookNote extends Component {
 
   render() {
 
-    const { loginUser, pageForRedBook, note, entityComments, pagingComments} = this.props;
+    const { loginUser, pageForRedBook, note, comments } = this.props;
     const { onLogin, onAddComment, onDeleteNote, onDeleteComment} = this.props;
-    const { isEditing, isOpenComment, isOpenContext, scrollTop, isInitialEditing } = this.state;
+    const { isEditing, isOpenComment, scrollTop, isInitialEditing } = this.state;
 
     if( isEditing && scrollTop && isInitialEditing ){
       setTimeout(function(){
@@ -60,15 +60,9 @@ export default class RedBookNote extends Component {
           <div className="date">{ moment(note.createdAt).format('LLL') }</div>
           <div className="username">{ note.author.username }</div>
         </div>
-        <div className="options">
-          <button><i className="fa fa-angle-down" onClick={this.handleOpenContext} /></button>
-          <ContextMenu 
-            loginUser={loginUser}
-            noteAuthor={note.author}
-            onEditNote={this.handleEditNote}
-            onDeleteNote={this.handleDeleteNote}
-            isOpenContext={isOpenContext} />
-        </div>
+
+        {this.renderContextMenu()}
+        
       </div>
       {this.renderContentByState()}
       <div className="controls">
@@ -78,10 +72,11 @@ export default class RedBookNote extends Component {
 
       <NoteCommentList 
         loginUser={loginUser}
-        commentIds={note.comments || []} 
-        entityComments={entityComments}
+
+
+        comments={comments}
+
         pageForRedBook={pageForRedBook}
-        pagingComments={pagingComments}
 
         onLogin={onLogin}
         isOpenComment={isOpenComment}
@@ -91,11 +86,33 @@ export default class RedBookNote extends Component {
     </div>
   }
 
+  renderContextMenu = () => {
+
+    const { hideContextMenu, loginUser, note } = this.props;
+    const { isOpenContext } = this.state;
+
+    if( hideContextMenu ){
+      return false;
+    }
+
+    return <div className="options">
+      <button><i className="fa fa-angle-down" onClick={this.handleOpenContext} /></button>
+      <ContextMenu 
+        loginUser={loginUser}
+        noteAuthor={note.author}
+        onEditNote={this.handleEditNote}
+        onDeleteNote={this.handleDeleteNote}
+        isOpenContext={isOpenContext} />
+    </div>
+
+  };
+
   renderContentByState = ()=> {
 
     const { note, pageForRedBook: {noteUpdate}} = this.props;
     const contentText = 
       note.content
+        .replace(/\[(.*)\]\[(\d+)\]/g, `<a target="blank" href="/notes/${note.id}/places/$2"><i class="fa fa-map-signs"></i> $1</a>`)
         .replace(/(.*)\n\n(.*)/g, '<p>$1</p><br/><p>$2</p>')
         .replace(/(.*)\n(.*)/g, '<p>$1</p><p>$2</p>')
         .replace(/\s\s/g, '<span></span>');
@@ -138,7 +155,9 @@ export default class RedBookNote extends Component {
         }
 
         return <div className="edit-content" >
-          <textarea defaultValue={note.content} style={style} ref="content"
+          <textarea dangerouslySetInnerHTML={{__html:note.content}}
+            style={style} 
+            ref="content"
             tabIndex="1"
             onKeyDown={this.handleFormKeyDown}
             autoFocus={true}></textarea>
@@ -230,13 +249,12 @@ RedBookNote.propTypes = {
   loginUser: PropTypes.object.isRequired,
   pageForRedBook: PropTypes.object.isRequired,
   note: PropTypes.object.isRequired,
-  entityComments: PropTypes.object.isRequired,
+  comments: PropTypes.array.isRequired,
 
+
+  // 댓글관련 컨트롤은 로그인해야만 할수있다. 
   onLogin: PropTypes.func.isRequired,
   onFetchComments: PropTypes.func.isRequired,
-  onSaveEditingNote: PropTypes.func.isRequired,
-  onSaveEditingNoteDone: PropTypes.func.isRequired,
   onAddComment: PropTypes.func.isRequired,
-  onDeleteNote: PropTypes.func.isRequired,
   onDeleteComment: PropTypes.func.isRequired
 }
