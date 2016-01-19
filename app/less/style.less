@@ -436,6 +436,10 @@ button {
   border-radius: 5px;
   min-height: 360px; 
 
+  &.place {
+    border: none;
+  }
+
   .shadow {
     background: linear-gradient(#000, #999);
     opacity: 0.2;
@@ -463,6 +467,7 @@ button {
     top: 10px;
     right: 10px;
     cursor: pointer;
+    z-index: 1;
 
     i {
       font-size: 30px;
@@ -500,6 +505,12 @@ button {
       }
     }
   }
+}
+
+.RedMapPlace {
+  height: 360px;
+  border-radius: 5px;
+  overflow: hidden;
 }
 
 .RedBookNoteForm {

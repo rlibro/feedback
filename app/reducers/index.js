@@ -212,6 +212,7 @@ function pageForRedBook(state = {
     id: null, 
     state: 'READY'
   },
+  formMode:'NOTE',
   count:0}, action) {
 
   // API 호출 응답을 먼저 받아야하기 때문에 응답 결과를 갖는 액션은 Skip 한다.
@@ -220,6 +221,9 @@ function pageForRedBook(state = {
   }
 
   switch(action.type){
+
+    case 'UPDATE_DATE_FOR_REDBOOK':
+    return merge({}, state, action.data);
 
     // 노트 쓰기
     case 'ADD_NOTE_REQUEST': 

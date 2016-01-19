@@ -15,8 +15,7 @@ class NewRedBookPage extends Component {
       return false;
     }
 
-    return true;
-    
+    return true;    
   }
 
 
@@ -31,14 +30,14 @@ class NewRedBookPage extends Component {
     }
   }
 
-  // componentWillUnmount(){
-
-  //   this.props.updateDataForNewRedBook(null);
-  // }
-
   render(){
 
     const { loginUser, replacePath, location } = this.props;
+
+    if( loginUser.current_location ){
+      this.loadGeoCoding();
+    }
+
 
     return <div className="NewRedBookPage">
       <NewRedBookCover 
@@ -57,8 +56,33 @@ class NewRedBookPage extends Component {
   }
 
   componentDidMount(){
-     this.props.updateDataForNewRedBook(this.props.location);
+    this.props.updateDataForNewRedBook(this.props.location);
   }
+
+  loadGeoCoding = () => {
+
+    const uname = this.props.redirect;   
+    const geocoder = new google.maps.Geocoder;
+    const self = this;
+
+
+    geocoder.geocode({'address': uname}, function(results, status) {
+
+      if (status === google.maps.GeocoderStatus.OK) {
+        const {location} = results[0].geometry;
+
+        self.props.updateDataForNewRedBook({
+          geo : {
+            lat: location.lat(),
+            lng: location.lng()
+          }
+        });
+      }
+
+    });
+
+
+  };
 
   handleCancelNewRedBook = (e) => {
     this.props.replacePath('/')

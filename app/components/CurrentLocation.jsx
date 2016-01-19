@@ -1,8 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import trim from 'lodash/string/trim';
 import findIndex from 'lodash/array/findIndex';
+import {default as ScriptjsLoader} from 'react-google-maps/lib/async/ScriptjsLoader';
+import {GoogleMap, GoogleMapLoader} from 'react-google-maps';
+
 
 export default class CurrentLocation extends Component {
+  static version = Math.ceil(Math.random() * 22);
 
   constructor(props){
     super(props);
@@ -31,8 +35,6 @@ export default class CurrentLocation extends Component {
           message: ''
         })
       } else {
-
-        //console.log('CurrentLocation 에서 위치 정보 업데이트 해야함!');  
         this.loadCurrentLocation();  
       }
       
@@ -41,17 +43,27 @@ export default class CurrentLocation extends Component {
   }
 
   render(){
-    return false;
-
-    <div className="CurrentLocation">
-      <p className="message">{this.state.message}</p>
-    </div>
+    return <ScriptjsLoader
+        hostname={'maps.googleapis.com'}
+        pathname={'/maps/api/js'}
+        query={{
+          key:'AIzaSyABFo5etnTuWbcrgVxaCeJa7a4R2ZLZsOY',
+          language:'en',
+          callback:'loadedGoogle',
+          libraries: 'geometry,drawing,places'
+        }}
+        loadingElement={<div/>}
+        googleMapElement={
+          <GoogleMap
+            defaultZoom={3}
+            defaultCenter={{lat: -25.363882, lng: 131.044922}}
+          ></GoogleMap>        
+        }
+      />;
   }
 
   componentDidMount(){
     const {loginUser} = this.props;
-
-    //console.log('위치 정보 로드 준비!!', loginUser);
 
     if( loginUser.currentLocation ){ 
       this.setState({message: loginUser.currentLocation.cityName});
@@ -61,21 +73,10 @@ export default class CurrentLocation extends Component {
 
   loadCurrentLocation = () => {
 
-    // 구글 지도 API 로딩
-    if( !this.state.loadedGoogleSDK ){
-      this.setState({
-        loadedGoogleSDK: true
-      })
-      const script = document.createElement('script');
-      script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyABFo5etnTuWbcrgVxaCeJa7a4R2ZLZsOY&signed_in=true&language=en&callback=loadedGoogle';
-      document.head.appendChild(script);
-    }
-
     if (navigator.geolocation) {
       this.setState({message: 'finding location...'})
       navigator.geolocation.getCurrentPosition(this.onSuccessPosition, this.onFailPosition);
     }
-  
   };
 
 
@@ -105,9 +106,6 @@ export default class CurrentLocation extends Component {
 
 
   findLocation = () => {
-
-    //console.log('findLocation..', this.state)
-
     let { checkCount } = this.state;
     checkCount--;
 
@@ -138,11 +136,11 @@ export default class CurrentLocation extends Component {
       results[0].address_components.forEach( (addr, i) => {
 
         if (addr.types[0] === 'locality'){
-            cityName = addr.long_name;
+          cityName = addr.long_name;
         }
 
         if (addr.types[0] === 'country'){
-            countryName = addr.long_name;
+          countryName = addr.long_name;
         }
 
       });

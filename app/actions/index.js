@@ -214,6 +214,20 @@ export function updateDataForNewRedBook(data){
 }
 /* END OF setNewRedBookCityName */
 
+/**
+ * 데이터 변경 사항을 저장한다. 
+ */
+export function updateDataForRedBook(data){
+  return (dispatch, getState) => {
+    return dispatch({
+      type: 'UPDATE_DATE_FOR_REDBOOK',
+      data: data
+    });
+  }
+}
+/* END OF setNewRedBookCityName */
+
+
 
 /**
  * 사이드바 정보 업데이트. 

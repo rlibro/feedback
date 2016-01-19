@@ -24,7 +24,7 @@ export default class Root extends Component {
               <Route path="/guide/:uname" component={RedBookPage}>
                 <Route path="/guide/:uname/people" component={CityPeoplePage}/>
               </Route>
-              <Route path="/crate/:uname" component={NewRedBookPage}/>
+              <Route path="/create/:uname" component={NewRedBookPage}/>
             </Route>
           </Router>
         </div>

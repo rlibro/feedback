@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { facebookLogin, updateLoginUserInfo } from '../actions'
+import { facebookLogin, updateLoginUserInfo, updateDataForRedBook } from '../actions'
 import { fetchNotes, 
          addNote, resetAddNote,
          updateNote, resetUpdateNote,
@@ -10,6 +10,7 @@ import { pushPath as pushState, replacePath } from 'redux-simple-router'
 import RedBookCover from '../components/RedBookCover'
 import RedBookNoteForm from '../components/RedBookNoteForm'
 import RedBookNoteList from '../components/RedBookNoteList'
+import RedMapPlace from '../components/RedMapPlace'
 
 
 function fetchNotesFromServer(props) {
@@ -90,15 +91,11 @@ class RedBookPage extends Component {
 
     // 일단 커버와 입력폼을 로드한다. 
     return <div className={klassName}>
-      <RedBookCover 
-        loginUser={loginUser} 
-        redBook={redBook}
-        onPushState={this.props.pushState}
-        onCloseRedBook={this.handleCloseRedBook} />
-
+      {this.renderCoverOrMap()}
       <RedBookNoteForm 
         loginUser={loginUser}
         pageForRedBook={pageForRedBook}
+        onUpdateDataForRedBook={this.props.updateDataForRedBook}
         onAddNote={this.handleAddNote.bind(null, redBook.id)} 
         onAddNoteDone={this.handleAddNoteDone}
       />
@@ -111,6 +108,29 @@ class RedBookPage extends Component {
       {this.props.children}
     </div>
   }
+
+  renderCoverOrMap = () => {
+    const { loginUser, redBook, pageForRedBook } = this.props;
+    const { formMode } = pageForRedBook;
+
+    if( formMode === 'NOTE') {
+      return <RedBookCover 
+        loginUser={loginUser} 
+        redBook={redBook}
+        onPushState={this.props.pushState}
+        onCloseRedBook={this.handleCloseRedBook} />
+    }
+
+    if( formMode === 'PLACE') {
+
+      return <RedMapPlace className="RedMapPlace" 
+        geo={redBook.geo}
+        onUpdateDataForRedBook={this.props.updateDataForRedBook}
+
+      />
+    }
+
+  };
 
   renderLoadingRedBook = () => {
 
@@ -267,6 +287,7 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, {
   facebookLogin,
   updateLoginUserInfo,
+  updateDataForRedBook,
  
   fetchNotes,
   fetchComments,

@@ -8,8 +8,7 @@ export default class RedBookNoteForm extends Component {
 
     this.state = {
       activeForm: false,
-      lineCount: 0,
-      formMode: 'NOTE'
+      lineCount: 0
     }
   }
 
@@ -33,7 +32,11 @@ export default class RedBookNoteForm extends Component {
    * 상태가 변경되었을 경우는 호출됨
    */
   shouldComponentUpdate(nextProps, nextState) {
-    const { loginUser } = nextProps;
+    const { loginUser, pageForRedBook : {formMode} } = nextProps;
+
+    if( formMode !== this.props.pageForRedBook.formMode){
+      return true;
+    }
 
     if( loginUser.id && loginUser.id !== this.props.loginUser.id ) {
       return true;
@@ -53,8 +56,8 @@ export default class RedBookNoteForm extends Component {
 
   renderFormByMode = () => {
 
-    const { formMode, lineCount } = this.state;
-    const { loginUser } = this.props;
+    const { lineCount } = this.state;
+    const { loginUser, pageForRedBook: {formMode} } = this.props;
 
     let style = {height:'36px'}
 
@@ -68,7 +71,7 @@ export default class RedBookNoteForm extends Component {
       return <div className="RedBookNoteForm">
         <div className="note-form-header">
           <button onClick={this.handleFormMode.bind(this,'NOTE')} className="on">Note</button>
-          {/*<button onClick={this.handleFormMode.bind(this,'CHECKIN')}>장소</button>*/}
+          <button onClick={this.handleFormMode.bind(this,'PLACE')}>Place</button>
         </div>  
         <textarea ref="textarea" className="text" style={style}
                   onKeyDown={this.handleFormKeyDown}
@@ -79,15 +82,17 @@ export default class RedBookNoteForm extends Component {
       </div>
     }
 
-    if( formMode === 'CHECKIN'){
+    if( formMode === 'PLACE'){
       return <div className="RedBookNoteForm">
         <div className="note-form-header">
           <button onClick={this.handleFormMode.bind(this,'NOTE')}>Note</button>
-          <button onClick={this.handleFormMode.bind(this,'CHECKIN')} className="on">장소</button>
+          <button onClick={this.handleFormMode.bind(this,'PLACE')} className="on">Place</button>
         </div>  
-        <div className="checkin-options">
-          상태를 
-        </div>          
+        <textarea ref="textarea" className="text" style={style}
+                  onKeyDown={this.handleFormKeyDown}
+                  onFocus={this.handeFormFocus}
+                  placeholder="Share your exprience in this city!">
+        </textarea>
         <div className="note-form-footer">
           <p className="message">위 상태로 당신의 위치를 공개 하겟습니까?</p>
           <button>공개</button>
@@ -116,20 +121,6 @@ export default class RedBookNoteForm extends Component {
     } 
   };
 
-  renderFormReady = () => {
-    const { loginUser } = this.props;
-
-    return <div className="RedBookNoteForm">
-      <div className="note-form-header">
-        <button>정보</button>
-        <button>사진</button>
-        <button>마커</button>
-      </div>
-  
-      <textarea className="text" placeholder="이 도시에서 경험한 유용한 정보를 공유하세요!"></textarea>
-    </div>
-  };
-
   handleAddNote = (e) => {
 
     const node = findDOMNode(this.refs.textarea);
@@ -140,9 +131,11 @@ export default class RedBookNoteForm extends Component {
   };
 
   handleFormMode = (mode, e) => {
-    this.setState({
+
+    this.props.onUpdateDataForRedBook({
       formMode: mode
     });
+
   };
 
   handleFormKeyDown = (e) => {
@@ -177,6 +170,7 @@ export default class RedBookNoteForm extends Component {
 RedBookNoteForm.propTypes = {
   loginUser: PropTypes.object.isRequired,
   pageForRedBook: PropTypes.object.isRequired,
+  onUpdateDataForRedBook: PropTypes.func.isRequired,
   onAddNote: PropTypes.func.isRequired,
   onAddNoteDone: PropTypes.func.isRequired
 }

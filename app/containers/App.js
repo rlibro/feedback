@@ -165,7 +165,7 @@ class App extends Component {
   handleCreateRedBook = (loc, e) => {
 
     const { cityName, countryName } = loc;
-    this.props.pushState(`/crate/${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`, `${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`);
+    this.props.pushState(`/create/${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`, `${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`);
     e.preventDefault();
   };
 }

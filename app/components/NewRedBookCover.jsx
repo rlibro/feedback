@@ -49,6 +49,11 @@ export default class NewRedBookCover extends Component {
       format: 'json'
     }, function(data){
 
+      if(data.items.length === 0){
+        this.loadFlickImage(null, countryName);
+        return;
+      }
+
       var rnd = Math.floor(Math.random() * data.items.length);
       var imageSrc = data.items[rnd]['media']['m'].replace('_m', '_b');
 

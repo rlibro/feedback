@@ -166,9 +166,17 @@ const parseAPI = {
     const redBook = new RedBook();
     const note    = new Note();
 
+    let geoPoint = new Parse.GeoPoint({
+      latitude: params.RedBook.geo.lat,
+      longitude: params.RedBook.geo.lng
+    });
+    params.RedBook.geo = geoPoint;
+
     redBook.set(params.RedBook);
     note.set(params.Note);
     note.set('redBook', redBook);
+
+
     
     return note.save()
     .then(function(note){
