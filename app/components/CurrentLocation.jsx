@@ -12,7 +12,6 @@ export default class CurrentLocation extends Component {
     super(props);
 
     this.state = {
-      loadedGoogleSDK: false,
       checkCount: 2,
       message: '',
       latlng : null
@@ -24,8 +23,6 @@ export default class CurrentLocation extends Component {
   componentWillReceiveProps(nextProps){
 
     if( nextProps.loginUser.id !== this.props.loginUser.id ){
-      
-
       if( !nextProps.loginUser.id ) {
         let checkCount = this.state.checkCount;
         checkCount++;
@@ -36,30 +33,25 @@ export default class CurrentLocation extends Component {
         })
       } else {
         this.loadCurrentLocation();  
-      }
-      
+      } 
     }
-    
   }
 
   render(){
     return <ScriptjsLoader
-        hostname={'maps.googleapis.com'}
-        pathname={'/maps/api/js'}
-        query={{
-          key:'AIzaSyABFo5etnTuWbcrgVxaCeJa7a4R2ZLZsOY',
-          language:'en',
-          callback:'loadedGoogle',
-          libraries: 'geometry,drawing,places'
-        }}
-        loadingElement={<div/>}
-        googleMapElement={
-          <GoogleMap
-            defaultZoom={3}
-            defaultCenter={{lat: -25.363882, lng: 131.044922}}
-          ></GoogleMap>        
-        }
-      />;
+      hostname={'maps.googleapis.com'}
+      pathname={'/maps/api/js'}
+      query={{
+        v: `3.${ CurrentLocation.version }`,
+        key:'AIzaSyABFo5etnTuWbcrgVxaCeJa7a4R2ZLZsOY',
+        language:'en',
+        callback:'loadedGoogle',
+        libraries: 'geometry,drawing,places'
+      }}
+      loadingElement={<div/>}
+      containerElement={<div id="google_map"/>}
+      googleMapElement={<GoogleMap/>}
+    />;
   }
 
   componentDidMount(){
@@ -81,6 +73,17 @@ export default class CurrentLocation extends Component {
 
 
   onLoadedGoogle = () => {
+
+    // google SDK 로드 완료!
+    this.props.onUpdateAppState({
+      loadedGoogleSDK: true
+    })
+
+    // SDK 로드를 위한 임시 지도는 제거
+    setTimeout(function(){
+      $('#google_map').remove();
+    }, 0)
+    
     this.findLocation();    
   };
 
@@ -157,7 +160,6 @@ export default class CurrentLocation extends Component {
         self.setState({message: '도시로 이동하세요!' });
       }
 
-      
     });
 
   };
@@ -165,5 +167,6 @@ export default class CurrentLocation extends Component {
 
 CurrentLocation.propTypes = {
   loginUser: PropTypes.object.isRequired,
+  onUpdateAppState: PropTypes.func.isRequired,
   onUpdateCurrentUserLocation: PropTypes.func.isRequired
 }

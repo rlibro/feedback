@@ -59,9 +59,11 @@ class App extends Component {
           onUpdateCurrentUserLocation={this.props.updateCurrentUserLocation}
           />
 
-        <CurrentLocation 
+        <CurrentLocation
+          loginUser={loginUser} 
+          onUpdateAppState={this.props.updateAppState}  
           onUpdateCurrentUserLocation={this.props.updateCurrentUserLocation}
-          loginUser={loginUser} />
+        />
 
         <SideBar 
           appState={appState}

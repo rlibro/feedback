@@ -14,12 +14,15 @@ export default class RedBookNoteForm extends Component {
 
   componentWillReceiveProps(nextProps){
 
-    const { pageForRedBook: { addNote } } = nextProps;
+    const { pageForRedBook: { isFetching } } = nextProps;
 
-    if( addNote && (addNote.state === 'SUCCESS') ) {
+    if( isFetching.addNote === 'DONE' ) {
       this.setState({
         activeForm: false,
-        lineCount: 0,
+        lineCount: 0
+      });
+      
+      this.props.onUpdateDataForRedBook({
         formMode: 'NOTE'
       });
 
@@ -112,7 +115,7 @@ export default class RedBookNoteForm extends Component {
               return <option key={i} value={refText}>{`[${place.label}]:${place.title}`}</option>
             })}
           </select>
-          <button onClick={this.handleReferncePlace}>Reference</button>
+          <button onClick={this.handleReferncePlace}>Add</button>
         </div>
         {this.renderPlacePostButton()}
       </div>
@@ -123,30 +126,31 @@ export default class RedBookNoteForm extends Component {
   renderPostButton = () => {
 
     const { activeForm } = this.state;
-    const { pageForRedBook: { addNote } } = this.props;
+    const { pageForRedBook: { isFetching } } = this.props;
 
 
-    if( activeForm && addNote.state === 'READY' ) {
+    if( activeForm && isFetching.addNote === 'READY' ) {
       return <div className="note-form-footer">
         <button onClick={this.handleAddNote}>Post</button>
       </div>
     } 
 
-    if( activeForm && addNote.state === 'REQUESTING' ) {
+    if( activeForm && isFetching.addNote === 'REQUESTING') {
       return <div className="note-form-footer">
         <button onClick={this.handleAddNote} disabled><i className="fa fa-spinner fa-pulse"></i></button>
       </div>
-    } 
+    }
+
   };
 
   renderPlacePostButton = () => {
-    const { pageForRedBook: { addNote } } = this.props;
+    const { pageForRedBook: { isFetching } } = this.props;
 
-    if( addNote.state === 'READY' ) {
+    if( isFetching.addNote === 'READY' ) {
       return <button onClick={this.handleAddNote}>Post</button>
     } 
 
-    if( addNote.state === 'REQUESTING' ) {
+    if( isFetching.addNote === 'REQUESTING' ) {
       return <button onClick={this.handleAddNote} disabled><i className="fa fa-spinner fa-pulse"></i></button>
     } 
   };

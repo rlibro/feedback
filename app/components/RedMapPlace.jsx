@@ -12,21 +12,20 @@ export default class RedMapPlace extends Component {
 
   static version = Math.ceil(Math.random() * 22);
 
-  state = {
-    markers: []
-  };
+  constructor(props){
+    super(props);
+
+    this.state = {
+      markers: props.markers.concat()
+    };
+  }
 
   render () {
 
-    const mapLocation = {
-      lat : this.props.geo.latitude,
-      lng : this.props.geo.longitude
-    };
-
+    const { mapCenter, zoomLevel = 13, isReadOnly } = this.props;
+    
     return <div className="RedBookCover place">
-    <div className="button-close">
-      <i className="fa fa-times" onClick={this.handleClosePlaceMap}/>
-    </div>
+    {this.renderCloseButton()}
     <GoogleMapLoader
       containerElement={
         <div
@@ -38,29 +37,16 @@ export default class RedMapPlace extends Component {
       }
       googleMapElement={
         <GoogleMap
-          ref={(map) => console.log(map)}
           defaultOptions={{
             mapTypeControl: false,
             streetViewControl: false,
             scrollwheel: false,
             disableDoubleClickZoom: true
           }}
-          defaultZoom={13}
-          defaultCenter={mapLocation}
+          defaultZoom={zoomLevel}
+          defaultCenter={mapCenter}
           onClick={this.handleMapClick}>
-          {this.state.markers.map((marker, index) => {
-            const ref = `marker_${index}`;
-            return (
-              <Marker key={ref} ref={ref}
-                {...marker}
-                title={(index+1).toString()}
-                onClick={this.handleMarkerClick.bind(this, marker)}
-                onRightclick={this.handleMarkerRightclick.bind(this, index)} >
-
-                {marker.showInfo ? this.renderInfoWindow(ref, marker) : null}
-              </Marker>
-            );
-          })}
+          {this.renderMarkers()}
         </GoogleMap>
       }
     />
@@ -68,23 +54,57 @@ export default class RedMapPlace extends Component {
 
   };
 
+  renderCloseButton = () => {
+    const { isReadOnly } = this.props;
+    if( isReadOnly ){
+      return false;
+    }
+
+    return <div className="button-close">
+      <i className="fa fa-times" onClick={this.handleClosePlaceMap}/>
+    </div>
+  };
+
+  renderMarkers = () => {
+
+    const { isReadOnly } = this.props;
+    const { markers } = this.state;
+
+    return markers.map((marker, index) => {
+      const ref = `marker_${index}`;
+      
+      return <Marker key={ref} ref={ref}
+        {...marker}
+        title={(index+1).toString()}
+        onClick={this.handleMarkerClick.bind(this, marker)}
+        onRightclick={this.handleMarkerRightclick.bind(this, index)} >
+        {marker.showInfo ? this.renderInfoWindow(ref, marker) : null}
+      </Marker>
+      
+    })
+  };
+
   renderInfoWindow = (ref, marker) => {
+
+    const { isReadOnly } = this.props;
+    
     let InfoContent = <div id={marker.key} 
       className="infoWindow" 
       onClick={this.handleEditInfoWindowTitle.bind(this, marker)}>
       <i className="fa fa-pencil-square-o" /> {marker.title}
     </div>;
 
+    if( isReadOnly ) {
+      InfoContent = <div id={marker.key} className="infoWindow">{marker.title}</div>;
+    }
 
     if( marker.isEditing ){
-      InfoContent = <div id={marker.key} 
-      className="infoWindow">
-      <input type="text" 
-        defaultValue={marker.title}
-        onKeyDown={this.handleKeyDownInfoWindow.bind(this, marker)}
-        onBlur={this.handleEditDoneInfoWindowTitle.bind(this, marker)}/>
-    </div>;
-
+      InfoContent = <div id={marker.key} className="infoWindow">
+        <input type="text" 
+          defaultValue={marker.title}
+          onKeyDown={this.handleKeyDownInfoWindow.bind(this, marker)}
+          onBlur={this.handleEditDoneInfoWindowTitle.bind(this, marker)}/>
+      </div>;
     }
 
     return (
@@ -98,8 +118,8 @@ export default class RedMapPlace extends Component {
   handleEditInfoWindowTitle = (marker) => {
     marker.isEditing = true;
 
-    var {markers} = this.state;
-    markers = update(markers, { $set: [marker] });
+    var { markers } = this.state;
+    update(markers, { $set: [marker] });
     this.setState({ markers });
 
   };
@@ -115,7 +135,8 @@ export default class RedMapPlace extends Component {
     marker.isEditing = false;
 
     var {markers} = this.state;
-    markers = update(markers, { $set: [marker] });
+
+    update(markers, { $set: [marker] });
     this.setState({ markers });
     this.props.onUpdateDataForRedBook({
       places: markers
@@ -158,6 +179,12 @@ export default class RedMapPlace extends Component {
   };
 
   handleMapClick =(event) =>{
+
+    const { isReadOnly } = this.props;
+    if( isReadOnly ) {
+      return false;
+    }
+
     let {markers} = this.state;
     let uniqLabelName = this.findUniqLabel();
     let self = this;
@@ -185,6 +212,12 @@ export default class RedMapPlace extends Component {
   };
 
   handleMarkerRightclick = (index, event) => {
+    const { isReadOnly } = this.props;
+    if( isReadOnly ) {
+      return false;
+    }
+
+
     var {markers} = this.state;
     markers = update(markers, {
       $splice: [
@@ -215,6 +248,9 @@ export default class RedMapPlace extends Component {
 }
 
 RedMapPlace.propTypes = {
-  geo : PropTypes.object.isRequired,
+  mapCenter : PropTypes.shape({
+    lat: React.PropTypes.number,
+    lng: React.PropTypes.number
+  }),
   onUpdateDataForRedBook: PropTypes.func.isRequired
 }

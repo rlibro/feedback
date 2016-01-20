@@ -209,11 +209,9 @@ function pageForRedBook(state = {
   isFetching: {
     redbook: false,
     note: false,
+    addNote: 'READY',
     comment: false,
     place: false
-  },
-  addNote: {
-    state: 'READY'
   },
   updateNote: {
     id: null, 
@@ -229,6 +227,7 @@ function pageForRedBook(state = {
 
   switch(action.type){
 
+    // 댓글
     case 'COMMENTS_REQUEST':
     state.isFetching.comment = true;
     return merge({}, state);
@@ -237,6 +236,31 @@ function pageForRedBook(state = {
     case 'COMMENTS_FAILURE':
     state.isFetching.comment = false;
     return merge({}, state);
+
+    // 노트 한개 가져오기 
+    case 'NOTE_REQUEST':
+    state.isFetching.note = true;
+    return merge({}, state);
+
+    case 'NOTE_SUCCESS':
+    case 'NOTE_FAILURE':
+    state.isFetching.note = false;
+    return merge({}, state);
+
+
+    // 노트 추가
+    case 'ADD_NOTE_REQUEST':
+    state.isFetching.addNote = 'REQUESTING';
+    return merge({}, state);
+
+    case 'ADD_NOTE_SUCCESS':
+    case 'ADD_NOTE_FAILURE':
+    state.isFetching.addNote = 'DONE';
+    return merge({}, state);
+    case 'RESET_ADD_NOTE': 
+    state.isFetching.addNote = 'READY';
+    return merge({}, state);
+
 
 
 
@@ -247,27 +271,9 @@ function pageForRedBook(state = {
       state.places = action.data.places;
       return merge({}, state);
     }
-
-
     return merge({}, state, action.data);
 
-    // 노트 쓰기
-    case 'ADD_NOTE_REQUEST': 
-      state.addNote = {
-        state: 'REQUESTING'
-      }
-      return merge({}, state);
-    case 'ADD_NOTE_SUCCESS': 
-      state.addNote = {
-        state: 'SUCCESS'
-      }
-      return merge({}, state);
-    case 'RESET_ADD_NOTE': 
-      state.addNote = {
-        state: 'READY'
-      }
-      return merge({}, state);
-
+    
     // 노트수정
     case 'UPDATE_NOTE_REQUEST': 
       state.updateNote = {

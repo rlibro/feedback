@@ -1,16 +1,15 @@
 import React, { Component, PropTypes } from 'react'
 import { 
   fetchNote,
-  updateNote,
   fetchComments,
   addComment,
   deleteComment,
-  resetUpdateNote,
-
+  resetUpdateNote
 } from '../actions'
 import { connect } from 'react-redux'
-import { findDOMNode } from 'react-dom';
+import { pushPath as pushState } from 'redux-simple-router'
 import RedBookNote from '../components/RedBookNote'
+import _ from 'lodash'
 
 function fetchNoteFromServer(noteId, props) {
   props.fetchNote( noteId )  
@@ -18,17 +17,12 @@ function fetchNoteFromServer(noteId, props) {
 
 class SingleNotePage extends Component {
   
-  constructor(props){
-    super(props);
-  }
-
   /** 
    * 최초 렌더링시 한번 호출됨.
    */
   componentWillMount(){
 
     const {params:{noteId}, notes} = this.props;
-
 
     // 페이지로 바로 접근한 경우에는 레드북이 패치된 다음에 업데이트 랜더링에서 처리한다. 
     if( !notes[noteId] ){
@@ -38,11 +32,15 @@ class SingleNotePage extends Component {
 
   /**
    * 초기로딩X, 프로퍼티가 새로 설정되면, 내부 state에 업데이트할 기회를 제공한다.
+   * note를 못받으면 되돌려라!
    */
   componentWillReceiveProps(nextProps) {
-    // this.setState({
-    //   likesIncreasing: nextProps.likeCount > this.props.likeCount
-    // });
+
+    const { pageForRedBook: { isFetching }, notes, params:{noteId} } = nextProps;
+
+    if( !isFetching.note && !notes[noteId] ) {
+      this.props.pushState('/');
+    }
   }
 
   /**
@@ -54,11 +52,9 @@ class SingleNotePage extends Component {
     const {params:{noteId}, notes} = this.props;
     const note = nextProps.notes[noteId];
 
-    if( note){
+    if( note ){
       return true;
     }
-
-
 
     return nextProps.notes[noteId] !== this.props.notes[noteId];
   }
@@ -71,7 +67,7 @@ class SingleNotePage extends Component {
       pageForRedBook, 
       notes, 
       entitiyComments, 
-      places
+      entitiyPlaces
     } = this.props;
 
     const note = notes[noteId];
@@ -80,29 +76,42 @@ class SingleNotePage extends Component {
       return false;
     }
 
-    let comments = [];
-    note.comments.forEach(function(commentId){
-
+    let comments = [], places=[];
+    _.each(note.comments, function(commentId){
       const comment = entitiyComments[commentId];
       if( comment ){
         comments.push( comment );               
       }
-  
     });
 
+    _.each(note.places, function(placeId){
+      const place = entitiyPlaces[placeId];
+      if( place ){
+        places.push( place );               
+      }
+    });
 
-    return <RedBookNote loginUser={loginUser}
-      pageForRedBook={pageForRedBook}
-      note={note} 
-      comments={comments}
+    return <div className="SingleNotePage">
 
-      hideContextMenu={true}
-      
-      onLogin={this.handleFacebookLogin}
-      onFetchComments={this.handleFetchComments}
-      onAddComment={this.handleAddComment}
-      onDeleteComment={this.handleDeleteComment}  
-      />
+      {this.props.children && 
+        React.cloneElement(this.props.children, {
+          note: note,
+          places: places
+        })
+      }
+      <RedBookNote loginUser={loginUser}
+        pageForRedBook={pageForRedBook}
+        note={note} 
+        comments={comments}
+
+        hideContextMenu={true}
+        
+        onLogin={this.handleFacebookLogin}
+        onFetchComments={this.handleFetchComments}
+        onAddComment={this.handleAddComment}
+        onDeleteComment={this.handleDeleteComment}  
+        />
+    </div>
   }
 
   handleFacebookLogin = () => {
@@ -129,18 +138,11 @@ class SingleNotePage extends Component {
     this.props.addComment(noteId, commentText)
   };
 
-  handleSaveEditingNote = (note, newText) => {
-
-    this.props.updateNote(this.props.redBook.id, note.id, newText);
-
-  };
-
-
-
 }
 
 
 SingleNotePage.propTypes = {
+  children: PropTypes.node
 };
 
 
@@ -156,7 +158,7 @@ function mapStateToProps(state) {
   return {
     notes,
     entitiyComments:comments,
-    places,
+    entitiyPlaces: places,
     loginUser: state.login,
     pageForRedBook: pageForRedBook,
   }
@@ -164,10 +166,9 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps, {
   fetchNote,
-  updateNote,
   fetchComments,
   addComment,
   deleteComment,
   resetUpdateNote,
-
+  pushState
 })(SingleNotePage)

@@ -126,6 +126,7 @@ const parseAPI = {
   fetchNote: function (schema, params) {
 
     let query = new Parse.Query(Note);
+        query.include('redBook');
         query.include('author');
     
     return query.get(params.noteId)
@@ -152,7 +153,11 @@ const parseAPI = {
 
         let jsonNote = note.toJSON();
         clearObjectId(jsonNote, 'author');
-        jsonNote.redBook = note.get('redBook').id;
+
+        let jsonRedBook = note.get('redBook').toJSON();
+        clearObjectId(jsonRedBook, 'creator');
+        
+        jsonNote.redBook = jsonRedBook;   
         entities.notes[note.id] = jsonNote;
 
         _.each(comments, function(comment){
@@ -285,6 +290,14 @@ const parseAPI = {
       return Parse.Promise.when(promises)
       .then(function(){
 
+        let places = [];
+        _.each( arguments, function(p){
+          places.push(p.id);
+        });
+
+        savedNote.save({
+          places: places
+        });
         let newNote = savedNote.toJSON();
         clearObjectId(newNote, 'author');
 

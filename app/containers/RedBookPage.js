@@ -125,7 +125,11 @@ class RedBookPage extends Component {
     if( formMode === 'PLACE') {
 
       return <RedMapPlace className="RedMapPlace" 
-        geo={redBook.geo}
+        mapCenter={{
+          lat: redBook.geo.latitude,
+          lng: redBook.geo.longitude
+        }}
+        markers = {[]}
         onUpdateDataForRedBook={this.props.updateDataForRedBook}
 
       />

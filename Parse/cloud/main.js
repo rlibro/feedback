@@ -55,9 +55,9 @@ Parse.Cloud.afterSave("CheckIn", function(request) {
 Parse.Cloud.afterDelete("Note", function(request) {
 
   // 관련 댓글도 모두 삭제한다. 
-  var query = new Parse.Query("Comment");
-  query.equalTo("parent", request.object);
-  query.find({
+  var commentQuery = new Parse.Query("Comment");
+  commentQuery.equalTo("parent", request.object);
+  commentQuery.find({
     success: function(comments) {
       Parse.Object.destroyAll(comments, {
         success: function() {},
@@ -70,6 +70,24 @@ Parse.Cloud.afterDelete("Note", function(request) {
       console.error("Error finding related comments ", error);
     }
   });
+
+  // 관련 장소도 모두 삭제한다.
+  var placeQuery = new Parse.Query("Place");
+  placeQuery.equalTo("note", request.object);
+  placeQuery.find({
+    success: function(places) {
+      Parse.Object.destroyAll(places, {
+        success: function() {},
+        error: function(error) {
+          console.error("노트를 지우고 난뒤에 관련 장소를 지우다 에러났다!", error);
+        }
+      });
+    },
+    error: function(error) {
+      console.error("Error finding related places ", error);
+    }
+  });
+
 
   // // 일단 레드북 노트목록에서도 ID를 제거하고, 
   // var redQuery = new Parse.Query("RedBook");
@@ -98,64 +116,64 @@ Parse.Cloud.afterDelete("Note", function(request) {
   // }); 
 });
 
-Parse.Cloud.afterSave("Place", function(request) {
-  var query = new Parse.Query("Note");
+// Parse.Cloud.afterSave("Place", function(request) {
+//   var query = new Parse.Query("Note");
   
-  query.get(request.object.get("note").id, {
-    success: function(note) {
+//   query.get(request.object.get("note").id, {
+//     success: function(note) {
 
-      var places = note.get('places');
-      var i=0, isNew = true;
-      for(; i< places.length; ++i){
-        if( places[i] === request.object.id) {
-          isNew = false;
-          break;
-        }
-      }
+//       var places = note.get('places');
+//       var i=0, isNew = true;
+//       for(; i< places.length; ++i){
+//         if( places[i] === request.object.id) {
+//           isNew = false;
+//           break;
+//         }
+//       }
 
-      if( isNew ){
-        places.push(request.object.id);
-        note.set("places", places);
-        note.save();      
-      }
+//       if( isNew ){
+//         places.push(request.object.id);
+//         note.set("places", places);
+//         note.save();      
+//       }
 
-    },
-    error: function(error) {
-      console.error("Got an places error " + error.code + " : " + error.message);
-    }
-  });
-});
+//     },
+//     error: function(error) {
+//       console.error("Got an places error " + error.code + " : " + error.message);
+//     }
+//   });
+// });
 
-Parse.Cloud.afterDelete("Place", function(request) {
-  var query = new Parse.Query("Note");
+// Parse.Cloud.afterDelete("Place", function(request) {
+//   var query = new Parse.Query("Note");
 
-  query.get(request.object.get("note").id, {
-    success: function(note) {
+//   query.get(request.object.get("note").id, {
+//     success: function(note) {
 
-      if( note ){
-        var places = note.get('places');
-        var i=0, isUpdate=false;
+//       if( note ){
+//         var places = note.get('places');
+//         var i=0, isUpdate=false;
 
-        for( ; i<places.length; ++i ){
-          if( places[i] === request.object.id ){
-            places.splice(i, 1);
-            isUpdate=true;
-            break;
-          }
-        }
+//         for( ; i<places.length; ++i ){
+//           if( places[i] === request.object.id ){
+//             places.splice(i, 1);
+//             isUpdate=true;
+//             break;
+//           }
+//         }
 
-        if( isUpdate ){
-          note.set("places", places);
-          note.save();  
-        }
-      }
-    },
-    error: function(error) {
-      console.error("Error deleting related comments - ", JSON.stringify(error));
-    }
-  });
+//         if( isUpdate ){
+//           note.set("places", places);
+//           note.save();  
+//         }
+//       }
+//     },
+//     error: function(error) {
+//       console.error("Error deleting related place - " + JSON.stringify(error));
+//     }
+//   });
 
-});
+// });
 
 
 Parse.Cloud.afterSave("Comment", function(request) {
