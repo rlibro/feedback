@@ -1017,9 +1017,20 @@ button {
         float: left;
         margin-right: 2px;
 
-        &.join {
-          background-color: #fff;
+        &.join, &.leave {
+          background-color: #244d5d;
+          color: #fff;
+          border: 1px solid #333;
           outline: none;
+          cursor: pointer;
+
+          &:hover{
+            background-color: #446d7d;
+          }
+        }
+
+        &.leave {
+          float: right;
         }
       }
     }

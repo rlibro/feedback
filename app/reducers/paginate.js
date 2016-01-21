@@ -32,7 +32,8 @@ export default function paginate({ types, mapActionToKey }) {
       case successType:
 
         if( successType === 'CITY_PEOPLES_SUCCESS'){
-          return merge({}, state, {
+
+          return merge({}, {
             isFetching: false,
             ids: action.response.result
           })

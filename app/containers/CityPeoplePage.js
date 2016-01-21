@@ -195,7 +195,7 @@ class CityPeoplePage extends Component {
           }
 
         })}
-
+        <div className="sign leave" alt="leave out here!" onClick={this.handleLeaveOut} key={'checkOut'}><i ref="leave" className="fa fa-sign-out"/></div>
       </div>
 
     }
@@ -203,11 +203,24 @@ class CityPeoplePage extends Component {
   };
 
   handleJoinUs = (redBookId, uname, latlng, e) => {
-      
+    
+    const {loginUser} = this.props;
     const node = findDOMNode(this.refs.join);
     node.className = 'fa fa-spinner fa-pulse';
 
+    if( loginUser.currentCity ){
+      this.props.checkOutHere(loginUser.currentCity);  
+    }
+
     this.props.checkInHere(redBookId, uname, latlng);
+  };
+
+  handleLeaveOut = (e) => {
+    const {loginUser} = this.props;
+    const node = findDOMNode(this.refs.leave);
+    node.className = 'fa fa-spinner fa-pulse';
+
+    this.props.checkOutHere(loginUser.currentCity); 
   };
 
 
