@@ -84,18 +84,15 @@ class App extends Component {
 
     window.fbAsyncInit = function() {
 
-      // 1155091951184116 테스트 버전
-      // 1155089597851018 베포 버전
-
       Parse.FacebookUtils.init({
-        appId      : '1155091951184116',  
+        appId      : window.__FaceBookAppID,  
         cookie     : true,
         xfbml      : true,
         version    : 'v2.4'
       });
+      delete window.__FaceBookAppID;
 
       this.props.updateAppState({loadedFacebookSDK: true});
-      //this.props.updateLoginUserInfo({facebook: true});
       
       const sessionUser = Parse.User.current();
       if( sessionUser ){

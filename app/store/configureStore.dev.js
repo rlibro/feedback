@@ -11,6 +11,9 @@ const finalCreateStore = compose(
   DevTools.instrument()
 )(createStore)
 
+window.__FaceBookAppID = '1155091951184116';
+Parse.initialize('oI9ho8CTpm5bFDliirnMFEdH3UGCzaBI8YHBtlnD', '97zh1DEXSPm7DiJjRZYy8KXJBMUVmSxUrScJlgAh');
+
 export default function configureStore(initialState) {
   
   const store = finalCreateStore(rootReducer, initialState)

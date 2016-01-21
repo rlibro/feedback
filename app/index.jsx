@@ -12,7 +12,6 @@ const store = configureStore(initialState);
 const history = createHistory()
 
 syncReduxAndRouter(history, store)
-Parse.initialize('oI9ho8CTpm5bFDliirnMFEdH3UGCzaBI8YHBtlnD', '97zh1DEXSPm7DiJjRZYy8KXJBMUVmSxUrScJlgAh');
 
 render(
   <Root store={store} history={history} />, 
