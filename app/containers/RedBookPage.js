@@ -12,7 +12,6 @@ import RedBookNoteForm from '../components/RedBookNoteForm'
 import RedBookNoteList from '../components/RedBookNoteList'
 import RedMapPlace from '../components/RedMapPlace'
 
-
 function fetchNotesFromServer(props) {
   const { redBook } = props
 
@@ -91,7 +90,7 @@ class RedBookPage extends Component {
     if( this.props.children ) { klassName = 'RedBookPage open-child' }
 
     // 일단 커버와 입력폼을 로드한다. 
-    return <div className={klassName}>
+    return <div className={klassName} ref="redbook">
       {this.renderCoverOrMap()}
       <RedBookNoteForm 
         loginUser={loginUser}
@@ -181,7 +180,7 @@ class RedBookPage extends Component {
         pagingCommentsByNoteId={pagingCommentsByNoteId}
         
         onLogin={this.handleFacebookLogin}
-        onPushState={this.handlePushState}
+        onPushState={this.props.pushState}
         onFetchComments={this.handleFetchComments}
         onSaveEditingNote={this.handleSaveEditingNote}
         onSaveEditingNoteDone={this.props.resetUpdateNote}
@@ -196,9 +195,7 @@ class RedBookPage extends Component {
   };
 
   handleCloseRedBook = (e) => {
-
-    this.props.replacePath('/')  
-
+    this.props.pushState('/')  
   };
 
   handleFetchComments =(noteId)=>{
@@ -232,9 +229,7 @@ class RedBookPage extends Component {
   };
 
   handleSaveEditingNote = (note, newText) => {
-
     this.props.updateNote(this.props.redBook.id, note.id, newText);
-
   };
   
 }

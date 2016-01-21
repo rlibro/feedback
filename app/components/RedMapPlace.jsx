@@ -45,6 +45,7 @@ export default class RedMapPlace extends Component {
           }}
           defaultZoom={zoomLevel}
           defaultCenter={mapCenter}
+          center={mapCenter}
           onClick={this.handleMapClick}>
           {this.renderMarkers()}
         </GoogleMap>

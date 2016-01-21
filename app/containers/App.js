@@ -12,38 +12,22 @@ import Explore from '../components/Explore'
 import RedBookList from '../components/RedBookList'
 import Footer from '../components/Footer'
 
-function loadData(props) {
+function fetchRedBooksFromServer(props) {
   props.fetchRedBooks()
 }
 
 class App extends Component {
 
+  /**
+   * 처음에 무조건 레드북을 가져온다.
+   * 새로 업데이트된 레드북은 새로 고침한다. 
+   */   
   componentWillMount() {
-
-    loadData(this.props)
-  }
-
-  renderErrorMessage() {
-    const { errorMessage } = this.props
-    if (!errorMessage) {
-      return null
-    }
-
-    return (
-      <p style={{ backgroundColor: '#e99', padding: 10 }}>
-        <b>{errorMessage}</b>
-        {' '}
-        (<a href="#"
-            onClick={this.handleDismissClick.bind(this)}>
-          Dismiss
-        </a>)
-      </p>
-    )
+    fetchRedBooksFromServer(this.props)
   }
 
   render() {
     const { loginUser, redBooks, entities, path, appState} = this.props
-    
     let klass = (path !== '/')? 'sub':''
 
     return (
@@ -89,7 +73,7 @@ class App extends Component {
           onCreateRedBook={this.handleCreateRedBook}
           />
 
-        {this.props.children}
+        {this.renderChildPage()}
 
         <Footer />
       </div>
@@ -138,6 +122,37 @@ class App extends Component {
 
   }
 
+  renderChildPage = () => {
+
+    const {path} = this.props;
+
+    let klassName = 'detail'
+
+    if( path === '/' ) {
+      klassName = 'detail hide'    
+    }
+
+    return <div className={klassName}>{this.props.children}</div>
+  };
+
+  renderErrorMessage = () => {
+    const { errorMessage } = this.props
+    if (!errorMessage) {
+      return null
+    }
+
+    return (
+      <p style={{ backgroundColor: '#e99', padding: 10 }}>
+        <b>{errorMessage}</b>
+        {' '}
+        (<a href="#"
+            onClick={this.handleDismissClick.bind(this)}>
+          Dismiss
+        </a>)
+      </p>
+    )
+  };
+
   handleFacebookLogin = () => {
     this.props.facebookLogin(this.props.updateLoginUserInfo);    
   };
@@ -154,11 +169,6 @@ class App extends Component {
     e.preventDefault()
   };
 
-  handleChangePath = (path, e) => {
-    this.props.pushState(path);
-    e.preventDefault()
-  };
-
   handleOpenRedBook = (redBook, e) => {
     this.props.pushState(`/guide/${redBook.uname}`)
     e.preventDefault()
@@ -170,6 +180,7 @@ class App extends Component {
     this.props.pushState(`/create/${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`, `${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`);
     e.preventDefault();
   };
+
 }
 
 App.propTypes = {

@@ -6,6 +6,7 @@ const userSchema = new Schema('users', { idAttribute: 'id' })
 const redBookSchema = new Schema('redBooks', { idAttribute: 'id' })
 const noteSchema = new Schema('notes', {  idAttribute: 'id'})
 const commentSchema = new Schema('comments', {idAttribute: 'id'})
+const placeSchema = new Schema('places', {  idAttribute: 'id'})
 const resultSchema = new Schema('findings', {  idAttribute: 'id'})
 
 export const Schemas = {
@@ -17,6 +18,8 @@ export const Schemas = {
   NOTE_ARRAY: arrayOf(noteSchema),
   COMMENT: commentSchema,
   COMMENT_ARRAY: arrayOf(commentSchema),
+  PLACE: placeSchema,
+  PLACE_ARRAY: arrayOf(placeSchema),
   RESULT: resultSchema,
   RESULT_ARRAY: arrayOf(resultSchema)
 }
@@ -221,6 +224,38 @@ const parseAPI = {
       });
 
       return Object.assign({}, normalize(results, schema));
+         
+    }, function(error) {
+
+      return error.code + ', ' + error.message;
+
+    })
+  },
+
+  fetchPlaces: function (schema, params) {
+
+    let placeQuery = new Parse.Query(Place);
+    let note = new Note();
+
+    note.id = params.noteId;
+
+    placeQuery.equalTo('note', note);
+    
+    return placeQuery.find()
+    .then(function(places) {
+
+      _.each(places, function(place, i, a){
+
+        let jsonPlace = place.toJSON();
+
+        place.note = params.noteId;
+        jsonPlace.id = place.id;
+        delete jsonPlace.objectId;
+
+        a[i] = jsonPlace;
+      });
+
+      return Object.assign({}, normalize(places, schema));
          
     }, function(error) {
 

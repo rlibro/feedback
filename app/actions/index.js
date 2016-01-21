@@ -529,3 +529,27 @@ export function deleteComment (commentId, noteId) {
   }
 }
 /* END OF deleteComment */
+
+
+// 장소를 불러온다. 
+export const PLACES_REQUEST = 'PLACES_REQUEST'
+export const PLACES_SUCCESS = 'PLACES_SUCCESS'
+export const PLACES_FAILURE = 'PLACES_FAILURE'
+export function fetchPlaces (noteId) {
+
+  return (dispatch, getState) => {
+    return dispatch(function(){
+      return {
+        noteId,
+        [PARSE]: {
+          method: 'fetchPlaces',
+          params: { 
+            noteId : noteId
+          },
+          types: [ PLACES_REQUEST, PLACES_SUCCESS, PLACES_FAILURE ],
+          schema: Schemas.PLACE_ARRAY
+        }
+      }
+    }())
+  }
+}

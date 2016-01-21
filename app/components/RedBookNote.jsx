@@ -171,8 +171,17 @@ export default class RedBookNote extends Component {
 
       
     }else {
-      return <div className="content" dangerouslySetInnerHTML={{__html: contentText}}></div>  
+      return <div className="content" onClick={this.handleContentLink} dangerouslySetInnerHTML={{__html: contentText}}></div>  
     }
+  };
+
+  handleContentLink = (e) => {
+
+    var link = e.target.href.split('notes')[1];
+
+    this.props.onPushState('/notes' + link);
+    e.preventDefault();
+
   };
 
 
@@ -256,5 +265,6 @@ RedBookNote.propTypes = {
   onLogin: PropTypes.func.isRequired,
   onFetchComments: PropTypes.func.isRequired,
   onAddComment: PropTypes.func.isRequired,
-  onDeleteComment: PropTypes.func.isRequired
+  onDeleteComment: PropTypes.func.isRequired,
+  onPushState: PropTypes.func.isRequired
 }

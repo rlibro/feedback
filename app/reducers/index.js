@@ -5,7 +5,7 @@ import { routeReducer } from 'redux-simple-router'
 import { combineReducers } from 'redux'
 
 // API 응답은 캐시를 위해 모두 entities에 저장한다. 
-function entities(state = { redBooks: {}, notes:{}, comments:{}, users:{} }, action) {
+function entities(state = { redBooks: {}, notes:{}, comments:{}, users:{}, places:{} }, action) {
   
   if (action.response && action.response.entities) {
 

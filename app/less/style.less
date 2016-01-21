@@ -43,7 +43,10 @@ button {
   width: 800px;
   margin: 0 auto;
   min-width: 320px;
+}
 
+.hide {
+  display: none;
 }
 
 /**
@@ -1160,6 +1163,17 @@ button {
 
 }
 
+.SingleNotePage {
+
+}
+
+.SingleNotePlacePage {
+  margin-top: 5px;
+
+  .RedBookCover.place {
+    border: 1px solid #ccc;
+  }
+}
 
 .Footer {
   clear: both;
@@ -1205,7 +1219,6 @@ button {
 
   .wrap-RedBookList {
     background-color: #fff;
-    padding-top: 5px;
     top: 0;
   }
 
@@ -1441,7 +1454,7 @@ button {
     margin-top: 54px;
   }
 
-  .wrap-RedBookList {
+  .wrap-RedBookList, .SingleNotePage {
     margin-top: 54px;
 
     .RedBookList-byLocation {

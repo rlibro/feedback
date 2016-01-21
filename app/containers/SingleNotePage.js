@@ -12,7 +12,7 @@ import RedBookNote from '../components/RedBookNote'
 import _ from 'lodash'
 
 function fetchNoteFromServer(noteId, props) {
-  props.fetchNote( noteId )  
+  props.fetchNote( noteId );
 }
 
 class SingleNotePage extends Component {
@@ -84,19 +84,11 @@ class SingleNotePage extends Component {
       }
     });
 
-    _.each(note.places, function(placeId){
-      const place = entitiyPlaces[placeId];
-      if( place ){
-        places.push( place );               
-      }
-    });
-
     return <div className="SingleNotePage">
 
       {this.props.children && 
         React.cloneElement(this.props.children, {
-          note: note,
-          places: places
+          note: note
         })
       }
       <RedBookNote loginUser={loginUser}
@@ -110,6 +102,7 @@ class SingleNotePage extends Component {
         onFetchComments={this.handleFetchComments}
         onAddComment={this.handleAddComment}
         onDeleteComment={this.handleDeleteComment}  
+        onPushState={this.props.pushState}
         />
     </div>
   }
@@ -149,7 +142,7 @@ SingleNotePage.propTypes = {
 function mapStateToProps(state) {
 
   const {
-    entities: { notes, comments, places },
+    entities: { notes, comments },
     routing: { path },
     pageForRedBook
   } = state
@@ -158,7 +151,6 @@ function mapStateToProps(state) {
   return {
     notes,
     entitiyComments:comments,
-    entitiyPlaces: places,
     loginUser: state.login,
     pageForRedBook: pageForRedBook,
   }

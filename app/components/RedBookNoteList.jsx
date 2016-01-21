@@ -40,6 +40,7 @@ export default class RedBookNoteList extends Component {
           onSaveEditingNote={onSaveEditingNote}
           onSaveEditingNoteDone={onSaveEditingNoteDone}
           onDeleteComment={onDeleteComment}
+          onPushState={onPushState}
           />
       }) }
     </div>
@@ -59,5 +60,6 @@ RedBookNoteList.propTypes = {
   onSaveEditingNote: PropTypes.func.isRequired,
   onSaveEditingNoteDone: PropTypes.func.isRequired,
   onDeleteNote: PropTypes.func.isRequired,
-  onDeleteComment: PropTypes.func.isRequired
+  onDeleteComment: PropTypes.func.isRequired,
+  onPushState: PropTypes.func.isRequired
 }
