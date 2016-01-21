@@ -155,7 +155,8 @@ export default class RedBookNote extends Component {
         }
 
         return <div className="edit-content" >
-          <textarea dangerouslySetInnerHTML={{__html:note.content}}
+          <textarea
+            defaultValue={note.content}
             style={style} 
             ref="content"
             tabIndex="1"
