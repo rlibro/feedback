@@ -21,37 +21,47 @@ export default class RedMapPlace extends Component {
   }
 
   render () {
-
-    const { mapCenter, zoomLevel = 13, isReadOnly } = this.props;
     
     return <div className="RedBookCover place">
     {this.renderCloseButton()}
     <GoogleMapLoader
       containerElement={
-        <div
-          {...this.props}
-          style={{
-            height: '360px',
-          }}
-        />
+        <div {...this.props} style={{ height: '360px' }}/>
       }
-      googleMapElement={
-        <GoogleMap
-          defaultOptions={{
-            mapTypeControl: false,
-            streetViewControl: false,
-            scrollwheel: false,
-            disableDoubleClickZoom: true
-          }}
-          defaultZoom={zoomLevel}
-          defaultCenter={mapCenter}
-          center={mapCenter}
-          onClick={this.handleMapClick}>
-          {this.renderMarkers()}
-        </GoogleMap>
-      }
+      googleMapElement={this.renderGoogleMap()}
     />
     </div>
+
+  };
+
+  renderGoogleMap = () => {
+    const { disableMoveCenter, mapCenter, zoomLevel = 13, isReadOnly } = this.props;
+    const { markers } = this.state;
+    const defaultOptions = {
+      mapTypeControl: false,
+      streetViewControl: false,
+      scrollwheel: false,
+      disableDoubleClickZoom: true
+    }
+
+    if( disableMoveCenter ){
+      return <GoogleMap
+        defaultOptions={defaultOptions}
+        defaultZoom={zoomLevel}
+        defaultCenter={mapCenter}
+        onClick={this.handleMapClick}>
+        {this.renderMarkers()}
+      </GoogleMap>
+    }
+
+    return <GoogleMap
+      defaultOptions={defaultOptions}
+      defaultZoom={zoomLevel}
+      defaultCenter={mapCenter}
+      center={ mapCenter}
+      onClick={this.handleMapClick}>
+      {this.renderMarkers()}
+    </GoogleMap>
 
   };
 

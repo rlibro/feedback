@@ -141,6 +141,7 @@ class RedBookPage extends Component {
           lng: redBook.geo.longitude
         }}
         markers = {markers}
+        disableMoveCenter={true}
         onUpdateDataForRedBook={this.props.updateDataForRedBook}
 
       />
