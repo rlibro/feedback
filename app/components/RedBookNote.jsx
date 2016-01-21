@@ -178,8 +178,8 @@ export default class RedBookNote extends Component {
   handleContentLink = (e) => {
 
     var link = e.target.href.split('notes')[1];
-
     this.props.onPushState('/notes' + link);
+    window.scrollTo(0,0);
     e.preventDefault();
 
   };
