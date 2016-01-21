@@ -173,7 +173,10 @@ function login(state = {}, action) {
   return state
 }
 
-function appState(state = {sidebar: false}, action) {
+function appState(state = {
+  loadedGoogleSDK: false,
+  sidebar: false
+}, action) {
 
   switch(action.type){
 

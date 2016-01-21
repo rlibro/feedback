@@ -82,7 +82,7 @@ class RedBookPage extends Component {
    * 렌더링 함수는 무조건 호출되기 때문에 레드북이 없으면 렌더링 하지 않는다.
    */
   render() {
-    const { loginUser, redBook, pageForRedBook } = this.props;
+    const { appState, loginUser, redBook, pageForRedBook } = this.props;
     let klassName = 'RedBookPage';
 
     // 레드북
@@ -93,6 +93,7 @@ class RedBookPage extends Component {
     return <div className={klassName} ref="redbook">
       {this.renderCoverOrMap()}
       <RedBookNoteForm 
+        appState={appState}
         loginUser={loginUser}
         pageForRedBook={pageForRedBook}
         onUpdateDataForRedBook={this.props.updateDataForRedBook}
@@ -206,7 +207,8 @@ class RedBookPage extends Component {
   };
 
   handleCloseRedBook = (e) => {
-    this.props.pushState('/')  
+    this.props.updateDataForRedBook({ places: [] });
+    this.props.pushState('/');
   };
 
   handleFetchComments =(noteId)=>{
@@ -290,6 +292,7 @@ function mapStateToProps(state) {
   }
 
   return {
+    appState: state.appState,
     childPath: path,
     pageForRedBook: pageForRedBook,
     loginUser: state.login,

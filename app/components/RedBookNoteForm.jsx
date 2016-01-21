@@ -31,26 +31,6 @@ export default class RedBookNoteForm extends Component {
     }
   }
 
-
-  /**
-   * 상태가 변경되었을 경우는 호출됨
-   */
-  shouldComponentUpdate(nextProps, nextState) {
-    const { loginUser, pageForRedBook : {formMode} } = nextProps;
-
-    if( formMode !== this.props.pageForRedBook.formMode){
-      return true;
-    }
-
-    if( loginUser.id && loginUser.id !== this.props.loginUser.id ) {
-      return true;
-    } else if( loginUser && loginUser.current_location ) {
-      return true;
-    }
-    
-    return false;
-  }
-
   render() {
 
     const { loginUser } = this.props;
@@ -78,10 +58,20 @@ export default class RedBookNoteForm extends Component {
   };
 
   renderNoteForm = (style) => {
+
+    const { appState } = this.props;
+
     return <div className="RedBookNoteForm">
       <div className="note-form-header">
         <button onClick={this.handleFormMode.bind(this,'NOTE')} className="on">Note</button>
-        <button onClick={this.handleFormMode.bind(this,'PLACE')}>Place</button>
+        {function(){
+
+          if( appState.loadedGoogleSDK ) {
+            return <button onClick={this.handleFormMode.bind(this,'PLACE')}>Place</button>    
+          } else {
+            return false
+          }
+        }.bind(this)()}
       </div>  
       <textarea ref="textarea" className="text" style={style}
                 onKeyDown={this.handleFormKeyDown}
@@ -254,6 +244,7 @@ export default class RedBookNoteForm extends Component {
 }
 
 RedBookNoteForm.propTypes = {
+  appState: PropTypes.object.isRequired,
   loginUser: PropTypes.object.isRequired,
   pageForRedBook: PropTypes.object.isRequired,
   onUpdateDataForRedBook: PropTypes.func.isRequired,
