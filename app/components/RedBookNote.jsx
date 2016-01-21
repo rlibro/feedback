@@ -112,7 +112,7 @@ export default class RedBookNote extends Component {
     const { note, pageForRedBook: {noteUpdate}} = this.props;
     const contentText = 
       note.content
-        .replace(/\[(.*)\]\[(\d+)\]/g, `<a target="_blank" href="/notes/${note.id}/places/$2"><i class="fa fa-map-signs"></i> $1</a>`)
+        .replace(/\[([^\[\]]*)\]\[(\d+)\]/g, `<a target="_blank" href="/notes/${note.id}/places/$2"><i class="fa fa-map-signs"></i> $1</a>`)
         .replace(/(.*)\n\n(.*)/g, '<p>$1</p><br/><p>$2</p>')
         .replace(/(.*)\n(.*)/g, '<p>$1</p><p>$2</p>')
         .replace(/\s\s/g, '<span></span>');
