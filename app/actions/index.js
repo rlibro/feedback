@@ -151,12 +151,11 @@ export function updateLoginUserInfo(userInfo, curLoc){
 /**
  * 로그아웃한다. 
  */
-export function logOutUser(userInfo){
+export function logOutUser(){
   
   return (dispatch, getState) => {
     return dispatch({
-      type: 'CLEAR_LOGIN_USER_INFO',
-      login: userInfo
+      type: 'CLEAR_LOGIN_USER_INFO'
     });
   };
 }

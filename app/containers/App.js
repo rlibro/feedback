@@ -88,22 +88,17 @@ class App extends Component {
       // 1155089597851018 베포 버전
 
       Parse.FacebookUtils.init({
-        appId      : '1155089597851018',  
+        appId      : '1155091951184116',  
         cookie     : true,
         xfbml      : true,
         version    : 'v2.4'
       });
 
-      //console.log('페북 SDK 로드 완료!', this.props.loginUser)
-
-      this.props.updateLoginUserInfo({facebook: true});
+      this.props.updateAppState({loadedFacebookSDK: true});
+      //this.props.updateLoginUserInfo({facebook: true});
       
-      //console.log('세션 유저가 있는지 확인함!');
       const sessionUser = Parse.User.current();
       if( sessionUser ){
-
-        //console.log('세션 유저 있어!', sessionUser.toJSON())
-
         this.props.updateLoginUserInfo(sessionUser.toJSON())
       } else {
         //console.log('세션 유저 없으면 아무일도 없어 그냥 로그인해!!!')

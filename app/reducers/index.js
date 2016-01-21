@@ -130,29 +130,11 @@ const pagination = combineReducers({
 function login(state = {}, action) {
   
   if( action.type === 'UPDATE_LOGIN_USER_INFO') {
-    if( action.login.facebook ){
-      state.facebook = action.login.facebook;
-    } else {
-      action.login.facebook = state.facebook ? 'LOADED': false;
-      state = action.login;
-    }
-
-    return merge({}, state)
+    return merge({}, action.login)
   }
 
   if( action.type === 'CLEAR_LOGIN_USER_INFO') {
-
-    if( state.facebook === 'LOADED') {
-      state = {
-        facebook: true
-      }
-    } else {
-      state = {
-        facebook: false
-      }
-    }
-
-    return merge({}, state)
+    return merge({current_location: state.current_location})
   }
 
   if( action.type === 'UPDATE_CURRENT_USER_LOCATION' ) {
@@ -174,6 +156,7 @@ function login(state = {}, action) {
 }
 
 function appState(state = {
+  loadedFacebookSDK: false,
   loadedGoogleSDK: false,
   sidebar: false
 }, action) {

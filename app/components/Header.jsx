@@ -4,7 +4,7 @@ import { findDOMNode } from 'react-dom';
 export default class Header extends Component {
   
   render() {
-    const { loginUser, appState:{sidebar} } = this.props;
+    const { appState:{sidebar} } = this.props;
 
     let klassName;
     if( sidebar ){
@@ -26,14 +26,16 @@ export default class Header extends Component {
         <span className="tagline">social travel guide</span>
       </h1>
 
-      { this.renderLoginUserInfo(loginUser) }
-      { this.renderFaceBookLogin(loginUser) }
+      { this.renderLoginUserInfo() }
+      { this.renderFaceBookLogin() }
     
     </header>
   }
 
-  renderFaceBookLogin = (loginUser) => {
-    if( !loginUser.facebook || loginUser.facebook === 'LOADED' ) {
+  renderFaceBookLogin = () => {
+    const { loginUser, appState:{ loadedFacebookSDK } } = this.props;
+
+    if( !loadedFacebookSDK || loginUser.id ) {
       return false;
     }
 
@@ -42,7 +44,9 @@ export default class Header extends Component {
     </ul>
   };
 
-  renderLoginUserInfo = (loginUser) => {
+  renderLoginUserInfo = () => {
+
+    const { loginUser } = this.props;
 
     if( !loginUser.id ) {
       return false;
