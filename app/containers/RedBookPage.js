@@ -111,7 +111,7 @@ class RedBookPage extends Component {
 
   renderCoverOrMap = () => {
     const { loginUser, redBook, pageForRedBook } = this.props;
-    const { formMode } = pageForRedBook;
+    const { formMode, places } = pageForRedBook;
 
     if( formMode === 'NOTE') {
       return <RedBookCover 
@@ -123,12 +123,23 @@ class RedBookPage extends Component {
 
     if( formMode === 'PLACE') {
 
+      let markers = [];
+      _.each(places, function(place){
+
+        markers.push({
+          key: place.key,
+          label: place.label,
+          title: place.title,
+          position: place.position
+        })
+      });
+
       return <RedMapPlace className="RedMapPlace" 
         mapCenter={{
           lat: redBook.geo.latitude,
           lng: redBook.geo.longitude
         }}
-        markers = {[]}
+        markers = {markers}
         onUpdateDataForRedBook={this.props.updateDataForRedBook}
 
       />

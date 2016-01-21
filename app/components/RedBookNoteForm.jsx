@@ -8,7 +8,8 @@ export default class RedBookNoteForm extends Component {
 
     this.state = {
       activeForm: false,
-      lineCount: 0
+      lineCount: 0,
+      selectIndex: 0
     }
   }
 
@@ -46,6 +47,7 @@ export default class RedBookNoteForm extends Component {
     } else if( loginUser && loginUser.current_location ) {
       return true;
     }
+    
     return false;
   }
 
@@ -92,8 +94,6 @@ export default class RedBookNoteForm extends Component {
 
   renderPlaceForm = (style) => {
 
-    const { pageForRedBook: {places} } = this.props;
-
     return <div className="RedBookNoteForm">
       <div className="note-form-header">
         <button onClick={this.handleFormMode.bind(this,'NOTE')}>Note</button>
@@ -102,25 +102,37 @@ export default class RedBookNoteForm extends Component {
       <textarea ref="textarea" className="text" style={style}
                 onKeyDown={this.handleFormKeyDown}
                 onFocus={this.handeFormFocus}
-                placeholder="[You can link your place like this][1]">
+                placeholder="[link your place like this][1]">
       </textarea>
       <div className="note-form-footer">
         <div className="references">
-          <select ref="select">
-            <option value="0">select a place to reference</option>
-            {places.map(function(place, i){
-
-              let refText = `[${place.title}][${place.label}]`;
-
-              return <option key={i} value={refText}>{`[${place.label}]:${place.title}`}</option>
-            })}
-          </select>
-          <button onClick={this.handleReferncePlace}>Add</button>
+          {this.renderSelectButton()}
+          {this.renderPlaceAddButton()}
         </div>
         {this.renderPlacePostButton()}
       </div>
     </div>    
 
+  };
+
+  renderSelectButton = () => {
+    const { pageForRedBook: { places } } = this.props;
+
+    if( places.length === 0 ){
+      return <select ref="select" disabled style={{width: '200px'}}>
+        <option value="0">click a map and add place </option>
+      </select>
+    } else {
+      return <select ref="select" onChange={this.handleSelectPlace}>
+        <option value="0">select a place to add note</option>
+        {places.map(function(place, i){
+
+          let refText = `[${place.title}][${place.label}]`;
+
+          return <option key={i} value={refText}>{`[${place.label}]:${place.title}`}</option>
+        })}
+      </select>
+    }
   };
 
   renderPostButton = () => {
@@ -143,6 +155,16 @@ export default class RedBookNoteForm extends Component {
 
   };
 
+  renderPlaceAddButton = () => {
+
+    if( 0 < this.state.selectIndex ) {
+      return <button onClick={this.handleReferncePlace}>Add</button>
+    } else {
+      return false;
+    }
+
+  };
+
   renderPlacePostButton = () => {
     const { pageForRedBook: { isFetching } } = this.props;
 
@@ -155,6 +177,14 @@ export default class RedBookNoteForm extends Component {
     } 
   };
 
+  handleSelectPlace = (e) => {
+
+    this.setState({
+      selectIndex: e.target.selectedIndex
+    })
+
+  };
+
   handleReferncePlace = (e) => {
     const node = findDOMNode(this.refs.textarea);
     const select = findDOMNode(this.refs.select);
@@ -165,6 +195,10 @@ export default class RedBookNoteForm extends Component {
     }
 
     select.selectedIndex = 0;
+    this.setState({
+      selectIndex: 0
+    });
+
     const lines = node.value.split('\n');
 
     node.style.height = (18*lines.length) + 'px'
