@@ -1,8 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-
 import NoteCommentForm from '../components/NoteCommentForm'
 import NoteComment from '../components/NoteComment'
-import moment from 'moment'
 
 export default class NoteCommentList extends Component {
 

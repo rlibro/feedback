@@ -104,7 +104,7 @@ class App extends Component {
       // 1155089597851018 베포 버전
 
       Parse.FacebookUtils.init({
-        appId      : '1155091951184116',  
+        appId      : '1155089597851018',  
         cookie     : true,
         xfbml      : true,
         version    : 'v2.4'

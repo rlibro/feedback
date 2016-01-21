@@ -1,7 +1,7 @@
 import * as ActionTypes from '../actions'
-import merge from 'lodash/object/merge'
+import merge from 'lodash/merge'
 import paginate from './paginate'
-import { pushPath as pushState, routeReducer } from 'redux-simple-router'
+import { routeReducer } from 'redux-simple-router'
 import { combineReducers } from 'redux'
 
 // API 응답은 캐시를 위해 모두 entities에 저장한다. 

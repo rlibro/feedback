@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { Provider } from 'react-redux'
-import { Router, Route, IndexRoute } from 'react-router'
+import { Router, Route } from 'react-router'
 
 import App from './App'
 import UserProfilePage from './UserProfilePage'

@@ -94,6 +94,7 @@ if(TARGET === 'build' || TARGET === 'stats') {
         return v !== 'alt-utils';
       })
     },
+    //devtool: 'eval-source-map',
     output: {
       path: PATHS.build,
       filename: '[name].js'

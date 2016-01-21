@@ -1,8 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import trim from 'lodash/string/trim';
-import findIndex from 'lodash/array/findIndex';
 import {default as ScriptjsLoader} from 'react-google-maps/lib/async/ScriptjsLoader';
-import {GoogleMap, GoogleMapLoader} from 'react-google-maps';
+import {GoogleMap} from 'react-google-maps';
 
 
 export default class CurrentLocation extends Component {

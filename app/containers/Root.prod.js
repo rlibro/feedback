@@ -7,6 +7,8 @@ import UserProfilePage from './UserProfilePage'
 import RedBookPage from './RedBookPage'
 import NewRedBookPage from './NewRedBookPage'
 import CityPeoplePage from './CityPeoplePage'
+import SingleNotePage from './SingleNotePage'
+import SingleNotePlacePage from './SingleNotePlacePage'
 
 export default class Root extends Component {
   
@@ -22,7 +24,10 @@ export default class Root extends Component {
               <Route path="/guide/:uname" component={RedBookPage}>
                 <Route path="/guide/:uname/people" component={CityPeoplePage}/>
               </Route>
-              <Route path="/redbooks/:countryName" component={NewRedBookPage}/>
+              <Route path="/notes/:noteId" component={SingleNotePage}>
+                <Route path="/notes/:noteId/places/:placeLabel" component={SingleNotePlacePage}/>
+              </Route>
+              <Route path="/create/:uname" component={NewRedBookPage}/>
             </Route>
           </Router>
         </div>
