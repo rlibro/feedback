@@ -86,11 +86,17 @@ export default class Header extends Component {
   };
 
   handleHome = (e) => {
+    this.props.onUpdateAppState({
+      sidebar: false
+    });
     this.props.onPushState('/');
     e.preventDefault();
   };
 
   handleProfile = (e) => {
+    this.props.onUpdateAppState({
+      sidebar: false
+    });
     this.props.onPushState('/profile');
     e.preventDefault();
   };

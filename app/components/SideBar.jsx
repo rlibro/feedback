@@ -21,9 +21,9 @@ export default class SideBar extends Component {
     return <div className="wrap-SideBar">
       <div className={klassName} style={style}>
         <ul className="account-menu">
+          { this.renderFaceBookLogin() }  
           { this.renderUserProfileInfo(loginUser) }
-          { this.renderCurrentLocation(loginUser) }
-          { this.renderFaceBookLogin(loginUser) }  
+          { this.renderCurrentLocation(loginUser) } 
           <li className="separator"></li>
           { this.renderLogOut(loginUser) }
         </ul>
@@ -35,7 +35,23 @@ export default class SideBar extends Component {
     </div>
   }
 
+  renderFaceBookLogin = () => {
+    const { loginUser, appState:{ loadedFacebookSDK } } = this.props;
+
+    if( !loadedFacebookSDK || loginUser.id ) {
+      return false;
+    }
+
+    return <li>
+      <button className="fb-login" onClick={this.handleFacebookLogin}>
+        <i className="fa fa-facebook"/> Login with Facebook
+      </button>
+    </li>
+  };
+
+
   renderUserProfileInfo = (loginUser) => {
+
     if( !loginUser.id ){ return false }
 
     return <li className="profile">
@@ -64,18 +80,6 @@ export default class SideBar extends Component {
       </div>
     </li>
 
-  };
-
-  renderFaceBookLogin = (loginUser) => {
-    if( !loginUser.facebook || loginUser.facebook === 'LOADED' ) {
-      return false;
-    }
-
-    return <li>
-      <button className="fb-login" onClick={this.handleFacebookLogin}>
-        <i className="fa fa-facebook"/> Login with Facebook
-      </button>
-    </li>
   };
 
   renderLogOut = (loginUser) => {
