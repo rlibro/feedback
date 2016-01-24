@@ -59,6 +59,7 @@ export default class RedBookNote extends Component {
         <div className="meta">
           <div className="date">{ moment(note.createdAt).format('LLL') }</div>
           <div className="username">{ note.author.username }</div>
+          <div className="country"><img src={`http://www.theodora.com/flags/new4/${note.author.location.country.replace(/\s/g,'_').toLowerCase()}-t.gif`}/></div>
         </div>
 
         {this.renderContextMenu()}
