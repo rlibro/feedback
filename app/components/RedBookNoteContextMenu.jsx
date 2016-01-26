@@ -27,9 +27,19 @@ export default class RedBookNoteContextMenu extends Component {
 
   renderAuthorContext = () => {
     return <ul>
-      <li><a className="option" href="#" onClick={this.props.onEditNote}>Edit</a></li>
-      <li><a className="option" href="#" onClick={this.props.onDeleteNote}>Del</a></li>
+      <li><a className="option" href="#" onClick={this.handleEditNote}>Edit</a></li>
+      <li><a className="option" href="#" onClick={this.handleDeleteNote}>Del</a></li>
     </ul>;
+  };
+
+  handleEditNote = (e) => {
+    e.preventDefault();
+    this.props.onEditNote();
+  };
+
+  handleDeleteNote = (e) => {
+    e.preventDefault();
+    this.props.onDeleteNote();
   };
 
 }
