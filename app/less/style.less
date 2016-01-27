@@ -468,10 +468,19 @@ button {
     } 
     
   }
-  .button-close {
+
+  &.add-marker-on {
+    .marker-add {
+      color: #078EFF;
+    }
+  }
+  &.user-loaction-on {
+    .current-location {
+      color: #078EFF;
+    }
+  }
+  .map-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
     cursor: pointer;
     z-index: 1;
 
@@ -483,6 +492,26 @@ button {
       &:hover {
         opacity: 1;
       }
+    }
+
+    &.close {
+      top: 10px;
+      right: 10px;
+    }
+
+    &.expand {
+      top: 10px;
+      right: 50px;
+    }
+
+    &.marker-add {
+      top: 10px;
+      right: 90px;
+    }
+
+    &.current-location {
+      top: 10px;
+      right: 130px;
     }
   }
 
@@ -510,6 +539,17 @@ button {
         opacity: 1;
       }
     }
+  }
+}
+
+.RedBookCover.place.expand {
+  width: 1000px;
+  height: 800px;
+  left: 50%;
+  margin-left: -500px;
+
+  .RedMapPlace {
+    height: 800px;
   }
 }
 

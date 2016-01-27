@@ -136,6 +136,7 @@ class RedBookPage extends Component {
       });
 
       return <RedMapPlace className="RedMapPlace" 
+        loginUser={loginUser}
         mapCenter={{
           lat: redBook.geo.latitude,
           lng: redBook.geo.longitude
