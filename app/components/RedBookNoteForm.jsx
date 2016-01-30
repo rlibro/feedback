@@ -44,7 +44,7 @@ export default class RedBookNoteForm extends Component {
     const { lineCount } = this.state;
     const { pageForRedBook: {formMode} } = this.props;
 
-    let style = {height:'36px'}
+    let style = {height:'54px'}
 
     if( 1 < lineCount ) {
       style = {
@@ -88,15 +88,20 @@ export default class RedBookNoteForm extends Component {
       <div className="note-form-header">
         <button onClick={this.handleFormMode.bind(this,'NOTE')}>Note</button>
         <button onClick={this.handleFormMode.bind(this,'PLACE')} className="on">Place</button>
-      </div>  
-      <textarea ref="textarea" className="text" style={style}
-                onKeyDown={this.handleFormKeyDown}
-                onFocus={this.handeFormFocus}
-                placeholder="[link your place like this][1]">
-      </textarea>
+      </div>
+      <div className="textarea-placeholder">
+        <textarea ref="textarea" className="text" style={style}
+                  onKeyDown={this.handleFormKeyDown}
+                  onFocus={this.handeFormFocus}>
+        </textarea>
+        <div>
+          you can make a link of the marker like this:
+          <br /> [your link name][marker number]
+          <br /> ex) [Rlibro][1] is everywhere!
+        </div>
+      </div>
       <div className="note-form-footer">
         <div className="references">
-          {this.renderSelectButton()}
           {this.renderPlaceAddButton()}
         </div>
         {this.renderPlacePostButton()}
@@ -167,34 +172,6 @@ export default class RedBookNoteForm extends Component {
     } 
   };
 
-  handleSelectPlace = (e) => {
-
-    this.setState({
-      selectIndex: e.target.selectedIndex
-    })
-
-  };
-
-  handleReferncePlace = (e) => {
-    const node = findDOMNode(this.refs.textarea);
-    const select = findDOMNode(this.refs.select);
-
-    if( select.selectedIndex ) {
-      node.value += '\n';
-      node.value += select.value;
-    }
-
-    select.selectedIndex = 0;
-    this.setState({
-      selectIndex: 0
-    });
-
-    const lines = node.value.split('\n');
-
-    node.style.height = (18*lines.length) + 'px'
-
-  };
-
   handleAddNote = (e) => {
 
     const { pageForRedBook: {formMode, places} } = this.props; 
@@ -206,6 +183,8 @@ export default class RedBookNoteForm extends Component {
     e.preventDefault()
   };
 
+
+ 
   handleFormMode = (mode, e) => {
 
     this.props.onUpdateDataForRedBook({
@@ -215,6 +194,13 @@ export default class RedBookNoteForm extends Component {
   };
 
   handleFormKeyDown = (e) => {
+
+    var length = e.target.value.length;
+    if( length > 0) {
+      e.target.className = 'text data-edits';
+    } else {
+      e.target.className = 'text';
+    }
 
     if(e.key === 'Enter' || e.key === 'Backspace') {
 

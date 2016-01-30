@@ -54,7 +54,7 @@ export default class RedMapPlace extends Component {
 
   renderGoogleMap = () => {
     const { isReadOnly, loginUser } = this.props;
-    const { markers, usedUserLocation, moveToCenter } = this.state;
+    const { markers, usedUserLocation, moveToCenter, isMarkerMode } = this.state;
     let { zoomLevel = 13, disableMoveCenter, mapCenter } = this.props;
 
     const defaultOptions = {
@@ -62,7 +62,8 @@ export default class RedMapPlace extends Component {
       streetViewControl: false,
       scrollwheel: false,
       disableDoubleClickZoom: false
-    }
+    };
+
     let contents = [];
 
     // 사용자 위치를 사용하고 moveToCenter 옵션을 사용할 경우 사용자 위치로 중심을 이동시킨다. 
@@ -183,6 +184,8 @@ export default class RedMapPlace extends Component {
       InfoContent = <div id={marker.key} className="infoWindow">
         <input type="text" 
           defaultValue={marker.title}
+          placeholder={'Input your place name'}
+          autoFocus={true}
           onKeyDown={this.handleKeyDownInfoWindow.bind(this, marker)}
           onBlur={this.handleEditDoneInfoWindowTitle.bind(this, marker)}/>
       </div>;
@@ -212,6 +215,12 @@ export default class RedMapPlace extends Component {
   };
 
   handleEditDoneInfoWindowTitle = (marker, e) => {
+
+    if( e.target.value.length === 0){
+      alert('palce name is empty!');
+      return;
+    }
+
     marker.title = e.target.value;
     marker.isEditing = false;
 
@@ -225,16 +234,16 @@ export default class RedMapPlace extends Component {
 
   };
 
-  getAddress = (latLng, callback) => {
-    const geocoder = new google.maps.Geocoder;
-    const self = this;
+  // getAddress = (latLng, callback) => {
+  //   const geocoder = new google.maps.Geocoder;
+  //   const self = this;
 
-    geocoder.geocode({'location': latLng}, function(results, status) {
-      if (status === google.maps.GeocoderStatus.OK) {
-        callback(results[0].formatted_address);
-      }
-    })
-  };
+  //   geocoder.geocode({'location': latLng}, function(results, status) {
+  //     if (status === google.maps.GeocoderStatus.OK) {
+  //       callback(results[0].formatted_address);
+  //     }
+  //   })
+  // };
 
   findUniqLabel = () => {
     let {markers} = this.state;
@@ -270,35 +279,30 @@ export default class RedMapPlace extends Component {
 
     if( !isMarkerMode ) { return false; }
 
-
-
     let {markers} = this.state;
     let uniqLabelName = this.findUniqLabel();
     let self = this;
     let marker = {
       position: event.latLng,
       defaultAnimation: 5,
-      title: `place #${uniqLabelName}`,
+      title: '',
       label: uniqLabelName,
       key: Date.now(),
-      isEditing: false 
+      showInfo: true,
+      isEditing: true 
     };
 
     markers = update(markers, { $push: [marker] });
     this.setState({ markers });
     this.setState({
       isMarkerMode: false
+    });
+
+    this.props.onUpdateDataForRedBook({
+      places: markers
     })
 
-    this.getAddress(event.latLng, function(address){
 
-      marker.title = address;
-
-      self.props.onUpdateDataForRedBook({
-        places: markers
-      })
-
-    });
   };
 
   handleMarkerRightclick = (index, event) => {
