@@ -57,7 +57,7 @@ export default class RedBookNote extends Component {
           <img src={note.author.picture} />
         </div>
         <div className="meta">
-          <div className="date">{ moment(note.createdAt).format('LLL') }</div>
+          <div className="date"><a href={`/notes/${note.id}`} onClick={this.handleMoveNote} >{ moment(note.createdAt).format('LLL') }</a></div>
           <div className="username">{ note.author.username }</div>
           <div className="country"><img src={`http://www.theodora.com/flags/new4/${note.author.location.country.replace(/\s/g,'_').toLowerCase()}-t.gif`}/></div>
         </div>
@@ -113,7 +113,7 @@ export default class RedBookNote extends Component {
     const { note, pageForRedBook: {noteUpdate}} = this.props;
     const contentText = 
       note.content
-        .replace(/\[([^\[\]]*)\]\[(\d+)\]/g, `<a target="_blank" href="/notes/${note.id}/places/$2"><i class="fa fa-map-signs"></i> $1</a>`)
+        .replace(/\[([^\[\]]*)\]\[(\d+)\]/g, `<a target="_blank" href="/notes/${note.id}/places/$2"><i class="fa icon-pin"></i>$1</a>`)
         .replace(/(.*)\n\n(.*)/g, '<p>$1</p><br/><p>$2</p>')
         .replace(/(.*)\n(.*)/g, '<p>$1</p><p>$2</p>')
         .replace(/\s\s/g, '<span></span>');
@@ -175,6 +175,14 @@ export default class RedBookNote extends Component {
     }else {
       return <div className="content" onClick={this.handleContentLink} dangerouslySetInnerHTML={{__html: contentText}}></div>  
     }
+  };
+
+  handleMoveNote = (e) => {
+
+    var link = e.target.href.split('notes')[1];
+    this.props.onPushState('/notes' + link);
+    e.preventDefault();
+
   };
 
   handleContentLink = (e) => {

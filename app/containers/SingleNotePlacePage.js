@@ -84,6 +84,7 @@ class SingleNotePlacePage extends Component {
     return <div className="SingleNotePlacePage">
 
       <RedMapPlace className="RedMapPlace" 
+        loginUser={loginUser}
         mapCenter={mapCenter}
         zoomLevel={16}
         markers={markers}

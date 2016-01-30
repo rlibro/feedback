@@ -101,8 +101,6 @@ export default class RedMapPlace extends Component {
       finalMapOptions.zoom = zoomLevel;   
     }
 
-    console.log(finalMapOptions); 
-
     return <GoogleMap { ...finalMapOptions}>
       {this.renderMarkers()}
       {contents}
@@ -116,7 +114,7 @@ export default class RedMapPlace extends Component {
       return false;
     }
 
-    return <div>
+    return <div className="btn-groups">
       <div className="map-btn close">
         <i className="fa fa-times" onClick={this.handleClosePlaceMap}/>
       </div>

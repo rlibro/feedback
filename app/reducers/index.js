@@ -193,7 +193,7 @@ function pageForRedBook(state = {
   stateDeleteComment:'READY',
   places: [],
   isFetching: {
-    redbook: false,
+    redbooks: 'READY',
     note: false,
     addNote: 'READY',
     comment: false,
@@ -247,9 +247,17 @@ function pageForRedBook(state = {
     state.isFetching.addNote = 'READY';
     return merge({}, state);
 
-
-
-
+    // 레드북 패치
+    case 'REDBOOKS_REQUEST':
+      state.isFetching.redbooks = 'REQUESTING'
+      return merge({}, state);
+    case 'REDBOOKS_FAILURE':
+    case 'REDBOOKS_SUCCESS':
+      state.isFetching.redbooks = 'DONE'
+      return merge({}, state);
+    case 'RESET_REDBOOKS':        // 아직은 필요없음.
+      state.isFetching.redbooks = 'READY'
+      return merge({}, state);
 
     case 'UPDATE_DATE_FOR_REDBOOK':
 
@@ -324,17 +332,6 @@ function pageForRedBook(state = {
       state.stateDeleteComment = 'FAIL';
       return merge({}, state);
 
-    // 레드북 생성
-    case 'REDBOOKS_REQUEST':
-      state.stateRedBook = 'REQUESTING'
-      return merge({}, state);
-    case 'REDBOOKS_SUCCESS':
-      state.stateRedBook = 'LOADED'
-      state.count = state.count + 1;
-      return merge({}, state);
-    case 'REDBOOKS_FAILURE':
-      state.stateRedBook = 'FAIL'
-      return merge({}, state);
   }
   
   return state

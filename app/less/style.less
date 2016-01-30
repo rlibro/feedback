@@ -479,10 +479,13 @@ button {
       color: #078EFF;
     }
   }
-  .map-btn {
+
+  .button-close {
     position: absolute;
     cursor: pointer;
     z-index: 1;
+    top: 10px;
+    right: 10px;
 
     i {
       font-size: 30px;
@@ -493,25 +496,29 @@ button {
         opacity: 1;
       }
     }
+  }
 
-    &.close {
-      top: 10px;
-      right: 10px;
-    }
+  .btn-groups {
+    width: 300px;
+    height: 80px;
+    position: absolute;
+    right: 10px;
+    top: 5px;
+  }
+  .map-btn {
+    position: relative;
+    cursor: pointer;
+    z-index: 1;
+    float: right;
 
-    &.expand {
-      top: 10px;
-      right: 50px;
-    }
+    i {
+      font-size: 30px;
+      padding: 8px;
+      opacity: 0.7;
 
-    &.marker-add {
-      top: 10px;
-      right: 90px;
-    }
-
-    &.current-location {
-      top: 10px;
-      right: 130px;
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 
@@ -547,6 +554,10 @@ button {
   height: 800px;
   left: 50%;
   margin-left: -500px;
+
+  .map-btn.close {
+    display: none;
+  }
 
   .RedMapPlace {
     height: 800px;
@@ -673,6 +684,14 @@ button {
   margin-bottom: 10px;
   border-radius: 5px;
 
+  a {
+    color: #3b5998;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
   .note-header {
     padding: 10px;
 
@@ -690,15 +709,21 @@ button {
       height: 40px;
 
       .date {
-        font-weight: bold; 
+        font-weight: bold;
+        font-size: 15px;
       }
       .username{
+        font-size: 14px;
+        line-height: 21px;
         color: #777;
         float: left;
         margin-right: 5px;
       }
       .country {
-        img { width: 27px; height: 18px}
+        img {
+          margin-top: 2px;
+          width: 27px; height: 18px
+        }
       }
     }
 
@@ -1303,6 +1328,17 @@ button {
 
   }
 
+  .RedBookCover.place.expand {
+    width: auto;
+    height: 700px;
+    left: auto;
+    margin-left: auto;
+
+    .RedMapPlace {
+      height: 700px;
+    }
+  }
+
   .RedBookPage, .NewRedBookPage {
     position: absolute;
     top: 20px;
@@ -1526,6 +1562,13 @@ button {
 
     &.middle {
       margin-top: 5px;
+    }
+  }
+
+  .RedBookCover.place.expand {
+    height: 400px;
+    .RedMapPlace {
+      height: 400px;
     }
   }
 

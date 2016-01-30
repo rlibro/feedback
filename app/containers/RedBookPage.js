@@ -35,35 +35,36 @@ class RedBookPage extends Component {
 
   /**
    * 최소에 한번만 호출된다
-   * 로드된 레드북 노트목록과 캐싱 노트 목록을 비교해서 업데이트가 필요한 경우만 
-   * 서버에서 다시 노트를 패치해온다.
+   * 레드북 정보는 물고오기 때문에 바로 관련 노트를 패치한다.
    */ 
   componentWillMount(){
 
-    // 페이지로 바로 접근한 경우에는 레드북이 패치된 다음에 업데이트 랜더링에서 처리한다. 
-    if( this.props.redBook ){
-      fetchNotesFromServer(this.props);
-    }
+    fetchNotesFromServer(this.props);
   }
+
+  componentWillReceiveProps(nextProps) {
+
+    const { redBook:{id}, pagingNotesByRedBookId } = nextProps;
+
+    this.setState({
+      notes: pagingNotesByRedBookId[id],
+    });
+  }
+
 
   /**
    * 상태가 변경되었을 경우는 레드북이 업데이트 된 경우다. 
-   * 하지만 사용자가 직접 URL을 입력해 들어왔을 경우, 
-   * 실제 레드북 정보가 없을수 있으므로 이럴때 무조건 홈으로 이동시켜버린다.
+   * 하지만 사용자가 직접 URL을 입력해 들어왔을 경우, 실제 레드북 정보가 없을수 있으므로 이럴때 무조건 홈으로 이동시켜버린다.
    */
-  shouldComponentUpdate(nextProps, nextState) {
-    const { redBook, pageForRedBook: {stateRedBook} , childPath} = nextProps;
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   const { childPath } = nextProps;
 
-    if( childPath.indexOf('people') > 1 ){
-      return true;
-    }
+  //   if( childPath.indexOf('people') > 1 ){
+  //     return true;
+  //   }
   
-    if( stateRedBook === 'LOADED' && !redBook ) {
-      this.props.replacePath('/')
-      return false;
-    }
-    return true;
-  }
+  //   return true;
+  // }
 
   /**
    * 최소 렌더링시에는 발생하지 않고 상태값이 변경되었을때만 렌더링 직전에 호출된다. 
@@ -152,7 +153,7 @@ class RedBookPage extends Component {
 
   renderLoadingRedBook = () => {
 
-    const { pageForRedBook: { cityName } } = this.props;
+    const { cityName } = this.props;
 
     return <div className="RedBookPage">
       <div className="loading">
@@ -162,7 +163,7 @@ class RedBookPage extends Component {
   };
 
   renderLoadingNotes = () => {
-    const { notes } = this.props;
+    const { notes } = this.state;
 
     if( !notes || notes.isFetching ) {
 
@@ -179,7 +180,9 @@ class RedBookPage extends Component {
 
   renderNoteList = () => {
 
-    const { redBook, childPath, loginUser, notes, entities, pagingCommentsByNoteId, pageForRedBook } = this.props;
+    const { redBook, childPath, loginUser, entities, pagingCommentsByNoteId, pageForRedBook } = this.props;
+    const { notes } = this.state;
+
     if( !notes ){
       return false;
     }
@@ -271,35 +274,19 @@ function mapStateToProps(state) {
     pageForRedBook
   } = state
 
-  let uname;
-
-  if( path.indexOf('people') > 1) {
-    uname = /\/guide\/(.*)\/people/.exec(path)[1];  
-  } else {
-    uname = path.split('/')[2];
-  }
+  //debugger;
    
-  const [ cityName, countryName ] = uname.split(',');
+  // const [ cityName, countryName ] = uname.split(',');
 
-  pageForRedBook.cityName = cityName.replace('_', ' ');
-  pageForRedBook.countryName = countryName.replace('_', ' ');
-
-
-  let redBookId = null;
-  for ( let id in redBooks ){
-    if( redBooks[id].uname === uname ){
-      redBookId = id;
-      break;
-    }
-  }
+  // pageForRedBook.cityName = cityName.replace('_', ' ');
+  // pageForRedBook.countryName = countryName.replace('_', ' ');
 
   return {
     appState: state.appState,
     childPath: path,
     pageForRedBook: pageForRedBook,
     loginUser: state.login,
-    redBook: redBooks[redBookId],
-    notes: notesByRedBookId[redBookId],
+    pagingNotesByRedBookId: notesByRedBookId,
     pagingCommentsByNoteId: commentsByNoteId,
     entities: state.entities
   }

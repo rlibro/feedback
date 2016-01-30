@@ -18,6 +18,14 @@ function fetchRedBooksFromServer(props) {
 
 class App extends Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      redBookId: null
+    }
+  }
+
   /**
    * 처음에 무조건 레드북을 가져온다.
    * 새로 업데이트된 레드북은 새로 고침한다. 
@@ -25,6 +33,40 @@ class App extends Component {
   componentWillMount() {
     fetchRedBooksFromServer(this.props)
   }
+
+  /**
+   * 레드북 목록을 가져왔는데 실제 필요한 레드북이 없으면 초기화면으로 보내야한다. 
+   */
+  componentWillReceiveProps(nextProps) {
+
+    const { pageForRedBook:{ isFetching }, 
+            params:{uname}, 
+            path,
+            entities:{ redBooks } 
+    } = nextProps;
+
+    let redBookId = null; 
+    let isGuidePage = path.indexOf('/guide') > -1;
+
+    // 가이드 페이지일 경우엔, 레드북 아이디를 뽑아내서 넣어준다. 
+    if( isGuidePage && uname && isFetching.redbooks === 'DONE' ) {
+
+      for ( let id in redBooks ){
+        if( redBooks[id].uname === uname ){
+          redBookId = id;
+          break;
+        }
+      }
+
+      if( redBookId ){
+        this.setState({
+          redBookId : redBookId
+        });
+      } else {
+        this.props.pushState('/');    
+      }
+    }
+  }  
 
   render() {
     const { loginUser, redBooks, entities, path, appState} = this.props
@@ -116,15 +158,48 @@ class App extends Component {
 
   renderChildPage = () => {
 
-    const {path} = this.props;
+    const { path, params:{uname}, entities:{ redBooks } } = this.props;
+    const { redBookId } = this.state;
+    let klassName = 'detail';
+    let cityName = null, countryName = null, redBook=null;
 
-    let klassName = 'detail'
+    let route = path.split('/')[1];
 
-    if( path === '/' ) {
-      klassName = 'detail hide'    
+    switch( route ){
+      case 'guide':
+        [ cityName, countryName ] = uname.split(',');  
+        cityName = cityName.replace('_', ' ');
+        countryName = countryName.replace('_', ' ');
+
+        if( !redBookId ) { return false }
+
+        redBook = redBooks[redBookId];
+        return <div className={klassName}>
+          {this.props.children && 
+            React.cloneElement(this.props.children, {
+              redBook: redBook,
+              cityName: cityName,
+              countryName: countryName
+            })
+          }
+        </div>
+ 
+
+      case 'notes':
+      case 'profile':
+      case 'create':
+      return <div className={klassName}>
+        {this.props.children}
+      </div> 
+
+      default:
+      klassName = 'detail hide';
+      return <div className={klassName}>
+        {this.props.children}
+      </div> 
+
     }
 
-    return <div className={klassName}>{this.props.children}</div>
   };
 
   renderErrorMessage = () => {
@@ -190,6 +265,7 @@ function mapStateToProps(state) {
   return {
     path: state.routing.path,
     appState: state.appState,
+    pageForRedBook: state.pageForRedBook,
     errorMessage: state.errorMessage,
     loginUser: state.login,
     redBooks: state.pagination.redBooks,
