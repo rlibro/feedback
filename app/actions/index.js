@@ -83,36 +83,37 @@ export function facebookLogin(update){
   Parse.FacebookUtils.logIn('user_location,user_friends,email', {
     success: function(parseUser){
 
-      if( !parseUser.get('location') ) {
+      // 로그아웃후 새로 로그인하면 페북에 있는 정보를 새로 가져온다.
+      FB.api('/me?fields=id,name,email,location,picture{url}', function(facebookUser) {
 
-        FB.api('/me?fields=id,name,email,location,picture{url}', function(facebookUser) {
+        FB.api(`/${facebookUser.location.id}/?fields=location`, function(res){
 
+          facebookUser.location = res.location;
 
-          //console.log('facebook 에서 로그인 정보 가져옴!', facebookUser);
+          let updatingUser = {
+            facebookId: facebookUser.id,
+            username: facebookUser.name,
+            location: facebookUser.location,
+            picture: facebookUser.picture.data.url,
+            updatedAt: new Date()
+          }
 
-          FB.api(`/${facebookUser.location.id}/?fields=location`, function(res){
+          // 최초 이메일이 없으면 업데이트
+          if( !parseUser.get('email') && facebookUser.email ){
+            updatingUser.email = facebookUser.email;
+          }
 
-            //console.log('facebook 에서 위치 정보 가져옴!', facebookUser);
+          // 최초 국가 정보가 없으면 업데이트
+          if( !parseUser.get('nationality') && facebookUser.location ){
+            updatingUser.nationality = facebookUser.location.country;
+          }
 
-            facebookUser.location = res.location;
-            
-            parseUser.save({
-              facebookId: facebookUser.id,
-              username: facebookUser.name,
-              //email: facebookUser.email,
-              location: facebookUser.location,
-              picture: facebookUser.picture.data.url
-            });
+          parseUser.save(updatingUser);
+          update(parseUser.toJSON());
 
-            update(parseUser.toJSON());
+        })
 
-          })
-
-        });
-
-      } else {
-        update(parseUser.toJSON());
-      }
+      });
 
     }.bind(this),
     error: function(err){
