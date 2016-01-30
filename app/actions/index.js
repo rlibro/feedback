@@ -90,12 +90,17 @@ export function facebookLogin(update){
 
           facebookUser.location = res.location;
 
+          // 매번 업데이트 하는 항목
           let updatingUser = {
             facebookId: facebookUser.id,
-            username: facebookUser.name,
             location: facebookUser.location,
             picture: facebookUser.picture.data.url,
             updatedAt: new Date()
+          }
+
+          // 최초 이름 없으면 업데이트
+          if( !parseUser.get('username') && facebookUser.name ){
+            updatingUser.username = facebookUser.name;
           }
 
           // 최초 이메일이 없으면 업데이트

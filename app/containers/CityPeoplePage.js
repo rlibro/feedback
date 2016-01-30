@@ -188,7 +188,7 @@ class CityPeoplePage extends Component {
       return <div className="state">
 
         { _.map( state, function(value, key, user){
-          let klassName = `fa fa-${key}`
+          let klassName = `fa icon-${key}`
 
           if( value ) {
             return <div className="sign" key={key}><i className={klassName}/></div>

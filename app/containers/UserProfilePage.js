@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { updateLoginUserInfo } from '../actions'
 import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom';
+import _ from 'lodash';
 
 function validateEmail(email) {
     var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -119,6 +120,11 @@ class UserProfilePage extends Component {
     let exchangeClass = state && state.exchange  ? 'on':'';
     let companionClass= state && state.companion ? 'on':'';
     let coffeeClass   = state && state.coffee    ? 'on':'';
+    let eatClass      = state && state.eat       ? 'on':'';
+    let beerClass     = state && state.beer      ? 'on':'';
+    let bedClass      = state && state.bed       ? 'on':'';
+    let carClass      = state && state.car       ? 'on':'';
+
 
     return <div className="check-in-city">
       <h4>Check-in State</h4>
@@ -128,23 +134,43 @@ class UserProfilePage extends Component {
         <table className="sign-meaning">
           <tbody>
             <tr>
-              <td className="sign"><i className="fa fa-exchange"/></td>
-              <td className="meaning">I wanna exchange money</td>
+              <td className="sign"><i className="fa icon-exchange"/></td>
+              <td className="meaning">I can exchange money</td>
             </tr>
             <tr>
-              <td className="sign"><i className="fa fa-companion"/></td>
+              <td className="sign"><i className="fa icon-companion"/></td>
               <td className="meaning">I am looking for companions</td>
             </tr>
             <tr>
-              <td className="sign"><i className="fa fa-coffee"/></td>
-              <td className="meaning">I wanna talk with someone</td>
+              <td className="sign"><i className="fa icon-coffee"/></td>
+              <td className="meaning">I have a time to drink a cup of coffee</td>
+            </tr>
+            <tr>
+              <td className="sign"><i className="fa icon-eat"/></td>
+              <td className="meaning">I have a time to eat something</td>
+            </tr>
+            <tr>
+              <td className="sign"><i className="fa icon-beer"/></td>
+              <td className="meaning">I have a time to drink a beer</td>
+            </tr>
+            <tr>
+              <td className="sign"><i className="fa icon-bed"/></td>
+              <td className="meaning">I can share my room</td>
+            </tr>
+            <tr>
+              <td className="sign"><i className="fa icon-car"/></td>
+              <td className="meaning">I can share my car</td>
             </tr>
           </tbody>
         </table>
         <ul>
-          <li className={exchangeClass}><button onClick={this.handleSelectState.bind(this, 'exchange')}><i className="fa fa-exchange"/></button></li>
-          <li className={companionClass}><button onClick={this.handleSelectState.bind(this, 'companion')}><i className="fa fa-companion"/></button></li>
-          <li className={coffeeClass}><button onClick={this.handleSelectState.bind(this, 'coffee')}><i className="fa fa-coffee"/></button></li>
+          <li className={exchangeClass}><button onClick={this.handleSelectState.bind(this, 'exchange')}><i className="fa icon-exchange"/></button></li>
+          <li className={companionClass}><button onClick={this.handleSelectState.bind(this, 'companion')}><i className="fa icon-companion"/></button></li>
+          <li className={coffeeClass}><button onClick={this.handleSelectState.bind(this, 'coffee')}><i className="fa icon-coffee"/></button></li>
+          <li className={eatClass}><button onClick={this.handleSelectState.bind(this, 'eat')}><i className="fa icon-eat"/></button></li>
+          <li className={beerClass}><button onClick={this.handleSelectState.bind(this, 'beer')}><i className="fa icon-beer"/></button></li>
+          <li className={bedClass}><button onClick={this.handleSelectState.bind(this, 'bed')}><i className="fa icon-bed"/></button></li>
+          <li className={carClass}><button onClick={this.handleSelectState.bind(this, 'car')}><i className="fa icon-car"/></button></li>
         </ul>
       </div>
     </div>
@@ -189,6 +215,14 @@ class UserProfilePage extends Component {
     let state = loginUser.state || {};
 
     if( !state[type] ) {
+
+      // 4이상이면 안돼!! 
+      let length = _.filter(state, function(o, key){ return o }).length
+      if( length >= 4 ){
+        alert('too many state, the max state is 4');
+        return;
+      }
+
       state[type] = true;
     } else {
       state[type] = false;
