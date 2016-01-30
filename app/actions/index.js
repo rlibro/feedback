@@ -99,7 +99,7 @@ export function facebookLogin(update){
           }
 
           // 최초 이름 없으면 업데이트
-          if( !parseUser.get('username') && facebookUser.name ){
+          if( !parseUser.get('facebookId') && facebookUser.name ){
             updatingUser.username = facebookUser.name;
           }
 
@@ -116,12 +116,49 @@ export function facebookLogin(update){
           parseUser.save(updatingUser);
           update(parseUser.toJSON());
 
+        }, function(res){
+
+          // 위치정보를 공개하지 않은 경우,..
+
+          // 프로필 사진만 바꿀수 있다. 
+          let updatingUser = {
+            facebookId: facebookUser.id,
+            picture: facebookUser.picture.data.url,
+            updatedAt: new Date()
+          }
+
+           // 최초 이름 없으면 업데이트
+          if( !parseUser.get('facebookId') && facebookUser.name ){
+            updatingUser.username = facebookUser.name;
+          }
+
+          // 최초 이메일이 없으면 업데이트
+          if( !parseUser.get('email') && facebookUser.email ){
+            updatingUser.email = facebookUser.email;
+          }
+
+          parseUser.save(updatingUser);
+          update(parseUser.toJSON());
+
         })
 
+      }, function(facebookUser){
+        // 기본 프로필 권한만 승인 요청한 경우,..
+
+        // 프로필 사진만 바꿀수 있다. 
+        let updatingUser = {
+          facebookId: facebookUser.id,
+          picture: facebookUser.picture.data.url,
+          updatedAt: new Date()
+        }
+
+        parseUser.save(updatingUser);
+        update(parseUser.toJSON());
       });
 
     }.bind(this),
     error: function(err){
+
       console.log('이 에러가 발생하면 로그인 시도할때 Parse로 호출이 안되는걸껄?', err);
     }
   });

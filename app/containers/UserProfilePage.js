@@ -31,6 +31,8 @@ class UserProfilePage extends Component {
         <div className="photo">
           <img src={loginUser.picture}/>
         </div>
+        { this.renderUserNationality() }
+      
         { this.renderEditingUserName() }
         { this.renderEditingUserEmail() }
       </div>
@@ -41,6 +43,16 @@ class UserProfilePage extends Component {
 
     </div>
   }
+
+  renderUserNationality = () => {
+    const { loginUser } = this.props;
+    
+    if( loginUser.nationality ) {
+      return <div className="country">
+        <img src={`http://www.theodora.com/flags/new4/${loginUser.nationality.replace(/\s/g,'_').toLowerCase()}-t.gif`}/>
+      </div>
+    }
+  };
 
   // 이름 변경
   renderEditingUserName = () => {
@@ -113,8 +125,6 @@ class UserProfilePage extends Component {
 
   // 체크인 상태
   renderCheckInSatae = (loginUser) => {
-
-    console.log( this.state.checkinState, loginUser.state)
 
     const state = loginUser.state;
     let exchangeClass = state && state.exchange  ? 'on':'';

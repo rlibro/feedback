@@ -21,7 +21,6 @@ export default class Header extends Component {
       <h1 className="logo" ref="logo">  
         <a href="/" onClick={this.handleHome}>
           <span className="service-name">rlibro</span>
-          <span className="beta">beta</span>
         </a>
         <span className="tagline">social travel guide</span>
       </h1>
