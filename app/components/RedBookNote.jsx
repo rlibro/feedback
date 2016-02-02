@@ -3,6 +3,7 @@ import NoteCommentList from '../components/NoteCommentList'
 import ContextMenu from '../components/RedBookNoteContextMenu'
 import { findDOMNode } from 'react-dom';
 import moment from 'moment'
+import {render} from '../libs/markdown';
 
 import { Provider } from 'react-redux'
 
@@ -111,13 +112,8 @@ export default class RedBookNote extends Component {
   renderContentByState = ()=> {
 
     const { note, pageForRedBook: {noteUpdate}} = this.props;
-    const contentText = 
-      note.content
-        .replace(/\[([^\[\]]*)\]\[(\d+)\]/g, `<a target="_blank" href="/notes/${note.id}/places/$2"><i class="fa icon-pin"></i>$1</a>`)
-        .replace(/(.*)\n\n(.*)/g, '<p>$1</p><br/><p>$2</p>')
-        .replace(/(.*)\n(.*)/g, '<p>$1</p><p>$2</p>')
-        .replace(/\s\s/g, '<span></span>');
-
+    const contentText = render(note.content, note.id);
+    
     let style = {height:'36px'};
     let lineCount = this.state.lineCount ? this.state.lineCount : note.content.split('\n').length;
 
@@ -187,11 +183,16 @@ export default class RedBookNote extends Component {
 
   handleContentLink = (e) => {
 
+    const regNote = RegExp('\/notes\/(.*)\/?');
+    
     if( e.target.tagName.toLowerCase() === 'a') {
-      var link = e.target.href.split('notes')[1];
-      this.props.onPushState('/notes' + link);
-      window.scrollTo(0,0);
-      e.preventDefault();
+      var match = regNote.exec(e.target.href);
+
+      if(match){
+        this.props.onPushState(match[0]);
+        window.scrollTo(0,0);
+        e.preventDefault();
+      } 
     }
   };
 
