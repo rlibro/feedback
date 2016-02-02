@@ -58,7 +58,7 @@ export default class RedBookNote extends Component {
           <img src={note.author.picture} />
         </div>
         <div className="meta">
-          <div className="date"><a href={`/notes/${note.id}`} onClick={this.handleMoveNote} >{ moment(note.createdAt).format('LLL') }</a></div>
+          {this.renderDate(note)}
           <div className="username">{ note.author.username }</div>
           <div className="country"><img src={`http://www.theodora.com/flags/new4/${note.author.location.country.replace(/\s/g,'_').toLowerCase()}-t.gif`}/></div>
         </div>
@@ -87,6 +87,21 @@ export default class RedBookNote extends Component {
         />
     </div>
   }
+
+  renderDate = (note) => {
+
+    const hasUpdated = note.createdAt !== note.updatedAt;
+
+    return <div className="date">
+      <a href={`/notes/${note.id}`} onClick={this.handleMoveNote} >{ moment(note.createdAt).format('LLL') }</a>
+      {function(){
+        if( hasUpdated ) {
+          return <p className="updated">{`updated - ${moment(note.updatedAt).format('LLL')}`}</p>
+        }
+      }()}
+    </div>
+
+  };
 
   renderContextMenu = () => {
 
