@@ -39,7 +39,11 @@ export default class RedBookNoteContextMenu extends Component {
 
   handleDeleteNote = (e) => {
     e.preventDefault();
-    this.props.onDeleteNote();
+
+    var yes = confirm('Are you sure to delete?');
+    if (yes){
+      this.props.onDeleteNote();  
+    }
   };
 
 }
