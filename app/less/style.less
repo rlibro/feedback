@@ -608,7 +608,7 @@ button {
 
   textarea.text {
     width: 100%;
-    resize: none;
+    max-height: 300px;
     background-color: transparent;
     border: 0;
     box-sizing: border-box;
@@ -620,7 +620,11 @@ button {
     margin: 13px 0px;
     padding: 0px 12px;
     word-wrap: break-word;
-    overflow: hidden;
+
+    &.on {
+      min-height: 100px;
+    }
+
     &.data-edits {
       background-color: #fff;
     }
@@ -828,7 +832,7 @@ button {
 
     textarea {
       width: 100%;
-      resize: none;
+      max-height: 300px;
       background-color: #fff;
       border: 1px solid #a6b7c8; 
       border-bottom: none;
@@ -841,7 +845,6 @@ button {
       margin: 13px 0 0 0px;
       padding: 0px 5px;
       word-wrap: break-word;
-      overflow: hidden;
     }
 
     .edit-controls {

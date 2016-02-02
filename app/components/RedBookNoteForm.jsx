@@ -52,6 +52,7 @@ export default class RedBookNoteForm extends Component {
       }
     }
 
+
     if( formMode === 'NOTE') { return this.renderNoteForm(style) }
     if( formMode === 'PLACE'){ return this.renderPlaceForm(style) }
       
@@ -60,6 +61,12 @@ export default class RedBookNoteForm extends Component {
   renderNoteForm = (style) => {
 
     const { appState } = this.props;
+    const { activeForm } = this.state;
+    let klassName = 'text';
+
+    if( activeForm ){
+      klassName += ' on';
+    }
 
     return <div className="RedBookNoteForm">
       <div className="note-form-header">
@@ -73,7 +80,7 @@ export default class RedBookNoteForm extends Component {
           }
         }.bind(this)()}
       </div>  
-      <textarea ref="textarea" className="text" style={style}
+      <textarea ref="textarea" className={klassName} style={style}
                 onKeyDown={this.handleFormKeyDown}
                 onFocus={this.handeFormFocus}
                 placeholder="Share your exprience in this city!">
@@ -83,6 +90,13 @@ export default class RedBookNoteForm extends Component {
   };
 
   renderPlaceForm = (style) => {
+    const { activeForm } = this.state;
+
+    let klassName = 'text';
+    if( activeForm ){
+      klassName += ' on';
+    }
+
 
     return <div className="RedBookNoteForm">
       <div className="note-form-header">
@@ -90,7 +104,7 @@ export default class RedBookNoteForm extends Component {
         <button onClick={this.handleFormMode.bind(this,'PLACE')} className="on">Place</button>
       </div>
       <div className="textarea-placeholder">
-        <textarea ref="textarea" className="text" style={style}
+        <textarea ref="textarea" className={klassName} style={style}
                   onKeyDown={this.handleFormKeyDown}
                   onFocus={this.handeFormFocus}>
         </textarea>
@@ -211,9 +225,9 @@ export default class RedBookNoteForm extends Component {
 
     var length = e.target.value.length;
     if( length > 0) {
-      e.target.className = 'text data-edits';
+      e.target.className = 'text on data-edits';
     } else {
-      e.target.className = 'text';
+      e.target.className = 'text on';
     }
 
     if(e.key === 'Enter' || e.key === 'Backspace') {
