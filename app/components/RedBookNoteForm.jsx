@@ -101,6 +101,7 @@ export default class RedBookNoteForm extends Component {
         </div>
       </div>
       <div className="note-form-footer">
+        {this.renderMarkdownHelp()}
         <div className="references">
           {this.renderPlaceAddButton()}
         </div>
@@ -138,16 +139,29 @@ export default class RedBookNoteForm extends Component {
 
     if( activeForm && isFetching.addNote === 'READY' ) {
       return <div className="note-form-footer">
+        {this.renderMarkdownHelp()}
         <button onClick={this.handleAddNote}>Post</button>
       </div>
     } 
 
     if( activeForm && isFetching.addNote === 'REQUESTING') {
       return <div className="note-form-footer">
+        {this.renderMarkdownHelp()}
         <button onClick={this.handleAddNote} disabled><i className="fa fa-spinner fa-pulse"></i></button>
       </div>
     }
 
+  };
+
+  renderMarkdownHelp = () => {
+    return <p className="message markdown-help">
+      <a href="https://guides.github.com/features/mastering-markdown/" target="_blank" data-ga-click="Markdown Toolbar, click, help">
+        <svg aria-hidden="true" height="16" role="img" version="1.1" viewBox="0 0 16 16" width="16">
+          <path d="M14.85 3H1.15C0.52 3 0 3.52 0 4.15v7.69C0 12.48 0.52 13 1.15 13h13.69c0.64 0 1.15-0.52 1.15-1.15V4.15C16 3.52 15.48 3 14.85 3zM9 11L7 11V8l-1.5 1.92L4 8v3H2V5h2l1.5 2 1.5-2 2 0V11zM11.99 11.5L9.5 8h1.5V5h2v3h1.5L11.99 11.5z"></path>
+        </svg>
+        Styling with Markdown is supported
+      </a>
+    </p>
   };
 
   renderPlaceAddButton = () => {
