@@ -70,11 +70,11 @@ export default class RedBookNoteForm extends Component {
 
     return <div className="RedBookNoteForm">
       <div className="note-form-header">
-        <button onClick={this.handleFormMode.bind(this,'NOTE')} className="on">Note</button>
+        <button onClick={this.handleFormMode.bind(this,'NOTE')} className="on"><i className="fa icon-note"></i> Note</button>
         {function(){
 
           if( appState.loadedGoogleSDK ) {
-            return <button onClick={this.handleFormMode.bind(this,'PLACE')}>Place</button>    
+            return <button onClick={this.handleFormMode.bind(this,'PLACE')}><i className="fa icon-location"></i> Place</button>    
           } else {
             return false
           }
@@ -100,8 +100,8 @@ export default class RedBookNoteForm extends Component {
 
     return <div className="RedBookNoteForm">
       <div className="note-form-header">
-        <button onClick={this.handleFormMode.bind(this,'NOTE')}>Note</button>
-        <button onClick={this.handleFormMode.bind(this,'PLACE')} className="on">Place</button>
+        <button onClick={this.handleFormMode.bind(this,'NOTE')}><i className="fa icon-note"></i> Note</button>
+        <button onClick={this.handleFormMode.bind(this,'PLACE')} className="on"><i className="fa icon-location"></i> Place</button>
       </div>
       <div className="textarea-placeholder">
         <textarea ref="textarea" className={klassName} style={style}
