@@ -96,7 +96,7 @@ export default class RedBookNote extends Component {
       <a href={`/notes/${note.id}`} onClick={this.handleMoveNote} >{ moment(note.createdAt).format('LLL') }</a>
       {function(){
         if( hasUpdated ) {
-          return <p className="updated">{`updated - ${moment(note.updatedAt).format('LLL')}`}</p>
+          return <p className="updated">{`updated ${moment(note.updatedAt).format('lll')}`}</p>
         }
       }()}
     </div>
