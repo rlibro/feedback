@@ -24,7 +24,8 @@ export default class RedBookNoteForm extends Component {
       });
       
       this.props.onUpdateDataForRedBook({
-        formMode: 'NOTE'
+        formMode: 'NOTE',
+        formText: ''
       });
 
       this.props.onAddNoteDone();
@@ -60,7 +61,7 @@ export default class RedBookNoteForm extends Component {
 
   renderNoteForm = (style) => {
 
-    const { appState } = this.props;
+    const { appState, pageForRedBook:{formText} } = this.props;
     const { activeForm } = this.state;
     let klassName = 'text';
 
@@ -81,20 +82,26 @@ export default class RedBookNoteForm extends Component {
         }.bind(this)()}
       </div>  
       <textarea ref="textarea" className={klassName} style={style}
-                onKeyDown={this.handleFormKeyDown}
+                onKeyUp={this.handleFormKeyUp}
                 onFocus={this.handeFormFocus}
-                placeholder="Share your exprience in this city!">
+                placeholder="Share your exprience in this city!"
+                defaultValue={formText}>
       </textarea>
       {this.renderPostButton()}
     </div>
   };
 
   renderPlaceForm = (style) => {
+    const { pageForRedBook:{formText} } = this.props;
     const { activeForm } = this.state;
 
     let klassName = 'text';
     if( activeForm ){
       klassName += ' on';
+    }
+
+    if( formText.length > 0){
+      klassName += ' data-edits';
     }
 
 
@@ -105,8 +112,9 @@ export default class RedBookNoteForm extends Component {
       </div>
       <div className="textarea-placeholder">
         <textarea ref="textarea" className={klassName} style={style}
-                  onKeyDown={this.handleFormKeyDown}
-                  onFocus={this.handeFormFocus}>
+                  onKeyUp={this.handleFormKeyUp}
+                  onFocus={this.handeFormFocus}
+                  defaultValue={formText}>
         </textarea>
         <div>
           you can make a link of the marker like this:
@@ -215,13 +223,17 @@ export default class RedBookNoteForm extends Component {
  
   handleFormMode = (mode, e) => {
 
+    const node = findDOMNode(this.refs.textarea);
+    const text = node.value;
+
     this.props.onUpdateDataForRedBook({
-      formMode: mode
+      formMode: mode, 
+      formText: text
     });
 
   };
 
-  handleFormKeyDown = (e) => {
+  handleFormKeyUp = (e) => {
 
     var length = e.target.value.length;
     if( length > 0) {
