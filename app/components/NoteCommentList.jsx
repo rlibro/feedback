@@ -38,8 +38,6 @@ export default class NoteCommentList extends Component {
           />
       })}
 
-      {this.renderLodingState()}
-
       <NoteCommentForm 
         loginUser={loginUser}
         pageForRedBook={pageForRedBook}
@@ -48,19 +46,6 @@ export default class NoteCommentList extends Component {
         onAddComment={onAddComment} />
     
     </div>
-  };
-
-  renderLodingState = () => {
-
-    const { pageForRedBook: {isFetching} }= this.props;
-
-    if( isFetching.comment ){
-      return <div className="loading">
-        <p><i className="fa fa-spinner fa-pulse"/> loading... </p>
-      </div>
-    }
-    return false;
-
   };
 }
 

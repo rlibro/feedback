@@ -4,7 +4,7 @@
   "description": "Social Realtime Traveling Guide",
   "private": true,
   "scripts": {
-    "start": "webpack-dev-server",
+    "start": "webpack-dev-server --content-base public/",
     "stats": "webpack --profile --json > stats.json",
     "lint": "eslint . --ext .js --ext .jsx",
     "build": "webpack"

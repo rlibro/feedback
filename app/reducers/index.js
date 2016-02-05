@@ -195,8 +195,8 @@ function pageForRedBook(state = {
   isFetching: {
     redbooks: 'READY',
     note: false,
+    comments: false,
     addNote: 'READY',
-    comment: false,
     place: false
   },
   updateNote: {
@@ -215,12 +215,12 @@ function pageForRedBook(state = {
 
     // 댓글
     case 'COMMENTS_REQUEST':
-    state.isFetching.comment = true;
+    state.isFetching.comments = true;
     return merge({}, state);
 
     case 'COMMENTS_SUCCESS':
     case 'COMMENTS_FAILURE':
-    state.isFetching.comment = false;
+    state.isFetching.comments = false;
     return merge({}, state);
 
     // 노트 한개 가져오기 
