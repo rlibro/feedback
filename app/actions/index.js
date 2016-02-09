@@ -582,7 +582,7 @@ export function fetchPlaces (params) {
   return (dispatch, getState) => {
     return dispatch(function(){
       return {
-        params,
+        redBookId:params.redBookId,
         [PARSE]: {
           method: 'fetchPlaces',
           params: params,

@@ -12,12 +12,20 @@ function fetchPlacesFromServer(props){
   const { redBook } = props
 
   if( redBook ){
-    props.fetchPlaces( redBook.id ) 
+    props.fetchPlaces( {redBookId: redBook.id}) 
   }
 
 }
 
 class CityMapPage extends Component {
+
+  constructor(props){
+    super(props);
+
+    this.state = {
+      sharedPlaces : {isFetching:true, ids:[]}
+    }
+  }
 
   /**
    * 최소에 한번만 호출된다. 
@@ -44,7 +52,8 @@ class CityMapPage extends Component {
 
   render() {
 
-    const { appState:{loadedGoogleSDK}, loginUser, redBook } = this.props;
+    const { appState:{loadedGoogleSDK}, loginUser, redBook, entities:{places} } = this.props;
+    const { sharedPlaces } = this.state;
     
     if( !loadedGoogleSDK ){
 
@@ -52,7 +61,26 @@ class CityMapPage extends Component {
       return false;
     }
 
+    if( sharedPlaces.isFetching  ) {
+      return false;
+    }
+
     let markers = [];
+
+    if( sharedPlaces.ids.length ) {
+      sharedPlaces.ids.forEach(function(id){
+        let place = places[id];
+
+        markers.push({
+          key:place.id,
+          title: place.title,
+          position: {
+            lat: place.geo.latitude,
+            lng: place.geo.longitude
+          }
+        })
+      });
+    }
 
     return <div className="CityMapPage Page">
 
@@ -88,6 +116,7 @@ function mapStateToProps(state) {
   return {
     appState: state.appState,
     loginUser: state.login,
+    entities: state.entities,
     pagingPlacesByRedBookId: placesByRedBookId,
   }
 }
