@@ -3,32 +3,10 @@ import { connect } from 'react-redux'
 import { pushPath as pushState } from 'redux-simple-router'
 import { updateDataForRedBook, fetchPlaces } from '../actions'
 import { findDOMNode } from 'react-dom'
-import RedMapPlace from '../components/RedMapPlace'
+import DisplayMap from '../components/DisplayMap'
 import _ from 'lodash'
 
-function fetchPlacesFromServer(noteId, props){
-  props.fetchPlaces( noteId );
-}
-
-
 class SingleNotePlacePage extends Component {
-
-  /** 
-   * 최초 렌더링시 한번 호출됨.
-   */
-  componentWillMount(){
-
-    const {note : {places}, entitiyPlaces, params:{noteId}} = this.props;
-    let i=0;
-
-    for(; i<places.length; ++i){
-      if( !entitiyPlaces[places[i]] ){
-        fetchPlacesFromServer(noteId, this.props);
-        break;
-      }
-    } 
-  }
-
 
   render() {
 
@@ -38,6 +16,8 @@ class SingleNotePlacePage extends Component {
 
 
     if( !appState.loadedGoogleSDK ){
+      console.log('지도를 로드중입니다...');
+
       return false;
     }
 
@@ -83,7 +63,7 @@ class SingleNotePlacePage extends Component {
 
     return <div className="SingleNotePlacePage">
 
-      <RedMapPlace className="RedMapPlace" 
+      <DisplayMap className="GoogleMap" 
         loginUser={loginUser}
         mapCenter={mapCenter}
         zoomLevel={16}

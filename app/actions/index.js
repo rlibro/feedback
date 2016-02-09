@@ -577,17 +577,15 @@ export function deleteComment (commentId, noteId) {
 export const PLACES_REQUEST = 'PLACES_REQUEST'
 export const PLACES_SUCCESS = 'PLACES_SUCCESS'
 export const PLACES_FAILURE = 'PLACES_FAILURE'
-export function fetchPlaces (noteId) {
+export function fetchPlaces (params) {
 
   return (dispatch, getState) => {
     return dispatch(function(){
       return {
-        noteId,
+        params,
         [PARSE]: {
           method: 'fetchPlaces',
-          params: { 
-            noteId : noteId
-          },
+          params: params,
           types: [ PLACES_REQUEST, PLACES_SUCCESS, PLACES_FAILURE ],
           schema: Schemas.PLACE_ARRAY
         }
@@ -595,3 +593,33 @@ export function fetchPlaces (noteId) {
     }())
   }
 }
+
+
+/**
+ *  노트에 커맨트를 추가한다.
+ */ 
+export const LIKE_NOTE_REQUEST = 'LIKE_NOTE_REQUEST'
+export const LIKE_NOTE_SUCCESS = 'LIKE_NOTE_SUCCESS'
+export const LIKE_NOTE_FAILURE = 'LIKE_NOTE_FAILURE'
+export function likeNote (noteId) {
+  return (dispatch, getState) => {
+    return dispatch(function(){
+      return {
+        noteId,
+        [PARSE]: {
+          method: 'likeNote',
+          params: {
+            Like: {
+              user: Parse.User.current()
+            }, 
+            noteId: noteId
+          },
+          types: [ LIKE_NOTE_REQUEST, LIKE_NOTE_SUCCESS, LIKE_NOTE_FAILURE ],
+          schema: Schemas.LIKE
+        }
+      }
+    }());
+  }
+}
+/* END OF addNoteComment */
+

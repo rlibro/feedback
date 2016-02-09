@@ -35,14 +35,26 @@ export default class RedBookCover extends Component {
         <i className="fa fa-times" onClick={onCloseRedBook}/>
       </div>
       <div className="controls">
-        <button onClick={this.handleCityPeople}><i className="fa fa-users" /> Peoples</button>
+        <button onClick={this.handleCityMap}><i className="fa icon-map" /> Map</button>
+        <button onClick={this.handleCityPeople}><i className="fa icon-people" /> People</button>
+        <button onClick={this.handleNewNote}><i className="fa icon-add-note" /> Note</button>
       </div>
     </div>
   }
 
+  handleCityMap = (e) => {
+    const {redBook} = this.props;
+    this.props.onPushState(`/guide/${redBook.uname}/map`);
+  };
+
   handleCityPeople = (e) => {
     const {redBook} = this.props;
     this.props.onPushState(`/guide/${redBook.uname}/people`);
+  };
+
+  handleNewNote = (e) => {
+    const {redBook} = this.props;
+    this.props.onPushState(`/guide/${redBook.uname}/create`);
   };
 }
 

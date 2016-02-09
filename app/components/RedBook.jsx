@@ -33,7 +33,6 @@ export default class RedBook extends Component {
         <i className="fa fa-map-signs"/> You are here!
       </div>
     }
-   
   };
 }
 

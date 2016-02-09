@@ -43,14 +43,14 @@ class CityPeoplePage extends Component {
 
   render() {
 
-    return <div className="CityPeoplePage">
+    return <div className="CityPeoplePage Page">
 
       <div className="headline">
         <h2>We are here!</h2>
       </div>
 
       <div className="button-close">
-        <i className="fa fa-times" onClick={this.hanldeCloseRedBook}/>
+        <i className="fa icon-cancel" onClick={this.hanldeCloseRedBook}/>
       </div>
 
       <hr/>

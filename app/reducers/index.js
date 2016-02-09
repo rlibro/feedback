@@ -105,6 +105,14 @@ const pagination = combineReducers({
       ActionTypes.NOTES_FAILURE
     ]
   }),
+  placesByRedBookId: paginate({
+    mapActionToKey: action => action.redBookId,
+    types: [
+      ActionTypes.PLACES_REQUEST,
+      ActionTypes.PLACES_SUCCESS,
+      ActionTypes.PLACES_FAILURE
+    ]
+  }),
   commentsByNoteId: paginate({
     mapActionToKey: action => action.noteId,
     types: [
@@ -203,6 +211,7 @@ function pageForRedBook(state = {
     id: null, 
     state: 'READY'
   },
+  formText: '',
   formMode:'NOTE',
   count:0}, action) {
 

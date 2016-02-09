@@ -60,16 +60,20 @@ export default class RedBookNote extends Component {
         <div className="meta">
           {this.renderDate(note)}
           <div className="username">{ note.author.username }</div>
-          <div className="country"><img src={`http://www.theodora.com/flags/new4/${note.author.location.country.replace(/\s/g,'_').toLowerCase()}-t.gif`}/></div>
-        </div>
+          {function(){
+            if(note.author.nationality){
+              return <div className="country"><img src={`http://www.theodora.com/flags/new4/${note.author.nationality.replace(/\s/g,'_').toLowerCase()}-t.gif`}/></div>  
+            }
+          }()}
+          </div>
 
         {this.renderContextMenu()}
         
       </div>
       {this.renderContentByState()}
       <div className="controls">
- {/*       <div className="like"><i className="fa fa-thumbs-o-up"/> 추천</div>*/}
-        <div className="comments" onClick={this.handleToggleComment.bind(null, note.id)}><i className="fa fa-comments-o"/> Comments ({note.comments.length})</div>
+        {/*<div className="like" onClick={this.handleToggleLike.bind(null, note.id)}><i className="fa fa-thumbs-o-up"/> </div>*/}
+        {this.renderCommentControl()}
       </div>
 
       <NoteCommentList 
@@ -90,13 +94,14 @@ export default class RedBookNote extends Component {
 
   renderDate = (note) => {
 
-    const hasUpdated = note.createdAt !== note.updatedAt;
+    const hasUpdated = note.modifiedAt && (note.createdAt !== note.modifiedAt.iso);
 
     return <div className="date">
+
       <a href={`/notes/${note.id}`} onClick={this.handleMoveNote} >{ moment(note.createdAt).format('LLL') }</a>
       {function(){
         if( hasUpdated ) {
-          return <p className="updated">{`updated ${moment(note.updatedAt).format('lll')}`}</p>
+          return <p className="updated">{`updated ${moment(note.modifiedAt.iso).format('lll')}`}</p>
         }
       }()}
     </div>
@@ -188,6 +193,19 @@ export default class RedBookNote extends Component {
     }
   };
 
+  renderCommentControl = () => {
+    const { note, pageForRedBook: {isFetching} }= this.props;
+    let iconClass = 'fa fa-comments-o';
+
+    if( isFetching.comments ){
+      iconClass = 'fa fa-spinner fa-pulse';
+    }
+
+    return <div className="comments" onClick={this.handleToggleComment.bind(null, note.id)}>
+      <i className={iconClass}/> Comments ({note.comments.length})
+    </div>
+  };
+
   handleMoveNote = (e) => {
 
     var link = e.target.href.split('notes')[1];
@@ -209,6 +227,7 @@ export default class RedBookNote extends Component {
         e.preventDefault();
       } 
     }
+
   };
 
 
@@ -243,6 +262,12 @@ export default class RedBookNote extends Component {
     const text = node.value.trim();
     this.props.onSaveEditingNote(note, text);
     e.preventDefault();
+  };
+
+  handleToggleLike = (noteId, e) => {
+
+    this.props.onLikeNote(noteId);
+
   };
 
   handleToggleComment = (noteId, e) => {
@@ -293,5 +318,6 @@ RedBookNote.propTypes = {
   onFetchComments: PropTypes.func.isRequired,
   onAddComment: PropTypes.func.isRequired,
   onDeleteComment: PropTypes.func.isRequired,
+  onLikeNote: PropTypes.func.isRequired,
   onPushState: PropTypes.func.isRequired
 }

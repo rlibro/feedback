@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { 
   fetchNote,
   fetchComments,
+  likeNote,
   addComment,
   deleteComment,
   resetUpdateNote
@@ -103,6 +104,7 @@ class SingleNotePage extends Component {
         onAddComment={this.handleAddComment}
         onDeleteComment={this.handleDeleteComment}  
         onPushState={this.props.pushState}
+        onLikeNote={this.props.likeNote}
         />
     </div>
   }
@@ -159,6 +161,7 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, {
   fetchNote,
   fetchComments,
+  likeNote,
   addComment,
   deleteComment,
   resetUpdateNote,

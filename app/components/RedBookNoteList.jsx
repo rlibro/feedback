@@ -9,8 +9,8 @@ export default class RedBookNoteList extends Component {
     const { onLogin, onPushState, childPath,
             onFetchComments, onAddComment, 
             onSaveEditingNote, onSaveEditingNoteDone, 
-            onDeleteNote, onDeleteComment
-          } = this.props
+            onDeleteNote, onDeleteComment, onLikeNote
+          } = this.props;
 
     return <div className="RedBookNoteList">
       { noteIds.map( (noteId, i) => {
@@ -40,6 +40,7 @@ export default class RedBookNoteList extends Component {
           onSaveEditingNote={onSaveEditingNote}
           onSaveEditingNoteDone={onSaveEditingNoteDone}
           onDeleteComment={onDeleteComment}
+          onLikeNote={onLikeNote}
           onPushState={onPushState}
           />
       }) }
@@ -61,5 +62,6 @@ RedBookNoteList.propTypes = {
   onSaveEditingNoteDone: PropTypes.func.isRequired,
   onDeleteNote: PropTypes.func.isRequired,
   onDeleteComment: PropTypes.func.isRequired,
+  onLikeNote: PropTypes.func.isRequired,
   onPushState: PropTypes.func.isRequired
 }

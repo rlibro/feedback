@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import {default as update} from 'react-addons-update';
-import {GoogleMapLoader, GoogleMap, Marker, InfoWindow, Circle} from 'react-google-maps';
+import {GoogleMapLoader, GoogleMap, Marker, InfoWindow, Circle, SearchBox} from 'react-google-maps';
 import {triggerEvent} from 'react-google-maps/lib/utils';
 
 /*
@@ -9,7 +9,7 @@ import {triggerEvent} from 'react-google-maps/lib/utils';
  *
  * Loaded using async loader.
  */
-export default class RedMapPlace extends Component {
+export default class DisplayMap extends Component {
 
   static version = Math.ceil(Math.random() * 22);
 
@@ -17,95 +17,18 @@ export default class RedMapPlace extends Component {
     super(props);
 
     this.state = {
-      moveToCenter: false,
-      usedUserLocation: false,
-      isMarkerMode: false,
-      isExpanded: false,
       markers: props.markers.concat()
     };
   }
 
   render () {
-    const { isExpanded, isMarkerMode, usedUserLocation } = this.state;
-    let klassName = 'RedBookCover place';
-    let style = {}
-
-    if( isExpanded ){
-      klassName += ' expand';
-    }
-
-    if( isMarkerMode ){
-      klassName += ' add-marker-on';
-    }
-
-    if( usedUserLocation ){
-      klassName += ' user-loaction-on'
-    }
-
-    return <div className={klassName}>
-    {this.renderMapButtons()}
-    <GoogleMapLoader
-      containerElement={ <div {...this.props} />}
-      googleMapElement={this.renderGoogleMap()}
-    />
+    return <div className="DisplayMap Map">
+      {this.renderMapButtons()}
+      <GoogleMapLoader
+        containerElement={ <div {...this.props} />}
+        googleMapElement={this.renderGoogleMap()}
+      />
     </div>
-
-  };
-
-  renderGoogleMap = () => {
-    const { isReadOnly, loginUser } = this.props;
-    const { markers, usedUserLocation, moveToCenter, isMarkerMode } = this.state;
-    let { zoomLevel = 13, disableMoveCenter, mapCenter } = this.props;
-
-    const defaultOptions = {
-      mapTypeControl: false,
-      streetViewControl: false,
-      scrollwheel: false,
-      disableDoubleClickZoom: false
-    };
-
-    let contents = [];
-
-    // 사용자 위치를 사용하고 moveToCenter 옵션을 사용할 경우 사용자 위치로 중심을 이동시킨다. 
-    if( usedUserLocation ){
-      zoomLevel = 17;
-      mapCenter = loginUser.current_location.latlng;
-      contents = contents.concat([
-        (<InfoWindow key="info" position={mapCenter} content={'you are here!'} />),
-        (<Circle key="circle" center={mapCenter} clickable={false} radius={50} options={{
-            fillColor: 'blue',
-            fillOpacity: 0.2,
-            strokeColor: 'red',
-            strokeOpacity: 1,
-            strokeWeight: 2,
-          }} />),
-      ]);
-      
-      if( moveToCenter ){
-        disableMoveCenter = false;
-      } else{
-        disableMoveCenter = true;
-      }   
-    }
-
-
-    let finalMapOptions = {
-      ref: function (it){ this._googleMapComponent = it}.bind(this),
-      defaultOptions: defaultOptions,
-      defaultZoom: zoomLevel,
-      defaultCenter: mapCenter,
-      onClick: this.handleMapClick
-    }
-
-    if( !disableMoveCenter ){
-      finalMapOptions.center = mapCenter;
-      finalMapOptions.zoom = zoomLevel;   
-    }
-
-    return <GoogleMap { ...finalMapOptions}>
-      {this.renderMarkers()}
-      {contents}
-    </GoogleMap>
   };
 
   renderMapButtons = () => {
@@ -118,18 +41,7 @@ export default class RedMapPlace extends Component {
     return <div className="btn-groups">
       <div className="map-btn close">
         <i className="fa fa-times" onClick={this.handleClosePlaceMap}/>
-      </div>
-      {function(){
-        if( !isExpanded ){
-          return <div className="map-btn expand">
-            <i className="fa icon-expand" onClick={this.handleExpandMap}/>
-          </div>
-        } else {
-          return <div className="map-btn expand">
-            <i className="fa icon-minimize" onClick={this.handleMinimizeMap}/>
-          </div>
-        }
-      }.bind(this)()}      
+      </div>  
       <div className="map-btn marker-add">
         <i className="fa icon-pin" onClick={this.handleToggleMarker}/>
       </div>
@@ -147,23 +59,63 @@ export default class RedMapPlace extends Component {
     </div>
   };
 
+  renderGoogleMap = () => {
+    const { isReadOnly, loginUser } = this.props;
+    const { markers } = this.state;
+    let { zoomLevel = 13, mapCenter } = this.props;
+
+    const defaultOptions = {
+      mapTypeControl: true,
+      streetViewControl: true,
+      scrollwheel: true,
+      disableDoubleClickZoom: false
+    };
+
+    if( !isReadOnly ){
+      defaultOptions.mapTypeControl = false;
+    }
+
+    let finalMapOptions = {
+      ref: function (map){ this._googleMapComponent = map }.bind(this),
+      defaultOptions: defaultOptions,
+      zoom: zoomLevel,
+      center: mapCenter
+    }
+
+    return <GoogleMap { ...finalMapOptions}>
+      {this.renderMarkers()}
+    </GoogleMap>
+  };
+
   renderMarkers = () => {
 
     const { isReadOnly } = this.props;
     const { markers } = this.state;
+    var bounds = new google.maps.LatLngBounds();
+    var markerArray = [];
 
-    return markers.map((marker, index) => {
+    markers.forEach((marker, index) => {
       const ref = `marker_${index}`;
-      
-      return <Marker key={ref} ref={ref}
+
+      bounds.extend(new google.maps.LatLng(marker.position));
+      markerArray.push(<Marker key={ref} ref={ref}
         {...marker}
         title={(index+1).toString()}
         onClick={this.handleMarkerClick.bind(this, marker)}
         onRightclick={this.handleMarkerRightclick.bind(this, index)} >
         {marker.showInfo ? this.renderInfoWindow(ref, marker) : null}
-      </Marker>
+      </Marker>);
       
-    })
+    });
+    
+    // FitBound 
+    // console.log('bounds ==> ', bounds);
+    // setTimeout(function(bounds){
+    //   console.log('panToBounds', bounds, this._googleMapComponent.fitBounds);
+    //   this._googleMapComponent.fitBounds(bounds);
+    // }.bind(this, bounds), 1000)
+
+    return markerArray;
   };
 
   renderInfoWindow = (ref, marker) => {
@@ -176,7 +128,7 @@ export default class RedMapPlace extends Component {
       <i className="fa fa-pencil-square-o" /> {marker.title}
     </div>;
 
-    if( isReadOnly ) {
+    if( isReadOnly || !marker.canEdit ) {
       InfoContent = <div id={marker.key} className="infoWindow">{marker.title}</div>;
     }
 
@@ -223,6 +175,7 @@ export default class RedMapPlace extends Component {
 
     marker.title = e.target.value;
     marker.isEditing = false;
+    marker.canEdit = true;
 
     var {markers} = this.state;
 
@@ -233,17 +186,6 @@ export default class RedMapPlace extends Component {
     });
 
   };
-
-  // getAddress = (latLng, callback) => {
-  //   const geocoder = new google.maps.Geocoder;
-  //   const self = this;
-
-  //   geocoder.geocode({'location': latLng}, function(results, status) {
-  //     if (status === google.maps.GeocoderStatus.OK) {
-  //       callback(results[0].formatted_address);
-  //     }
-  //   })
-  // };
 
   findUniqLabel = () => {
     let {markers} = this.state;
@@ -381,7 +323,7 @@ export default class RedMapPlace extends Component {
   };
 }
 
-RedMapPlace.propTypes = {
+DisplayMap.propTypes = {
   loginUser: PropTypes.object.isRequired,
   mapCenter : PropTypes.shape({
     lat: React.PropTypes.number,

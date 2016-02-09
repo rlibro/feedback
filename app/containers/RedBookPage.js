@@ -1,24 +1,21 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { facebookLogin, updateLoginUserInfo, updateDataForRedBook } from '../actions'
-import { fetchNotes, 
-         addNote, resetAddNote,
+import { fetchNotes, fetchPlaces,
          updateNote, resetUpdateNote,
-         deleteNote } from '../actions'
+         deleteNote, likeNote } from '../actions'
 import { fetchComments, addComment, deleteComment } from '../actions'
-import { pushPath as pushState, replacePath } from 'redux-simple-router'
+import { pushPath as pushState } from 'redux-simple-router'
 import RedBookCover from '../components/RedBookCover'
-import RedBookNoteForm from '../components/RedBookNoteForm'
 import RedBookNoteList from '../components/RedBookNoteList'
-import RedMapPlace from '../components/RedMapPlace'
 
 function fetchNotesFromServer(props) {
   const { redBook } = props
 
   if( redBook ){
-    props.fetchNotes( redBook.id )  
+    props.fetchNotes( redBook.id )
+    props.fetchPlaces( {redBookId: redBook.id} ) 
   }
-  
 }
 
 class RedBookPage extends Component {
@@ -44,27 +41,13 @@ class RedBookPage extends Component {
 
   componentWillReceiveProps(nextProps) {
 
-    const { redBook:{id}, pagingNotesByRedBookId } = nextProps;
+    const { redBook:{id}, pagingNotesByRedBookId, pagingPlacesByRedBookId } = nextProps;
 
     this.setState({
+      sharedPlaces: pagingPlacesByRedBookId[id],
       notes: pagingNotesByRedBookId[id],
     });
   }
-
-
-  /**
-   * 상태가 변경되었을 경우는 레드북이 업데이트 된 경우다. 
-   * 하지만 사용자가 직접 URL을 입력해 들어왔을 경우, 실제 레드북 정보가 없을수 있으므로 이럴때 무조건 홈으로 이동시켜버린다.
-   */
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   const { childPath } = nextProps;
-
-  //   if( childPath.indexOf('people') > 1 ){
-  //     return true;
-  //   }
-  
-  //   return true;
-  // }
 
   /**
    * 최소 렌더링시에는 발생하지 않고 상태값이 변경되었을때만 렌더링 직전에 호출된다. 
@@ -75,8 +58,7 @@ class RedBookPage extends Component {
 
     if( nextProps.redBook && !this.props.redBook){
       fetchNotesFromServer(nextProps)
-    }
-    
+    } 
   }
 
   /**
@@ -92,63 +74,27 @@ class RedBookPage extends Component {
 
     // 일단 커버와 입력폼을 로드한다. 
     return <div className={klassName} ref="redbook">
-      {this.renderCoverOrMap()}
-      <RedBookNoteForm 
-        appState={appState}
-        loginUser={loginUser}
-        pageForRedBook={pageForRedBook}
-        onUpdateDataForRedBook={this.props.updateDataForRedBook}
-        onAddNote={this.handleAddNote.bind(null, redBook.id)} 
-        onAddNoteDone={this.handleAddNoteDone}
-      />
-      
+      {this.renderCover()}
       {this.renderNoteList()}
       {this.renderLoadingNotes()}
 
       <div className="dimmed"></div>
 
-      {this.props.children}
+      {this.props.children && 
+        React.cloneElement(this.props.children, {
+          redBook: redBook
+        })
+      }
     </div>
   }
 
-  renderCoverOrMap = () => {
-    const { loginUser, redBook, pageForRedBook } = this.props;
-    const { formMode, places } = pageForRedBook;
-
-    if( formMode === 'NOTE') {
-      return <RedBookCover 
-        loginUser={loginUser} 
-        redBook={redBook}
-        onPushState={this.props.pushState}
-        onCloseRedBook={this.handleCloseRedBook} />
-    }
-
-    if( formMode === 'PLACE') {
-
-      let markers = [];
-      _.each(places, function(place){
-
-        markers.push({
-          key: place.key,
-          label: place.label,
-          title: place.title,
-          position: place.position
-        })
-      });
-
-      return <RedMapPlace className="RedMapPlace" 
-        loginUser={loginUser}
-        mapCenter={{
-          lat: redBook.geo.latitude,
-          lng: redBook.geo.longitude
-        }}
-        markers = {markers}
-        disableMoveCenter={true}
-        onUpdateDataForRedBook={this.props.updateDataForRedBook}
-
-      />
-    }
-
+  renderCover = () => {
+    const { loginUser, redBook, pageForRedBook, entities } = this.props;
+    return <RedBookCover 
+      loginUser={loginUser} 
+      redBook={redBook}
+      onPushState={this.props.pushState}
+      onCloseRedBook={this.handleCloseRedBook} />
   };
 
   renderLoadingRedBook = () => {
@@ -187,6 +133,13 @@ class RedBookPage extends Component {
       return false;
     }
 
+    if( !notes.isFetching && !notes.ids.length ) {
+      return <div className="RedBookNoteList empty-note">
+        there is no review yet, you can be the first.
+      </div>
+    }
+
+
 
     return <RedBookNoteList
         loginUser={loginUser}
@@ -204,6 +157,7 @@ class RedBookPage extends Component {
         onDeleteNote={this.handleDeleteNote}
         onAddComment={this.handleAddComment}
         onDeleteComment={this.handleDeleteComment}
+        onLikeNote={this.handleLikeNote}
         />
   };
 
@@ -218,20 +172,6 @@ class RedBookPage extends Component {
 
   handleFetchComments =(noteId)=>{
     this.props.fetchComments(noteId)
-  };
-
-  handleAddNote = (redBookId, formMode, noteText, places) => {
-    this.props.addNote(redBookId, noteText, places);
-
-    if( formMode === 'PLACE') {
-      this.props.updateDataForRedBook({
-        places: []
-      });
-    }  
-  };
-
-  handleAddNoteDone = () => {
-    this.props.resetAddNote();
   };
 
   handleAddComment = (noteId, commentText) => {
@@ -249,16 +189,18 @@ class RedBookPage extends Component {
   handleSaveEditingNote = (note, newText) => {
     this.props.updateNote(this.props.redBook.id, note.id, newText);
   };
+
+  handleLikeNote = (noteId) => {
+    this.props.likeNote(noteId);
+  };
   
 }
 
 RedBookPage.propTypes = {
   pageForRedBook: PropTypes.object.isRequired,
   pushState: PropTypes.func.isRequired,
-  replacePath: PropTypes.func.isRequired,
   fetchNotes: PropTypes.func.isRequired,
   facebookLogin: PropTypes.func.isRequired,
-  addNote: PropTypes.func.isRequired,
   addComment: PropTypes.func.isRequired,
   deleteNote: PropTypes.func.isRequired,
   deleteComment: PropTypes.func.isRequired,
@@ -268,18 +210,11 @@ RedBookPage.propTypes = {
 function mapStateToProps(state) {
 
   const {
-    pagination: { notesByRedBookId, commentsByNoteId },
+    pagination: { notesByRedBookId, placesByRedBookId, commentsByNoteId },
     entities: { redBooks },
     routing: { path },
     pageForRedBook
   } = state
-
-  //debugger;
-   
-  // const [ cityName, countryName ] = uname.split(',');
-
-  // pageForRedBook.cityName = cityName.replace('_', ' ');
-  // pageForRedBook.countryName = countryName.replace('_', ' ');
 
   return {
     appState: state.appState,
@@ -288,6 +223,7 @@ function mapStateToProps(state) {
     loginUser: state.login,
     pagingNotesByRedBookId: notesByRedBookId,
     pagingCommentsByNoteId: commentsByNoteId,
+    pagingPlacesByRedBookId: placesByRedBookId,
     entities: state.entities
   }
 }
@@ -298,15 +234,14 @@ export default connect(mapStateToProps, {
   updateDataForRedBook,
  
   fetchNotes,
+  fetchPlaces,
   fetchComments,
-  addNote,
-  resetAddNote,
   addComment,
   updateNote,
   resetUpdateNote,
   deleteNote,
   deleteComment,
+  likeNote,
 
-  pushState,
-  replacePath
+  pushState
 })(RedBookPage)

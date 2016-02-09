@@ -6,6 +6,7 @@ const userSchema = new Schema('users', { idAttribute: 'id' })
 const redBookSchema = new Schema('redBooks', { idAttribute: 'id' })
 const noteSchema = new Schema('notes', {  idAttribute: 'id'})
 const commentSchema = new Schema('comments', {idAttribute: 'id'})
+const likeSchema = new Schema('likes', {idAttribute: 'id'})
 const placeSchema = new Schema('places', {  idAttribute: 'id'})
 const resultSchema = new Schema('findings', {  idAttribute: 'id'})
 
@@ -18,6 +19,8 @@ export const Schemas = {
   NOTE_ARRAY: arrayOf(noteSchema),
   COMMENT: commentSchema,
   COMMENT_ARRAY: arrayOf(commentSchema),
+  LIKE: likeSchema,
+  LIKE_ARRAY: arrayOf(likeSchema),
   PLACE: placeSchema,
   PLACE_ARRAY: arrayOf(placeSchema),
   RESULT: resultSchema,
@@ -29,6 +32,7 @@ const Note = Parse.Object.extend('Note');
 const Comment = Parse.Object.extend('Comment');
 const CheckIn = Parse.Object.extend('CheckIn');
 const Place = Parse.Object.extend('Place');
+const Like = Parse.Object.extend('Like');
 
 function clearObjectId(obj, key){
   obj.id = obj.objectId;
@@ -236,11 +240,16 @@ const parseAPI = {
   fetchPlaces: function (schema, params) {
 
     let placeQuery = new Parse.Query(Place);
-    let note = new Note();
 
-    note.id = params.noteId;
+    if( params.redBookId ){
+      placeQuery.equalTo('redBookId', params.redBookId);  
+    }
 
-    placeQuery.equalTo('note', note);
+    if( params.noteId) {
+      let note = new Note();
+      note.id = params.noteId;
+      placeQuery.equalTo('note', note);
+    }
     
     return placeQuery.find()
     .then(function(places) {
@@ -318,6 +327,11 @@ const parseAPI = {
         place.set('title', placeParam.title);
         place.set('label', placeParam.label);
         place.set('geo', geoPoint);
+        place.set('userId', params.Note.author.id);
+        place.set('redBookId', params.redBookId);
+        place.set('refCount', 1);
+        place.set('refType', 'N');
+        place.set('refId', savedNote.id);
 
         promises.push(place.save());
 
@@ -380,6 +394,45 @@ const parseAPI = {
     
   },
 
+  likeNote: function(schema, params){
+
+    let note = new Note();
+    note.id = params.noteId;
+
+    const like = new Like();
+    params.Like.note = note;
+
+
+
+    // 1. 일단 좋아요를 서버에 저장해!      
+    return like
+    .save(params.Like)
+    .then(function(result){
+
+      // debugger;
+
+      // // 댓글에서 필요한 것만 뽑아내자!
+      // const author = result.get('author');
+      // const data = {
+      //   id: result.id,
+      //   author: {
+      //     id: author.id,
+      //     username: author.get('username'),
+      //     picture: author.get('picture'),
+      //     facebookId: author.get('facebookId')
+      //   },
+      //   text: result.get('text'),
+      //   createdAt: result.get('createdAt')
+      // }
+
+      return Object.assign({}, normalize(data, schema));
+
+    }, function(error){
+      return error.code + ', ' + error.message;
+    })
+    
+  },
+
   deleteNote: function(schema, params){
 
     const noteQuery = new Parse.Query(Note);
@@ -418,7 +471,7 @@ const parseAPI = {
     note.id = params.noteId;
 
     return note
-    .save({content: params.newText})
+    .save({content: params.newText, modifiedAt:new Date})
     .then(function(redBookNote){
 
       let newNote = redBookNote.toJSON();
