@@ -86,10 +86,7 @@ export default class ControlMap extends Component {
 
 
     let finalMapOptions = {
-      ref: function (map){ 
-        this._googleMapComponent = map
-        console.log('---> ', map);
-      }.bind(this),
+      ref: function (map){ this._googleMapComponent = map }.bind(this),
       defaultOptions: defaultOptions,
       defaultZoom: zoomLevel,
       defaultCenter: mapCenter,
