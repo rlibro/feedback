@@ -69,7 +69,7 @@ class SingleNotePlacePage extends Component {
         zoomLevel={16}
         markers={markers}
         isReadOnly={true}
-        onUpdateDataForRedBook={this.props.updateDataForRedBook}
+        onUpdateNoteState={this.props.updateDataForRedBook}
       />
 
     </div>

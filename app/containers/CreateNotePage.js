@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { pushPath as pushState } from 'redux-simple-router'
-import { addNote, resetAddNote, updateDataForRedBook } from '../actions'
+import { addNote, resetAddNote, updateNoteState } from '../actions'
 import { findDOMNode } from 'react-dom'
 import _ from 'lodash'
 import ControlMap from '../components/ControlMap'
@@ -11,7 +11,7 @@ class CreateNotePage extends Component {
 
   render() {
 
-    const { appState, pageForRedBook, loginUser, redBook } = this.props;
+    const { appState, noteState, loginUser, redBook } = this.props;
     
     return <div className="CreateNotePage Page">
       <div className="button-close">
@@ -21,25 +21,21 @@ class CreateNotePage extends Component {
       <RedBookNoteForm 
         appState={appState}
         loginUser={loginUser}
-        pageForRedBook={pageForRedBook}
-        onUpdateDataForRedBook={this.props.updateDataForRedBook}
+        noteState={noteState}
+        onUpdateNoteState={this.props.updateNoteState}
         onAddNote={this.handleAddNote.bind(null, redBook.id)} 
         onAddNoteDone={this.handleAddNoteDone}
       />
 
-      {this.renderCoverOrMap()}
+      {this.renderControlMap()}
     </div>
   }
 
-  renderCoverOrMap = () => {
-    const { loginUser, redBook, pageForRedBook, entities } = this.props;
-    const { formMode, places } = pageForRedBook;
+  renderControlMap = () => {
+    const { loginUser, redBook, noteState: {openMap, places} } = this.props;
+    
   
-    if( formMode === 'NOTE') {
-      return false
-    }
-
-    if( formMode === 'PLACE') {
+    if( openMap ) {
 
       let markers = [];
       _.each(places, function(place){
@@ -61,11 +57,12 @@ class CreateNotePage extends Component {
         }}
         markers = {markers}
         disableMoveCenter={true}
-        onUpdateDataForRedBook={this.props.updateDataForRedBook}
+        onUpdateNoteState={this.props.updateNoteState}
 
       />
+    } else {
+      return false;
     }
-
   };
 
   handleAddNote = (redBookId, formMode, noteText, places) => {
@@ -101,14 +98,14 @@ function mapStateToProps(state) {
 
   return {
     appState: state.appState,
-    pageForRedBook: state.pageForRedBook,
+    noteState: state.noteState,
     loginUser: state.login,
     pagingPlacesByRedBookId: placesByRedBookId,
   }
 }
 
 export default connect(mapStateToProps, {
-  updateDataForRedBook,
+  updateNoteState,
   pushState,
   addNote,
   resetAddNote

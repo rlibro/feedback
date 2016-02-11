@@ -1,12 +1,13 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { facebookLogin, updateLoginUserInfo, updateDataForRedBook } from '../actions'
+import { facebookLogin, updateLoginUserInfo, updateNoteState } from '../actions'
 import { fetchNotes, fetchPlaces,
          updateNote, resetUpdateNote,
          deleteNote, likeNote } from '../actions'
 import { fetchComments, addComment, deleteComment } from '../actions'
 import { pushPath as pushState } from 'redux-simple-router'
 import RedBookCover from '../components/RedBookCover'
+import ControlMap from '../components/ControlMap'
 import RedBookNoteList from '../components/RedBookNoteList'
 
 function fetchNotesFromServer(props) {
@@ -65,7 +66,7 @@ class RedBookPage extends Component {
    * 렌더링 함수는 무조건 호출되기 때문에 레드북이 없으면 렌더링 하지 않는다.
    */
   render() {
-    const { appState, loginUser, redBook, pageForRedBook } = this.props;
+    const { appState, loginUser, redBook, noteState } = this.props;
     let klassName = 'RedBookPage';
 
     // 레드북
@@ -74,7 +75,8 @@ class RedBookPage extends Component {
 
     // 일단 커버와 입력폼을 로드한다. 
     return <div className={klassName} ref="redbook">
-      {this.renderCover()}
+      {this.renderCover()} 
+      {this.renderControlMap()}
       {this.renderNoteList()}
       {this.renderLoadingNotes()}
 
@@ -89,13 +91,47 @@ class RedBookPage extends Component {
   }
 
   renderCover = () => {
-    const { loginUser, redBook, pageForRedBook, entities } = this.props;
+    const { loginUser, redBook, noteState, entities } = this.props;
     return <RedBookCover 
       loginUser={loginUser} 
       redBook={redBook}
       onPushState={this.props.pushState}
       onCloseRedBook={this.handleCloseRedBook} />
   };
+
+  renderControlMap = () => {
+    const { loginUser, redBook, noteState: {isEditing, openMap, places} } = this.props;
+    
+    if( isEditing && openMap ) {
+
+      let markers = [];
+      _.each(places, function(place){
+
+        markers.push({
+          key: place.key,
+          canEdit: true,
+          label: place.label,
+          title: place.title,
+          position: place.position
+        })
+      });
+
+      return <ControlMap className="GoogleMap" 
+        loginUser={loginUser}
+        mapCenter={{
+          lat: redBook.geo.latitude,
+          lng: redBook.geo.longitude
+        }}
+        markers = {markers}
+        disableMoveCenter={true}
+        onUpdateNoteState={this.props.updateNoteState}
+
+      />
+    } else {
+      return false;
+    }
+  };
+
 
   renderLoadingRedBook = () => {
 
@@ -126,7 +162,7 @@ class RedBookPage extends Component {
 
   renderNoteList = () => {
 
-    const { redBook, childPath, loginUser, entities, pagingCommentsByNoteId, pageForRedBook } = this.props;
+    const { redBook, childPath, loginUser, entities, pagingCommentsByNoteId, noteState } = this.props;
     const { notes } = this.state;
 
     if( !notes ){
@@ -142,23 +178,26 @@ class RedBookPage extends Component {
 
 
     return <RedBookNoteList
-        loginUser={loginUser}
-        pageForRedBook={pageForRedBook}
-        entityNotes={entities.notes} 
-        entityComments={entities.comments} 
-        noteIds={notes.ids}
-        pagingCommentsByNoteId={pagingCommentsByNoteId}
-        
-        onLogin={this.handleFacebookLogin}
-        onPushState={this.props.pushState}
-        onFetchComments={this.handleFetchComments}
-        onSaveEditingNote={this.handleSaveEditingNote}
-        onSaveEditingNoteDone={this.props.resetUpdateNote}
-        onDeleteNote={this.handleDeleteNote}
-        onAddComment={this.handleAddComment}
-        onDeleteComment={this.handleDeleteComment}
-        onLikeNote={this.handleLikeNote}
-        />
+      appState={this.props.appState}
+      loginUser={loginUser}
+      noteState={noteState}
+      entityNotes={entities.notes} 
+      entityComments={entities.comments}
+      entityPlaces={entities.places}
+      noteIds={notes.ids}
+      pagingCommentsByNoteId={pagingCommentsByNoteId}
+      
+      onUpdateNoteState={this.props.updateNoteState}
+      onLogin={this.handleFacebookLogin}
+      onPushState={this.props.pushState}
+      onFetchComments={this.handleFetchComments}
+      onSaveEditingNote={this.handleSaveEditingNote}
+      onSaveEditingNoteDone={this.props.resetUpdateNote}
+      onDeleteNote={this.handleDeleteNote}
+      onAddComment={this.handleAddComment}
+      onDeleteComment={this.handleDeleteComment}
+      onLikeNote={this.handleLikeNote}
+      />
   };
 
   handleFacebookLogin = () => {
@@ -166,7 +205,7 @@ class RedBookPage extends Component {
   };
 
   handleCloseRedBook = (e) => {
-    this.props.updateDataForRedBook({ places: [] });
+    this.props.updateNoteState({ places: [] });
     this.props.pushState('/');
   };
 
@@ -186,8 +225,16 @@ class RedBookPage extends Component {
     this.props.deleteComment(commentId, noteId)
   };
 
-  handleSaveEditingNote = (note, newText) => {
+  handleSaveEditingNote = (note, newText, places) => {
+
+    
     this.props.updateNote(this.props.redBook.id, note.id, newText);
+
+    console.log('TODO: 위치 업데이트, 변경된 경우에만? ===> ', note, places);
+
+    // 위치관련해서 지도에 찍으면 일단 임시 노트아이디를 박아서 그냥 저장한다. 
+    // 저장후 임시 노트아이디를 걸러서 노트로 변경 
+
   };
 
   handleLikeNote = (noteId) => {
@@ -197,7 +244,7 @@ class RedBookPage extends Component {
 }
 
 RedBookPage.propTypes = {
-  pageForRedBook: PropTypes.object.isRequired,
+  noteState: PropTypes.object.isRequired,
   pushState: PropTypes.func.isRequired,
   fetchNotes: PropTypes.func.isRequired,
   facebookLogin: PropTypes.func.isRequired,
@@ -213,13 +260,13 @@ function mapStateToProps(state) {
     pagination: { notesByRedBookId, placesByRedBookId, commentsByNoteId },
     entities: { redBooks },
     routing: { path },
-    pageForRedBook
+    noteState
   } = state
 
   return {
     appState: state.appState,
     childPath: path,
-    pageForRedBook: pageForRedBook,
+    noteState: noteState,
     loginUser: state.login,
     pagingNotesByRedBookId: notesByRedBookId,
     pagingCommentsByNoteId: commentsByNoteId,
@@ -231,7 +278,7 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, {
   facebookLogin,
   updateLoginUserInfo,
-  updateDataForRedBook,
+  updateNoteState,
  
   fetchNotes,
   fetchPlaces,

@@ -70,7 +70,7 @@ export default class NoteCommentForm extends Component {
 
   render() {
 
-    const { loginUser, pageForRedBook:{ stateAddComment } } = this.props;
+    const { loginUser, noteState:{ stateAddComment } } = this.props;
 
     return loginUser.id ? this.renderForm(stateAddComment) : this.renderLogin();
   }
@@ -109,7 +109,7 @@ export default class NoteCommentForm extends Component {
 
 NoteCommentForm.propTypes = {
   loginUser: PropTypes.object.isRequired,
-  pageForRedBook: PropTypes.object.isRequired,
+  noteState: PropTypes.object.isRequired,
   isOpenComment: PropTypes.bool.isRequired,
   onAddComment: PropTypes.func.isRequired,
   onLogin: PropTypes.func.isRequired

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux'
-import { updateDataForNewRedBook, addRedBook } from '../actions'
+import { updateRedBookState, addRedBook } from '../actions'
 import { pushPath as pushState, replacePath } from 'redux-simple-router'
 import NewRedBookCover from '../components/NewRedBookCover'
 import NewRedBookForm from '../components/NewRedBookForm'
@@ -56,7 +56,7 @@ class NewRedBookPage extends Component {
   }
 
   componentDidMount(){
-    this.props.updateDataForNewRedBook(this.props.location);
+    this.props.updateRedBookState(this.props.location);
   }
 
   loadGeoCoding = () => {
@@ -71,7 +71,7 @@ class NewRedBookPage extends Component {
       if (status === google.maps.GeocoderStatus.OK) {
         const {location} = results[0].geometry;
 
-        self.props.updateDataForNewRedBook({
+        self.props.updateRedBookState({
           geo : {
             lat: location.lat(),
             lng: location.lng()
@@ -115,7 +115,7 @@ class NewRedBookPage extends Component {
 
   handleCoverImageForNewRedBook = (imgData) => {
 
-    this.props.updateDataForNewRedBook(imgData);
+    this.props.updateRedBookState(imgData);
 
   };
 }
@@ -138,7 +138,7 @@ function mapStateToProps(state) {
   }
 
   return {
-    requiredInfo: state.pageForNewRedBook,
+    requiredInfo: state.redBookState,
     redirect: location.uname,
     redBooks: redBooks,
     loginUser: state.login,
@@ -148,7 +148,7 @@ function mapStateToProps(state) {
 
 
 export default connect(mapStateToProps, {
-  updateDataForNewRedBook,
+  updateRedBookState,
   addRedBook,
   pushState,
   replacePath

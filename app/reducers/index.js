@@ -180,11 +180,11 @@ function appState(state = {
   return state
 }
 
-function pageForNewRedBook(state = {}, action) {
+function redBookState(state = {}, action) {
 
   switch(action.type){
 
-    case 'UPDATE_DATA_FOR_NEW_BOOK':
+    case 'UPDATE_REDBOOK_STATE':
       if( !action.data ) {
         return null;
       }
@@ -195,7 +195,7 @@ function pageForNewRedBook(state = {}, action) {
   return state
 }
 
-function pageForRedBook(state = {
+function noteState(state = {
   stateLoaded: 'READY', 
   stateAddComment:'READY',
   stateDeleteComment:'READY',
@@ -211,8 +211,10 @@ function pageForRedBook(state = {
     id: null, 
     state: 'READY'
   },
+  isEditing: false,
+  editingId: null,
   formText: '',
-  formMode:'NOTE',
+  openMap: false,
   count:0}, action) {
 
   // API 호출 응답을 먼저 받아야하기 때문에 응답 결과를 갖는 액션은 Skip 한다.
@@ -268,12 +270,11 @@ function pageForRedBook(state = {
       state.isFetching.redbooks = 'READY'
       return merge({}, state);
 
-    case 'UPDATE_DATE_FOR_REDBOOK':
-
+    case 'UPDATE_NOTE_STATE':
     if( action.data.places ) {
       state.places = action.data.places;
-      return merge({}, state);
     }
+    
     return merge({}, state, action.data);
 
     
@@ -353,8 +354,8 @@ const rootReducer = combineReducers({
   login,
   routing: routeReducer,
   appState,
-  pageForNewRedBook,
-  pageForRedBook
+  redBookState,
+  noteState
   
 })
 

@@ -5,7 +5,8 @@ export default class RedBookNoteList extends Component {
 
   render(){
 
-    const { entityNotes, entityComments, noteIds, loginUser, pageForRedBook } = this.props;
+    const { entityNotes, entityComments, entityPlaces,
+            noteIds, loginUser, noteState } = this.props;
     const { onLogin, onPushState, childPath,
             onFetchComments, onAddComment, 
             onSaveEditingNote, onSaveEditingNoteDone, 
@@ -17,7 +18,7 @@ export default class RedBookNoteList extends Component {
         
         const note = entityNotes[noteId];
 
-        let comments = [];
+        let comments = [], places = [];
         note.comments.forEach(function(commentId){
 
           const comment = entityComments[commentId];
@@ -27,12 +28,24 @@ export default class RedBookNoteList extends Component {
       
         });
 
+        note.places.forEach(function(placeId){
+
+          const place = entityPlaces[placeId];
+          if( place ){
+            places.push(place);
+          }
+
+        });
+
         return <RedBookNote key={i}
+          appState={this.props.appState}
           loginUser={loginUser}
-          pageForRedBook={pageForRedBook}
+          noteState={noteState}
           note={note}
           comments={comments}
+          places={places}
 
+          onUpdateNoteState={this.props.onUpdateNoteState}
           onLogin={onLogin}
           onFetchComments={onFetchComments}
           onDeleteNote={onDeleteNote}
@@ -49,11 +62,15 @@ export default class RedBookNoteList extends Component {
 }
 
 RedBookNoteList.propTypes = {
+  appState: PropTypes.object.isRequired,
   loginUser: PropTypes.object.isRequired,
-  pageForRedBook: PropTypes.object.isRequired,
+  noteState: PropTypes.object.isRequired,
+  onUpdateNoteState: PropTypes.func.isRequired,
   noteIds: PropTypes.array.isRequired,
   
   entityNotes: PropTypes.object.isRequired,
+  entityComments: PropTypes.object.isRequired,
+  entityPlaces: PropTypes.object.isRequired,
 
   onLogin: PropTypes.func.isRequired,
   onFetchComments: PropTypes.func.isRequired,

@@ -41,7 +41,7 @@ export default class NoteComment extends Component {
 
   renderDeleteButton = () => {
 
-    const { comment, loginUser, index, pageForRedBook:{ stateDeleteComment } } = this.props;
+    const { comment, loginUser, index, noteState:{ stateDeleteComment } } = this.props;
 
     if( comment.author.id !== loginUser.id ){
       return false;
@@ -78,6 +78,6 @@ export default class NoteComment extends Component {
 NoteComment.propTypes = {
   index: PropTypes.number.isRequired,
   loginUser: PropTypes.object.isRequired,
-  pageForRedBook: PropTypes.object.isRequired,
+  noteState: PropTypes.object.isRequired,
   onDeleteComment: PropTypes.func.isRequired
 }

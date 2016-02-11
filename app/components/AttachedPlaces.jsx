@@ -10,20 +10,12 @@ export default class AttachedPlaces extends Component {
   }
 
   render(){
-    const { pageForRedBook: { places }, appState: { loadedGoogleSDK } } = this.props;
+    const { isEditMode, appState: { loadedGoogleSDK } } = this.props;
+    let { noteState: { places } } = this.props;
 
     if( !loadedGoogleSDK ) {
       return false;
     }
-
-    var options = places.map(function(place){
-      return {
-        key: place.key,
-        value: place.title,
-        label: place.label
-      }
-    });
-
 
     return <div className="AttachedPlaces">
       <div className="title header-box" onClick={this.handleTogglePlace}>{`Places (${places.length})`}</div>
@@ -35,10 +27,13 @@ export default class AttachedPlaces extends Component {
   renderPlaces = () => {
 
     const { isOpenedPlaceList } = this.state;
-    const { pageForRedBook: { places } } = this.props;
+    let { isEditMode, noteState: { places } } = this.props;
 
     if( !isOpenedPlaceList ) { return false }
 
+    if( isEditMode ){
+      places = this.props.places;
+    }
 
     if( places.length ){
       return <ul className="PlaceList">
@@ -65,28 +60,20 @@ export default class AttachedPlaces extends Component {
 
   handleInsertPlace = (place) => {
 
-    console.log( place );
-
-    let { pageForRedBook:{formText} } = this.props;
+    let { noteState:{formText} } = this.props;
     let str = `[${place.title}][${place.label}]`;
-    
-    console.log( str );
 
     this.setState({isOpenedPlaceList: false})
-    // this.props.onUpdateDataForRedBook({
-    //   formText: formText + str
-    // });   
     this.props.onInsertPlace(str);
-
   };
 
   handleDeletePlace = (place, e) => {
-    const { pageForRedBook: { places } } = this.props;
+    const { noteState: { places } } = this.props;
 
     let yes = confirm('Are you sure delete this place?');
 
     if( yes ){
-       this.props.onUpdateDataForRedBook({
+       this.props.onUpdateNoteState({
         places: _.without(places, place)
       });
     }
@@ -96,8 +83,8 @@ export default class AttachedPlaces extends Component {
 
   handleOpenMap = (e) => {
 
-    this.props.onUpdateDataForRedBook({
-      formMode: 'PLACE'
+    this.props.onUpdateNoteState({
+      openMap: true
     });
     this.setState({
       isOpenedPlaceList: true
@@ -107,7 +94,7 @@ export default class AttachedPlaces extends Component {
 
 AttachedPlaces.propTypes = {
   appState: PropTypes.object.isRequired,
-  pageForRedBook: PropTypes.object.isRequired,
-  onUpdateDataForRedBook: PropTypes.func.isRequired,
+  noteState: PropTypes.object.isRequired,
+  onUpdateNoteState: PropTypes.func.isRequired,
   onInsertPlace: PropTypes.func.isRequired
 }

@@ -4,8 +4,7 @@ import ContextMenu from '../components/RedBookNoteContextMenu'
 import { findDOMNode } from 'react-dom';
 import moment from 'moment'
 import {render} from '../libs/markdown';
-
-import { Provider } from 'react-redux'
+import AttachedPlaces from '../components/AttachedPlaces';
 
 export default class RedBookNote extends Component {
 
@@ -16,24 +15,20 @@ export default class RedBookNote extends Component {
       lineCount: 0,
       isEditing: false,
       isOpenContext: false,
-      isOpenComment: false,
-      isInitialEditing: true,
-      scrollTop: 0
+      isOpenComment: false
     }
   }
 
   componentWillReceiveProps(nextProps){
 
-    const { pageForRedBook: { updateNote } } = nextProps;
+    const { noteState: { updateNote } } = nextProps;
 
     if( updateNote && (updateNote.id === this.props.note.id) && (updateNote.state === 'SUCCESS') ) {
       this.setState({
         lineCount: 0,
         isEditing: false,
         isOpenContext: false,
-        isOpenComment: false,
-        isInitialEditing: true,
-        scrollTop: 0
+        isOpenComment: false
       });
 
       this.props.onSaveEditingNoteDone();
@@ -42,15 +37,9 @@ export default class RedBookNote extends Component {
 
   render() {
 
-    const { loginUser, pageForRedBook, note, comments } = this.props;
+    const { loginUser, noteState, note, comments } = this.props;
     const { onLogin, onAddComment, onDeleteNote, onDeleteComment} = this.props;
-    const { isEditing, isOpenComment, scrollTop, isInitialEditing } = this.state;
-
-    if( isEditing && scrollTop && isInitialEditing ){
-      setTimeout(function(){
-        document.body.scrollTop = scrollTop
-      }, 0)
-    }
+    const { isEditing, isOpenComment } = this.state;
 
     return <div id={note.id} className="RedBookNote">
       <div className="note-header">
@@ -78,11 +67,8 @@ export default class RedBookNote extends Component {
 
       <NoteCommentList 
         loginUser={loginUser}
-
-
         comments={comments}
-
-        pageForRedBook={pageForRedBook}
+        noteState={noteState}
 
         onLogin={onLogin}
         isOpenComment={isOpenComment}
@@ -110,7 +96,7 @@ export default class RedBookNote extends Component {
 
   renderContextMenu = () => {
 
-    const { hideContextMenu, loginUser, note } = this.props;
+    const { hideContextMenu, loginUser, note, noteState } = this.props;
     const { isOpenContext } = this.state;
 
     if( hideContextMenu ){
@@ -121,8 +107,9 @@ export default class RedBookNote extends Component {
       <button><i className="fa fa-angle-down" onClick={this.handleOpenContext} /></button>
       <ContextMenu 
         loginUser={loginUser}
+        noteState={noteState}
         noteAuthor={note.author}
-        onEditNote={this.handleEditNote}
+        onEditNote={this.handleEditNote.bind(this, note)}
         onDeleteNote={this.handleDeleteNote}
         isOpenContext={isOpenContext} />
     </div>
@@ -131,7 +118,7 @@ export default class RedBookNote extends Component {
 
   renderContentByState = ()=> {
 
-    const { note, pageForRedBook: {noteUpdate}} = this.props;
+    const { note, places, noteState: {noteUpdate}} = this.props;
     const contentText = render(note.content, note.id);
     
     let style = {height:'36px'};
@@ -144,6 +131,7 @@ export default class RedBookNote extends Component {
     }
 
 
+    // 노트수정
     if( this.state.isEditing ) {
 
       // 수정 완료 요청
@@ -159,17 +147,13 @@ export default class RedBookNote extends Component {
         </div>
 
       } else {
-
-        if( this.state.isInitialEditing ){
-          setTimeout(function(){
-            const node = findDOMNode(this.refs.content);
-            const len = node.value.length * 2;
-            node.setSelectionRange(len, len);
-            this.setState({
-              isInitialEditing: false
-            })
-          }.bind(this), 0)
-        }
+ 
+        // 노트 수정폼
+        setTimeout(function(){
+          const node = findDOMNode(this.refs.content);
+          const len = node.value.length * 2;
+          node.setSelectionRange(len, len);
+        }.bind(this), 0)
 
         return <div className="edit-content" >
           <textarea
@@ -181,6 +165,13 @@ export default class RedBookNote extends Component {
             autoFocus={true}></textarea>
 
           <div className="edit-controls">
+            <AttachedPlaces 
+              appState={this.props.appState}
+              noteState={this.props.noteState}
+              onInsertPlace={this.handleInsertPlace}
+              onUpdateNoteState={this.props.onUpdateNoteState}
+            />
+
             <button tabIndex="3" className="cancel" onClick={this.handleCancelEditNote}>Cancel</button>
             <button tabIndex="2" className="save" onClick={this.handleSaveEditNote.bind(this, note)}>Save</button>
           </div>
@@ -194,7 +185,7 @@ export default class RedBookNote extends Component {
   };
 
   renderCommentControl = () => {
-    const { note, pageForRedBook: {isFetching} }= this.props;
+    const { note, noteState: {isFetching} }= this.props;
     let iconClass = 'fa fa-comments-o';
 
     if( isFetching.comments ){
@@ -204,6 +195,16 @@ export default class RedBookNote extends Component {
     return <div className="comments" onClick={this.handleToggleComment.bind(null, note.id)}>
       <i className={iconClass}/> Comments ({note.comments.length})
     </div>
+  };
+
+  handleInsertPlace = (str) => {
+
+    const node = findDOMNode(this.refs.content);
+    node.value += str;
+    this.props.onUpdateNoteState({
+      formText: node.value
+    });   
+
   };
 
   handleMoveNote = (e) => {
@@ -254,13 +255,36 @@ export default class RedBookNote extends Component {
     this.setState({
       isEditing: false
     });
+    this.props.onUpdateNoteState({
+      isEditing: false, 
+      editingId: null,
+      openMap: false,
+      formText: '',
+      places: []
+    });
   };
 
   handleSaveEditNote = (note, e) => {
 
     const node = findDOMNode(this.refs.content);
     const text = node.value.trim();
-    this.props.onSaveEditingNote(note, text);
+    const { noteState: { places } } = this.props;
+
+
+    this.props.onSaveEditingNote(note, text, places);
+    this.props.onUpdateNoteState({
+      isEditing: false, 
+      editingId: null,
+      openMap: false,
+      formText: '',
+      places: [],
+      updateNote: {
+        id: node.id,
+        state: 'REQUESTING'
+      }
+    })
+
+
     e.preventDefault();
   };
 
@@ -289,13 +313,39 @@ export default class RedBookNote extends Component {
     })
   };
 
-  handleEditNote = (e) => {
+  handleEditNote = (note, e) => {
 
     this.setState({
       isEditing: true,
-      isOpenContext: false,
-      scrollTop: document.body.scrollTop
+      isOpenContext: false
     });
+
+    let places = [];
+
+    this.props.places.forEach(function(place){
+      places.push({
+        canEdit: true,
+        defaultAnimation: 5,
+        isEditing: false,
+        key: place.id,
+        label: place.label,
+        position: {
+          lat: place.geo.latitude,
+          lng: place.geo.longitude
+        },
+        showInfo: false,
+        title: place.title
+      })
+    })
+
+    this.props.onUpdateNoteState({
+      isEditing: true, 
+      editingId: note.id,
+      openMap: false,
+      formText: note.content,
+      places: places
+    });
+
   };
 
   handleDeleteNote = (e) => {
@@ -307,11 +357,13 @@ export default class RedBookNote extends Component {
 }
 
 RedBookNote.propTypes = {
+  appState: PropTypes.object.isRequired,
   loginUser: PropTypes.object.isRequired,
-  pageForRedBook: PropTypes.object.isRequired,
+  noteState: PropTypes.object.isRequired,
   note: PropTypes.object.isRequired,
   comments: PropTypes.array.isRequired,
-
+  places: PropTypes.array.isRequired,
+  onUpdateNoteState: PropTypes.func.isRequired,
 
   // 댓글관련 컨트롤은 로그인해야만 할수있다. 
   onLogin: PropTypes.func.isRequired,

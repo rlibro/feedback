@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { findDOMNode } from 'react-dom';
 import _ from 'lodash';
-import AttachedPlaces from '../components/AttachedPlaces'
+import AttachedPlaces from '../components/AttachedPlaces';
 
 export default class RedBookNoteForm extends Component {
 
@@ -14,14 +14,14 @@ export default class RedBookNoteForm extends Component {
 
   componentWillReceiveProps(nextProps){
 
-    const { pageForRedBook: { isFetching } } = nextProps;
+    const { noteState: { isFetching } } = nextProps;
 
     if( isFetching.addNote === 'DONE' ) {
       this.setState({
         lineCount: 0
       });
       
-      this.props.onUpdateDataForRedBook({
+      this.props.onUpdateNoteState({
         formText: ''
       });
 
@@ -33,8 +33,8 @@ export default class RedBookNoteForm extends Component {
 
     const { loginUser } = this.props;
     const { lineCount } = this.state;
-    const { pageForRedBook: {formMode} } = this.props;
-    const { appState, pageForRedBook:{formText} } = this.props;
+    const { noteState: {formMode} } = this.props;
+    const { appState, noteState:{formText} } = this.props;
 
     let klassName = 'text';
     let style = {height:'54px'}
@@ -83,9 +83,9 @@ export default class RedBookNoteForm extends Component {
         {/*this.renderAttachPlaces()*/}
         <AttachedPlaces 
           appState={this.props.appState} 
-          pageForRedBook={this.props.pageForRedBook}
+          noteState={this.props.noteState}
           onInsertPlace={this.handleInsertPlace}
-          onUpdateDataForRedBook={this.props.onUpdateDataForRedBook}
+          onUpdateNoteState={this.props.onUpdateNoteState}
         />
         {this.renderPostButton()}
       </div>
@@ -97,14 +97,14 @@ export default class RedBookNoteForm extends Component {
 
     const node = findDOMNode(this.refs.textarea);
     node.value += str;
-    this.props.onUpdateDataForRedBook({
+    this.props.onUpdateNoteState({
       formText: node.value
     });   
 
   };
 
   renderPostButton = () => {
-    const { pageForRedBook: { isFetching } } = this.props;
+    const { noteState: { isFetching } } = this.props;
 
     if( isFetching.addNote === 'READY' ) {
       return <button onClick={this.handlePostNote}>Post</button>
@@ -119,7 +119,7 @@ export default class RedBookNoteForm extends Component {
 
   handlePostNote = (e) => {
 
-    const { pageForRedBook: {formMode, places} } = this.props; 
+    const { noteState: {formMode, places} } = this.props; 
     const node = findDOMNode(this.refs.textarea);
     const text = node.value.trim();
 
@@ -164,8 +164,8 @@ export default class RedBookNoteForm extends Component {
 RedBookNoteForm.propTypes = {
   appState: PropTypes.object.isRequired,
   loginUser: PropTypes.object.isRequired,
-  pageForRedBook: PropTypes.object.isRequired,
-  onUpdateDataForRedBook: PropTypes.func.isRequired,
+  noteState: PropTypes.object.isRequired,
+  onUpdateNoteState: PropTypes.func.isRequired,
   onAddNote: PropTypes.func.isRequired,
   onAddNoteDone: PropTypes.func.isRequired
 }

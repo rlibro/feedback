@@ -92,7 +92,7 @@ class CityMapPage extends Component {
         }}
         markers = {markers}
         disableMoveCenter={true}
-        onUpdateDataForRedBook={this.hanldeCloseMap}
+        onUpdateNoteState={this.hanldeCloseMap}
       />
     </div>
   }

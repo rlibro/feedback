@@ -34,6 +34,14 @@ export default class RedBookNoteContextMenu extends Component {
 
   handleEditNote = (e) => {
     e.preventDefault();
+
+    const { noteState: {isEditing} } = this.props;
+
+    if( isEditing ){
+      alert('now you are editing another note.');
+      return;
+    }
+
     this.props.onEditNote();
   };
 
@@ -50,6 +58,7 @@ export default class RedBookNoteContextMenu extends Component {
 
 RedBookNoteContextMenu.propTypes = {
   noteAuthor: PropTypes.object.isRequired,
+  noteState: PropTypes.object.isRequired,
   loginUser: PropTypes.object.isRequired,
   isOpenContext: PropTypes.bool.isRequired,
   onDeleteNote: PropTypes.func.isRequired,

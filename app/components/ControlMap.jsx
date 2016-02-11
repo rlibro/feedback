@@ -274,7 +274,7 @@ export default class ControlMap extends Component {
 
     update(markers, { $set: [marker] });
     this.setState({ markers });
-    this.props.onUpdateDataForRedBook({
+    this.props.onUpdateNoteState({
       places: markers
     });
 
@@ -333,7 +333,7 @@ export default class ControlMap extends Component {
       isMarkerMode: false
     });
 
-    this.props.onUpdateDataForRedBook({
+    this.props.onUpdateNoteState({
       places: markers
     })
 
@@ -349,7 +349,7 @@ export default class ControlMap extends Component {
     let {markers} = this.state;
     markers = _.without(markers, marker);
     this.setState({ markers });
-    this.props.onUpdateDataForRedBook({
+    this.props.onUpdateNoteState({
       places: markers
     })
   };
@@ -379,8 +379,8 @@ export default class ControlMap extends Component {
   };
 
   handleClosePlaceMap = () => {
-    this.props.onUpdateDataForRedBook({
-      formMode: 'NOTE'
+    this.props.onUpdateNoteState({
+      openMap: false
     })
   };
 }
@@ -391,5 +391,5 @@ ControlMap.propTypes = {
     lat: React.PropTypes.number,
     lng: React.PropTypes.number
   }),
-  onUpdateDataForRedBook: PropTypes.func.isRequired
+  onUpdateNoteState: PropTypes.func.isRequired
 }

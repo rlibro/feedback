@@ -37,7 +37,7 @@ class SingleNotePage extends Component {
    */
   componentWillReceiveProps(nextProps) {
 
-    const { pageForRedBook: { isFetching }, notes, params:{noteId} } = nextProps;
+    const { noteState: { isFetching }, notes, params:{noteId} } = nextProps;
 
     if( !isFetching.note && !notes[noteId] ) {
       this.props.pushState('/');
@@ -65,7 +65,7 @@ class SingleNotePage extends Component {
     const { 
       params:{noteId}, 
       loginUser, 
-      pageForRedBook, 
+      noteState, 
       notes, 
       entitiyComments, 
       entitiyPlaces
@@ -93,7 +93,7 @@ class SingleNotePage extends Component {
         })
       }
       <RedBookNote loginUser={loginUser}
-        pageForRedBook={pageForRedBook}
+        noteState={noteState}
         note={note} 
         comments={comments}
 
@@ -146,7 +146,7 @@ function mapStateToProps(state) {
   const {
     entities: { notes, comments },
     routing: { path },
-    pageForRedBook
+    noteState
   } = state
 
 
@@ -154,7 +154,7 @@ function mapStateToProps(state) {
     notes,
     entitiyComments:comments,
     loginUser: state.login,
-    pageForRedBook: pageForRedBook,
+    noteState: noteState,
   }
 }
 

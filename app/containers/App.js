@@ -39,7 +39,7 @@ class App extends Component {
    */
   componentWillReceiveProps(nextProps) {
 
-    const { pageForRedBook:{ isFetching }, 
+    const { noteState:{ isFetching }, 
             params:{uname}, 
             path,
             entities:{ redBooks } 
@@ -265,7 +265,7 @@ function mapStateToProps(state) {
   return {
     path: state.routing.path,
     appState: state.appState,
-    pageForRedBook: state.pageForRedBook,
+    noteState: state.noteState,
     errorMessage: state.errorMessage,
     loginUser: state.login,
     redBooks: state.pagination.redBooks,

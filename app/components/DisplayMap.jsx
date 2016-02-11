@@ -178,8 +178,8 @@ export default class DisplayMap extends Component {
   };
 
   handleClosePlaceMap = () => {
-    this.props.onUpdateDataForRedBook({
-      formMode: 'NOTE'
+    this.props.onUpdateNoteState({
+      openMap: false
     })
   };
 }
@@ -190,5 +190,5 @@ DisplayMap.propTypes = {
     lat: React.PropTypes.number,
     lng: React.PropTypes.number
   }),
-  onUpdateDataForRedBook: PropTypes.func.isRequired
+  onUpdateNoteState: PropTypes.func.isRequired
 }

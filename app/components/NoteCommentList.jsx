@@ -19,7 +19,7 @@ export default class NoteCommentList extends Component {
 
     const { 
       loginUser, 
-      pageForRedBook,
+      noteState,
       comments,
       isOpenComment,
       onLogin, onAddComment, onDeleteComment
@@ -32,7 +32,7 @@ export default class NoteCommentList extends Component {
         return <NoteComment key={i}
           index={i}
           comment={comment}
-          pageForRedBook={pageForRedBook}
+          noteState={noteState}
           loginUser={loginUser}
           onDeleteComment={onDeleteComment.bind(null, comment.id)}
           />
@@ -40,7 +40,7 @@ export default class NoteCommentList extends Component {
 
       <NoteCommentForm 
         loginUser={loginUser}
-        pageForRedBook={pageForRedBook}
+        noteState={noteState}
         isOpenComment={isOpenComment}
         onLogin={onLogin}
         onAddComment={onAddComment} />
@@ -52,7 +52,7 @@ export default class NoteCommentList extends Component {
 NoteCommentList.propTypes = {
   loginUser: PropTypes.object.isRequired,
   isOpenComment: PropTypes.bool.isRequired,
-  pageForRedBook: PropTypes.object.isRequired,
+  noteState: PropTypes.object.isRequired,
 
   comments: PropTypes.array.isRequired,
 

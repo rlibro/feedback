@@ -246,10 +246,10 @@ export function findingKeyWord(keyword) {
 /**
  * 데이터 변경 사항을 저장한다. 
  */
-export function updateDataForNewRedBook(data){
+export function updateRedBookState(data){
   return (dispatch, getState) => {
     return dispatch({
-      type: 'UPDATE_DATA_FOR_NEW_BOOK',
+      type: 'UPDATE_REDBOOK_STATE',
       data: data
     });
   }
@@ -259,10 +259,10 @@ export function updateDataForNewRedBook(data){
 /**
  * 데이터 변경 사항을 저장한다. 
  */
-export function updateDataForRedBook(data){
+export function updateNoteState(data){
   return (dispatch, getState) => {
     return dispatch({
-      type: 'UPDATE_DATE_FOR_REDBOOK',
+      type: 'UPDATE_NOTE_STATE',
       data: data
     });
   }
