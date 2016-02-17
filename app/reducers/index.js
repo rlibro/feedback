@@ -30,6 +30,23 @@ function entities(state = { redBooks: {}, notes:{}, comments:{}, users:{}, place
     }
   }
 
+  if( action.response && (action.type === 'DELETE_PLACE_SUCCESS')){
+
+    const { notedId, placeId } = action.response;
+    let i=0;
+    for (; i< state.places.length; ++i){
+      if( state.places[i] === placeId ){
+        state.places.splice(i,1);
+        break;
+      }
+    }
+
+    state.places[placeId] = null;
+    delete state.places[placeId]
+
+    return merge({}, state);
+  }
+
   if( action.response && (action.type === 'DELETE_COMMENT_SUCCESS')){
 
     const { commentId, noteId } = action.response;
@@ -48,6 +65,7 @@ function entities(state = { redBooks: {}, notes:{}, comments:{}, users:{}, place
 
     return merge({}, state);
   }
+
 
   if( action.response && action.type === 'DELETE_NOTE_SUCCESS') {
 
@@ -258,6 +276,31 @@ function noteState(state = {
     state.isFetching.addNote = 'READY';
     return merge({}, state);
 
+    // 위치 추가
+    case 'ADD_PLACE_SUCCESS':
+    
+    const {entities: {places}, result} = action.response;
+    const place = places[result];
+
+    let i=0;
+
+    for(; i< state.places.length; ++i){
+      if( state.places[i].key == place.redBookId ){
+        state.places[i] = {
+          canEdit: true,
+          key: place.id,
+          label: place.label,
+          position: {
+            lat: place.geo.latitude,
+            lng: place.geo.longitude
+          },
+          title: place.title,
+          isNew: true
+        }
+        return merge({}, state);
+      }
+    }
+
     // 레드북 패치
     case 'REDBOOKS_REQUEST':
       state.isFetching.redbooks = 'REQUESTING'
@@ -274,7 +317,7 @@ function noteState(state = {
     if( action.data.places ) {
       state.places = action.data.places;
     }
-    
+
     return merge({}, state, action.data);
 
     
@@ -291,7 +334,12 @@ function noteState(state = {
         state: 'SUCCESS'
       }
       return merge({}, state);
-    case 'RESET_UPDATE_NOTE': 
+    case 'RESET_UPDATE_NOTE':
+      state.isEditing = false;
+      state.editingId = null;
+      state.formText  = '';
+      state.places    = [];
+
       state.updateNote = {
         id: null,
         state: 'READY'

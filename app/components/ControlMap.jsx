@@ -259,6 +259,8 @@ export default class ControlMap extends Component {
     }
   };
 
+
+  // 이게 사실상 저장!
   handleEditDoneInfoWindowTitle = (marker, e) => {
 
     if( e.target.value.length === 0){
@@ -269,6 +271,8 @@ export default class ControlMap extends Component {
     marker.title = e.target.value;
     marker.isEditing = false;
     marker.canEdit = true;
+
+    this.props.onAddPlace(marker);
 
     var {markers} = this.state;
 
@@ -379,6 +383,17 @@ export default class ControlMap extends Component {
   };
 
   handleClosePlaceMap = () => {
+
+    let {markers} = this.state;
+    let i=0; 
+
+    for(; i<markers.length; ++i ){
+      let marker = markers[i];
+      if( marker.title.length === 0){
+        return alert('make sure place name!');
+      }
+    }
+
     this.props.onUpdateNoteState({
       openMap: false
     })
@@ -391,5 +406,6 @@ ControlMap.propTypes = {
     lat: React.PropTypes.number,
     lng: React.PropTypes.number
   }),
+  onAddPlace: PropTypes.func.isRequired,
   onUpdateNoteState: PropTypes.func.isRequired
 }

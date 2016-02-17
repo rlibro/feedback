@@ -41,7 +41,12 @@ export default class RedBookNote extends Component {
     const { onLogin, onAddComment, onDeleteNote, onDeleteComment} = this.props;
     const { isEditing, isOpenComment } = this.state;
 
-    return <div id={note.id} className="RedBookNote">
+    let klassName = 'RedBookNote';
+    if( noteState.isEditing && (noteState.editingId !== note.id) ) {
+      klassName += ' hide';
+    }
+
+    return <div id={note.id} className={klassName}>
       <div className="note-header">
         <div className="profile photo" >
           <img src={note.author.picture} />
@@ -135,7 +140,7 @@ export default class RedBookNote extends Component {
     if( this.state.isEditing ) {
 
       // 수정 완료 요청
-      if( noteUpdate && ( noteUpdate.state === 'REQUESTING') && ( noteUpdate.id === note.id )) {
+      if( noteUpdate && ( updateNote.state === 'REQUESTING') && ( updateNote.id === note.id )) {
         return <div className="edit-content" >
           <textarea defaultValue={note.content} style={style} ref="content" disabled
             tabIndex="1"></textarea>
@@ -273,11 +278,6 @@ export default class RedBookNote extends Component {
 
     this.props.onSaveEditingNote(note, text, places);
     this.props.onUpdateNoteState({
-      isEditing: false, 
-      editingId: null,
-      openMap: false,
-      formText: '',
-      places: [],
       updateNote: {
         id: node.id,
         state: 'REQUESTING'
@@ -370,6 +370,7 @@ RedBookNote.propTypes = {
   onFetchComments: PropTypes.func.isRequired,
   onAddComment: PropTypes.func.isRequired,
   onDeleteComment: PropTypes.func.isRequired,
+  onDeletePlace: PropTypes.func.isRequired,
   onLikeNote: PropTypes.func.isRequired,
   onPushState: PropTypes.func.isRequired
 }

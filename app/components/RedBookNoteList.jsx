@@ -8,7 +8,7 @@ export default class RedBookNoteList extends Component {
     const { entityNotes, entityComments, entityPlaces,
             noteIds, loginUser, noteState } = this.props;
     const { onLogin, onPushState, childPath,
-            onFetchComments, onAddComment, 
+            onFetchComments, onAddComment, onDeletePlace,
             onSaveEditingNote, onSaveEditingNoteDone, 
             onDeleteNote, onDeleteComment, onLikeNote
           } = this.props;
@@ -53,6 +53,7 @@ export default class RedBookNoteList extends Component {
           onSaveEditingNote={onSaveEditingNote}
           onSaveEditingNoteDone={onSaveEditingNoteDone}
           onDeleteComment={onDeleteComment}
+          onDeletePlace={onDeletePlace}
           onLikeNote={onLikeNote}
           onPushState={onPushState}
           />
@@ -79,6 +80,7 @@ RedBookNoteList.propTypes = {
   onSaveEditingNoteDone: PropTypes.func.isRequired,
   onDeleteNote: PropTypes.func.isRequired,
   onDeleteComment: PropTypes.func.isRequired,
+  onDeletePlace: PropTypes.func.isRequired,
   onLikeNote: PropTypes.func.isRequired,
   onPushState: PropTypes.func.isRequired
 }

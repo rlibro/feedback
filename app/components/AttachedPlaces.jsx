@@ -73,7 +73,7 @@ export default class AttachedPlaces extends Component {
     let yes = confirm('Are you sure delete this place?');
 
     if( yes ){
-       this.props.onUpdateNoteState({
+      this.props.onUpdateNoteState({
         places: _.without(places, place)
       });
     }

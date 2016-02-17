@@ -327,6 +327,7 @@ export function addRedBook(noteText){
             'RedBook': pageForNewRedBook,
             'Note': {
               comments: [],
+              places: [],
               content: noteText,
               author: Parse.User.current()
             }
@@ -454,7 +455,7 @@ export function deleteNote (noteId, redBookId) {
 export const UPDATE_NOTE_REQUEST = 'UPDATE_NOTE_REQUEST'
 export const UPDATE_NOTE_SUCCESS = 'UPDATE_NOTE_SUCCESS'
 export const UPDATE_NOTE_FAILURE = 'UPDATE_NOTE_FAILURE'
-export function updateNote (redBookId, noteId, newText) {
+export function updateNote (redBookId, noteId, newText, placeIds) {
   return (dispatch, getState) => {
     return dispatch(function(){
       return {
@@ -465,7 +466,8 @@ export function updateNote (redBookId, noteId, newText) {
           params: {
             redBookId: redBookId,
             noteId: noteId,
-            newText: newText
+            newText: newText,
+            places: placeIds
           },
           types: [ UPDATE_NOTE_REQUEST, UPDATE_NOTE_SUCCESS, UPDATE_NOTE_FAILURE ],
           schema: Schemas.NOTE
@@ -593,6 +595,94 @@ export function fetchPlaces (params) {
     }())
   }
 }
+
+/**
+ *  노트에 위치를 추가한다.
+ */ 
+export const ADD_PLACE_REQUEST = 'ADD_PLACE_REQUEST'
+export const ADD_PLACE_SUCCESS = 'ADD_PLACE_SUCCESS'
+export const ADD_PLACE_FAILURE = 'ADD_PLACE_FAILURE'
+export function addPlace (markerKey, userId, noteId, title, label, geo) {
+  return (dispatch, getState) => {
+    return dispatch(function(){
+      return {
+        [PARSE]: {
+          method: 'addPlace',
+          params: {
+            Place: {
+              redBookId: markerKey+'',
+              userId: userId,
+              title: title,
+              label: label,
+              noteId: noteId
+            },
+            geoPoint: geo
+          },
+          types: [ ADD_PLACE_REQUEST, ADD_PLACE_SUCCESS, ADD_PLACE_FAILURE ],
+          schema: Schemas.PLACE
+        }
+      }
+    }());
+  }
+}
+/* END OF addNoteComment */
+
+/**
+ *  노트에 위치를 추가한다.
+ */ 
+export const UPDATE_PLACE_REQUEST = 'UPDATE_PLACE_REQUEST'
+export const UPDATE_PLACE_SUCCESS = 'UPDATE_PLACE_SUCCESS'
+export const UPDATE_PLACE_FAILURE = 'UPDATE_PLACE_FAILURE'
+export function updatePlace (redBookId, noteId, place) {
+  return (dispatch, getState) => {
+    return dispatch(function(){
+      return {
+        [PARSE]: {
+          method: 'updatePlace',
+          params: {
+            Place: {
+              redBookId: redBookId,
+              title: place.title,
+              label: place.label
+            },
+            placeId: place.key,
+            noteId: noteId,
+            geoPoint: place.position
+          },
+          types: [ UPDATE_PLACE_REQUEST, UPDATE_PLACE_SUCCESS, UPDATE_PLACE_FAILURE ],
+          schema: Schemas.PLACE
+        }
+      }
+    }());
+  }
+}
+/* END OF addNoteComment */
+
+/**
+ *  노트에 위치를 삭제한다.
+ */ 
+export const DELETE_PLACE_REQUEST = 'DELETE_PLACE_REQUEST'
+export const DELETE_PLACE_SUCCESS = 'DELETE_PLACE_SUCCESS'
+export const DELETE_PLACE_FAILURE = 'DELETE_PLACE_FAILURE'
+export function deletePlace (placeId) {
+  return (dispatch, getState) => {
+    return dispatch(function(){
+      return {
+        [PARSE]: {
+          method: 'deletePlace',
+          params: {
+            placeId: placeId,
+          },
+          types: [ DELETE_PLACE_REQUEST, DELETE_PLACE_SUCCESS, DELETE_PLACE_FAILURE ],
+          schema: Schemas.PLACE
+        }
+      }
+    }());
+  }
+}
+/* END OF addNoteComment */
+
+
 
 
 /**

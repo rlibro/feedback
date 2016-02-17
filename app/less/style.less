@@ -429,6 +429,9 @@ button {
   &.open-child .dimmed {
     z-index: 1;
   }
+  &.open-map .dimmed {
+    z-index: 5;
+  }
   .dimmed {
     z-index: -1;
   }
@@ -494,13 +497,13 @@ button {
     bottom: 0px;
     right: 0px;
     left: 0px;
-    padding: 5px;
-    border-top: 1px solid #fff;
-    width: 95%;
+    padding-bottom: 5px;
+    // border-top: 1px solid #fff;
+    // width: 95%;
 
     button {
       padding: 10px 15px;
-      margin: 0 5px;
+      margin-left: 0px;
       border-radius: 5px;
       background-color: #2a2a2a;
       border: 1px solid #FFF;

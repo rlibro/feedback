@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { facebookLogin, updateLoginUserInfo, updateNoteState } from '../actions'
 import { fetchNotes, fetchPlaces,
          updateNote, resetUpdateNote,
+         addPlace, updatePlace, deletePlace,
          deleteNote, likeNote } from '../actions'
 import { fetchComments, addComment, deleteComment } from '../actions'
 import { pushPath as pushState } from 'redux-simple-router'
@@ -72,6 +73,7 @@ class RedBookPage extends Component {
     // 레드북
     if( !redBook ) { return this.renderLoadingRedBook()}
     if( this.props.children ) { klassName = 'RedBookPage open-child' }
+    if( noteState.openMap ) { klassName += ' open-map' }
 
     // 일단 커버와 입력폼을 로드한다. 
     return <div className={klassName} ref="redbook">
@@ -124,6 +126,7 @@ class RedBookPage extends Component {
         }}
         markers = {markers}
         disableMoveCenter={true}
+        onAddPlace={this.handleAddPlace}
         onUpdateNoteState={this.props.updateNoteState}
 
       />
@@ -196,6 +199,7 @@ class RedBookPage extends Component {
       onDeleteNote={this.handleDeleteNote}
       onAddComment={this.handleAddComment}
       onDeleteComment={this.handleDeleteComment}
+      onDeletePlace={this.handleDeletePlace}
       onLikeNote={this.handleLikeNote}
       />
   };
@@ -217,6 +221,15 @@ class RedBookPage extends Component {
     this.props.addComment(noteId, commentText)
   };
 
+  handleAddPlace = (marker) => {
+    const {loginUser, noteState: {editingId}} = this.props;
+    this.props.addPlace(marker.key, loginUser.id, editingId, marker.title, marker.label, {lat: marker.position.lat(), lng: marker.position.lng()});
+  };
+
+  handleDeletePlace = (marker) => {
+    this.props.deletePlace(marker.key);
+  };
+
   handleDeleteNote = (noteId) => {
     this.props.deleteNote(noteId, this.props.redBook.id);
   };
@@ -227,14 +240,30 @@ class RedBookPage extends Component {
 
   handleSaveEditingNote = (note, newText, places) => {
 
-    
-    this.props.updateNote(this.props.redBook.id, note.id, newText);
+    let placeIds = [];
+    let deletedPlaceId = note.places; 
 
-    console.log('TODO: 위치 업데이트, 변경된 경우에만? ===> ', note, places);
+    // 첨부된 최종 위치를 확인해서 새로운 것은 추가하고, 삭제된 녀석을 뽑아낸다. 
+    _.each(places, function(place){
 
-    // 위치관련해서 지도에 찍으면 일단 임시 노트아이디를 박아서 그냥 저장한다. 
-    // 저장후 임시 노트아이디를 걸러서 노트로 변경 
+      if( place.isNew ){
+        this.props.updatePlace(this.props.redBook.id, note.id, place);
+      }
 
+      placeIds.push(place.key);
+
+      deletedPlaceId = _.without(deletedPlaceId, place.key);
+
+    }.bind(this));
+
+
+    // 삭제할 녀석이 있다면 삭제 진행
+    _.each(deletedPlaceId, function(placeId){
+      this.props.deletePlace(placeId);
+    }.bind(this));
+
+
+    this.props.updateNote(this.props.redBook.id, note.id, newText, placeIds);
   };
 
   handleLikeNote = (noteId) => {
@@ -284,10 +313,13 @@ export default connect(mapStateToProps, {
   fetchPlaces,
   fetchComments,
   addComment,
+  addPlace,
+  updatePlace,
   updateNote,
   resetUpdateNote,
   deleteNote,
   deleteComment,
+  deletePlace,
   likeNote,
 
   pushState

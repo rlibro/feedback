@@ -329,10 +329,6 @@ const parseAPI = {
         place.set('geo', geoPoint);
         place.set('userId', params.Note.author.id);
         place.set('redBookId', params.redBookId);
-        place.set('refCount', 1);
-        place.set('refType', 'N');
-        place.set('refId', savedNote.id);
-
         promises.push(place.save());
 
       });
@@ -393,6 +389,57 @@ const parseAPI = {
     })
     
   },
+
+  addPlace: function(schema, params){
+
+    const geoPoint = new Parse.GeoPoint({
+      latitude: params.geoPoint.lat,
+      longitude: params.geoPoint.lng
+    });
+
+    const place = new Place();
+
+    place.set('geo', geoPoint);
+    return place
+    .save(params.Place)
+    .then(function(savedPlace){
+
+      let placeObject = savedPlace.toJSON();
+      clearObjectId(placeObject);
+
+      return Object.assign({}, normalize(placeObject, schema));
+    });
+
+
+  },
+
+  updatePlace: function(schema, params){
+
+    const place = new Place();
+    place.id = params.placeId;
+
+    const note = new Note();
+    note.id = params.noteId;
+
+    const geoPoint = new Parse.GeoPoint({
+      latitude: params.geoPoint.lat,
+      longitude: params.geoPoint.lng
+    });
+
+    place.set('note', note);
+    place.set('geo', geoPoint);
+    return place
+    .save(params.Place)
+    .then(function(savedPlace){
+
+      let placeObject = savedPlace.toJSON();
+      clearObjectId(placeObject);
+
+      return Object.assign({}, normalize(placeObject, schema));
+    });
+  },
+
+
 
   likeNote: function(schema, params){
 
@@ -471,18 +518,32 @@ const parseAPI = {
     note.id = params.noteId;
 
     return note
-    .save({content: params.newText, modifiedAt:new Date})
-    .then(function(redBookNote){
+    .save({content: params.newText, modifiedAt:new Date, places: params.places})
+    .then(function(savedNote){
 
-      let newNote = redBookNote.toJSON();
+      let newNote = savedNote.toJSON();
       clearObjectId(newNote, 'author');
 
       return Object.assign({}, normalize(newNote, schema));
-
+      
     }, function(error){
       return error.code + ', ' + error.message;
     })
 
+  },
+
+  deletePlace: function(schema, params){
+    let place = new Place();
+    place.id = params.placeId;
+
+    return place
+    .destroy()
+    .then(function(deletedPlace){
+      return {
+        noteId : deletedPlace.get('note').id,
+        placeId : deletedPlace.id
+      }
+    });
   },
 
   deleteComment: function(schema, params){
