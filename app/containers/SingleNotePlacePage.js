@@ -11,14 +11,17 @@ class SingleNotePlacePage extends Component {
   render() {
 
     const { loginUser, appState, note, entitiyPlaces, 
-      params : {placeLabel, noteId}
+      params : {placeId, noteId}
     } = this.props;
 
 
     if( !appState.loadedGoogleSDK ){
-      console.log('지도를 로드중입니다...');
-
-      return false;
+      
+      return <div className="map-loading">
+        <div className="loading">
+          <p><i className="fa fa-spinner fa-pulse"></i> Now loading map, <br/>please wait a moment</p>
+        </div>
+      </div>;
     }
 
 
@@ -43,7 +46,7 @@ class SingleNotePlacePage extends Component {
     let markers = [], mapCenter;
     _.each(places, function(place){
 
-      if( place.label === placeLabel ) {
+      if( place.id === placeId ) {
         mapCenter = {
           lat: place.geo.latitude,
           lng: place.geo.longitude

@@ -63,6 +63,7 @@ class SingleNotePage extends Component {
   render() {
 
     const { 
+      appState,
       params:{noteId}, 
       loginUser, 
       noteState, 
@@ -74,7 +75,11 @@ class SingleNotePage extends Component {
     const note = notes[noteId];
 
     if( !note ){
-      return false;
+      return <div className="RedBookNote">
+        <div className="loading">
+          <p><i className="fa fa-spinner fa-pulse"></i> Now loading a note, <br/>please wait a moment</p>
+        </div>
+      </div>;
     }
 
     let comments = [], places=[];
@@ -85,6 +90,16 @@ class SingleNotePage extends Component {
       }
     });
 
+    note.places.forEach(function(placeId){
+
+      const place = entitiyPlaces[placeId];
+      if( place ){
+        places.push(place);
+      }
+
+    });
+
+
     return <div className="SingleNotePage">
 
       {this.props.children && 
@@ -92,9 +107,13 @@ class SingleNotePage extends Component {
           note: note
         })
       }
-      <RedBookNote loginUser={loginUser}
+      
+      <RedBookNote 
+        appState={appState}
+        loginUser={loginUser}
         noteState={noteState}
         note={note} 
+        places={places}
         comments={comments}
 
         hideContextMenu={true}
@@ -105,6 +124,8 @@ class SingleNotePage extends Component {
         onDeleteComment={this.handleDeleteComment}  
         onPushState={this.props.pushState}
         onLikeNote={this.props.likeNote}
+        onUpdateNoteState={function(){}}
+        onDeletePlace={function(){}}
         />
     </div>
   }
@@ -137,6 +158,7 @@ class SingleNotePage extends Component {
 
 
 SingleNotePage.propTypes = {
+  appState: PropTypes.object.isRequired,
   children: PropTypes.node
 };
 
@@ -144,15 +166,18 @@ SingleNotePage.propTypes = {
 function mapStateToProps(state) {
 
   const {
-    entities: { notes, comments },
+    appState,
+    entities: { notes, comments, places },
     routing: { path },
     noteState
   } = state
 
 
   return {
+    appState,
     notes,
     entitiyComments:comments,
+    entitiyPlaces: places,
     loginUser: state.login,
     noteState: noteState,
   }

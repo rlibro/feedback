@@ -73,8 +73,8 @@ export default class RedBookNoteForm extends Component {
           <br /> 
           <br /> 
           <br /> also, you can make a link like this:
-          <br /> [ LINK NAME ][ MARKER NUMBER ]
-          <br /> ex) [Rlibro][1] is everywhere!
+          <br /> [ LINK NAME ][ MARKER ID ]
+          <br /> ex) [Rlibro][sWe3ns3kdj] is everywhere!
         </div>
       </div>
 
@@ -119,7 +119,7 @@ export default class RedBookNoteForm extends Component {
 
   handlePostNote = (e) => {
 
-    const { noteState: {formMode, places} } = this.props; 
+    const { noteState: { places} } = this.props; 
     const node = findDOMNode(this.refs.textarea);
     const text = node.value.trim();
 
@@ -127,7 +127,7 @@ export default class RedBookNoteForm extends Component {
       return alert('the content is empty');
     }
 
-    this.props.onAddNote(formMode, text, places);    
+    this.props.onAddNote(text, places);    
     node.value = '';
     e.preventDefault()
   };

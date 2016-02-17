@@ -108,14 +108,24 @@ class RedBookPage extends Component {
 
       let markers = [];
       _.each(places, function(place){
-
-        markers.push({
+        let marker = {
           key: place.key,
           canEdit: true,
           label: place.label,
           title: place.title,
           position: place.position
-        })
+        }
+
+        if( place.showInfo ){
+          marker.showInfo = place.showInfo;
+        }
+
+        if( place.isEditing ) {
+          marker.isEditing = place.isEditing;
+        }
+
+        markers.push(marker)
+
       });
 
       return <ControlMap className="GoogleMap" 

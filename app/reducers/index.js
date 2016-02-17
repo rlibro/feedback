@@ -273,6 +273,7 @@ function noteState(state = {
     state.isFetching.addNote = 'DONE';
     return merge({}, state);
     case 'RESET_ADD_NOTE': 
+    state.places = [];
     state.isFetching.addNote = 'READY';
     return merge({}, state);
 
@@ -281,7 +282,6 @@ function noteState(state = {
     
     const {entities: {places}, result} = action.response;
     const place = places[result];
-
     let i=0;
 
     for(; i< state.places.length; ++i){
@@ -314,7 +314,8 @@ function noteState(state = {
       return merge({}, state);
 
     case 'UPDATE_NOTE_STATE':
-    if( action.data.places ) {
+
+    if( action.data.places ){
       state.places = action.data.places;
     }
 

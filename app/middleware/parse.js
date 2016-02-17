@@ -309,7 +309,7 @@ const parseAPI = {
     const redBook = new RedBook();
     redBook.id = params.redBookId;
     params.Note.redBook = redBook;
-    
+
     return note
     .save(params.Note)
     .then(function(savedNote){
@@ -318,11 +318,12 @@ const parseAPI = {
       _.each(params.Place, function(placeParam){
 
         const geoPoint = new Parse.GeoPoint({
-          latitude: placeParam.position.lat(),
-          longitude: placeParam.position.lng()
+          latitude: placeParam.position.lat,
+          longitude: placeParam.position.lng
         });
 
         const place = new Place();
+        place.id = placeParam.key;
         place.set('note', savedNote);
         place.set('title', placeParam.title);
         place.set('label', placeParam.label);
@@ -336,14 +337,6 @@ const parseAPI = {
       return Parse.Promise.when(promises)
       .then(function(){
 
-        let places = [];
-        _.each( arguments, function(p){
-          places.push(p.id);
-        });
-
-        savedNote.save({
-          places: places
-        });
         let newNote = savedNote.toJSON();
         clearObjectId(newNote, 'author');
 
@@ -448,8 +441,6 @@ const parseAPI = {
 
     const like = new Like();
     params.Like.note = note;
-
-
 
     // 1. 일단 좋아요를 서버에 저장해!      
     return like

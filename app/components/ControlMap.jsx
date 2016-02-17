@@ -25,6 +25,14 @@ export default class ControlMap extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+
+    this.setState({
+      markers: nextProps.markers.concat()
+    });
+  }
+
+
   render () {
     const { isExpanded, isMarkerMode, usedUserLocation } = this.state;
     let klassName = 'AddPlace2Note Map';
@@ -143,13 +151,13 @@ export default class ControlMap extends Component {
 
     const { isReadOnly } = this.props;
     const { markers } = this.state;
-    var bounds = new google.maps.LatLngBounds();
+    //var bounds = new google.maps.LatLngBounds();
     var markerArray = [];
 
     markers.forEach((marker, index) => {
       const ref = `marker_${index}`;
 
-      bounds.extend(new google.maps.LatLng(marker.position));
+      //bounds.extend(new google.maps.LatLng(marker.position));
       markerArray.push(<Marker key={ref} ref={ref}
         {...marker}
         title={(index+1).toString()}

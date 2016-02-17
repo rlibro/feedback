@@ -40,7 +40,7 @@ export default class AttachedPlaces extends Component {
         {places.map(function(place, i){
           return <li className="item" key={i} onClick={this.handleInsertPlace.bind(this, place)}>
             <div className="label"><i className="fa icon-up"></i> {place.label}</div>
-            <div className="title" title={place.title}>{place.title}</div>
+            <div className="title" title={place.title}>{place.title}[{place.key}]</div>
             <div className="btn-delete" onClick={this.handleDeletePlace.bind(this, place)}><i className="fa icon-trash-o"></i></div>
           </li>
         }.bind(this))}
@@ -50,8 +50,6 @@ export default class AttachedPlaces extends Component {
         click +Map if you wanna add a place
       </ul>
     }
-
-
   };
 
   handleTogglePlace = () => {
@@ -61,7 +59,7 @@ export default class AttachedPlaces extends Component {
   handleInsertPlace = (place) => {
 
     let { noteState:{formText} } = this.props;
-    let str = `[${place.title}][${place.label}]`;
+    let str = `[${place.title}][${place.key}]`;
 
     this.setState({isOpenedPlaceList: false})
     this.props.onInsertPlace(str);

@@ -49,6 +49,13 @@ button {
   display: none;
 }
 
+.map-loading .loading {
+  padding: 20px;
+  text-align: center;
+}
+
+
+
 /**
  * 레드북 헤더
  */
@@ -873,6 +880,11 @@ button {
     }
   }
 
+  .loading {
+    padding: 20px;
+    text-align: center;
+  }
+
   .note-header {
     padding: 10px;
 
@@ -969,6 +981,7 @@ button {
       font-size: 14px;
       height: 36px;
       line-height: 18px;
+      min-height: 300px;
       outline: 0;
       margin: 13px 0 0 0px;
       padding: 0px 5px;
@@ -1217,7 +1230,11 @@ button {
 }
 
 .CreateNotePage {
+  z-index: 6;
+}
 
+.open-map .CreateNotePage {
+  top: 0;
 }
 
 .CityPeoplePage {

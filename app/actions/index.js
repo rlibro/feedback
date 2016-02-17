@@ -396,7 +396,7 @@ export function fetchNotes (redBookId) {
 export const ADD_NOTE_REQUEST = 'ADD_NOTE_REQUEST'
 export const ADD_NOTE_SUCCESS = 'ADD_NOTE_SUCCESS'
 export const ADD_NOTE_FAILURE = 'ADD_NOTE_FAILURE'
-export function addNote (redBookId, noteText, places){
+export function addNote (redBookId, noteText, placeIds, places){
 
   return (dispatch, getState) => {
     return dispatch(function(){
@@ -406,7 +406,7 @@ export function addNote (redBookId, noteText, places){
           method: 'addNote',
           params: {
             Note: {
-              places: [],
+              places: placeIds,
               comments: [],
               content: noteText,
               author: Parse.User.current()

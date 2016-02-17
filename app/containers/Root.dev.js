@@ -31,7 +31,7 @@ export default class Root extends Component {
                 <Route path="/guide/:uname/create" component={CreateNotePage}/>
               </Route>
               <Route path="/notes/:noteId" component={SingleNotePage}>
-                <Route path="/notes/:noteId/places/:placeLabel" component={SingleNotePlacePage}/>
+                <Route path="/notes/:noteId/places/:placeId" component={SingleNotePlacePage}/>
               </Route>
               <Route path="/create/:uname" component={NewRedBookPage}/>
             </Route>
