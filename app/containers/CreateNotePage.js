@@ -94,7 +94,7 @@ class CreateNotePage extends Component {
 
   handleAddPlace = (marker) => {
     const {loginUser, noteState: {editingId}} = this.props;
-    this.props.addPlace(marker.key, loginUser.id, editingId, marker.title, marker.label, {lat: marker.position.lat(), lng: marker.position.lng()});
+    this.props.addPlace(marker.key, loginUser.id, editingId, marker.title, marker.label, {lat: marker.position.lat, lng: marker.position.lng});
   };
 
   hanldeClose = () => {
