@@ -40,7 +40,7 @@ export default class AttachedPlaces extends Component {
         {places.map(function(place, i){
           return <li className="item" key={i} onClick={this.handleInsertPlace.bind(this, place)}>
             <div className="label"><i className="fa icon-up"></i> {place.label}</div>
-            <div className="title" title={place.title}>{place.title}[{place.key}]</div>
+            <div className="title" title={place.title}>{place.title} [{place.key}]</div>
             <div className="btn-delete" onClick={this.handleDeletePlace.bind(this, place)}><i className="fa icon-trash-o"></i></div>
           </li>
         }.bind(this))}

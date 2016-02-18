@@ -217,6 +217,7 @@ function noteState(state = {
   stateLoaded: 'READY', 
   stateAddComment:'READY',
   stateDeleteComment:'READY',
+  stateNoteUpdate: 'READY',     // 요건 쓰는거임!
   places: [],
   isFetching: {
     redbooks: 'READY',
@@ -224,10 +225,6 @@ function noteState(state = {
     comments: false,
     addNote: 'READY',
     place: false
-  },
-  updateNote: {
-    id: null, 
-    state: 'READY'
   },
   isEditing: false,
   editingId: null,
@@ -324,16 +321,10 @@ function noteState(state = {
     
     // 노트수정
     case 'UPDATE_NOTE_REQUEST': 
-      state.updateNote = {
-        id: action.noteId,
-        state: 'REQUESTING'
-      }
+      state.stateNoteUpdate = 'REQUESTING';
       return merge({}, state);
     case 'UPDATE_NOTE_SUCCESS': 
-      state.updateNote = {
-        id: action.noteId,
-        state: 'SUCCESS'
-      }
+      state.stateNoteUpdate = 'SUCCESS';
       return merge({}, state);
     case 'RESET_UPDATE_NOTE':
       state.isEditing = false;
@@ -341,10 +332,7 @@ function noteState(state = {
       state.formText  = '';
       state.places    = [];
 
-      state.updateNote = {
-        id: null,
-        state: 'READY'
-      }
+      state.stateNoteUpdate = 'READY';
       return merge({}, state);
     
     // 체크인

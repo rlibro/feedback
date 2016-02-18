@@ -21,9 +21,9 @@ export default class RedBookNote extends Component {
 
   componentWillReceiveProps(nextProps){
 
-    const { noteState: { updateNote } } = nextProps;
+    const { noteState: { editingId, stateNoteUpdate } } = nextProps;
 
-    if( updateNote && (updateNote.id === this.props.note.id) && (updateNote.state === 'SUCCESS') ) {
+    if( (editingId === this.props.note.id) && ( stateNoteUpdate === 'SUCCESS') ) {
       this.setState({
         lineCount: 0,
         isEditing: false,
@@ -123,7 +123,7 @@ export default class RedBookNote extends Component {
 
   renderContentByState = ()=> {
 
-    const { note, places, noteState: {noteUpdate}} = this.props;
+    const { note, places, noteState: { stateNoteUpdate, editingId } } = this.props;
     const contentText = render(note.content, note.id);
     
     let style = {height:'36px'};
@@ -140,7 +140,7 @@ export default class RedBookNote extends Component {
     if( this.state.isEditing ) {
 
       // 수정 완료 요청
-      if( noteUpdate && ( updateNote.state === 'REQUESTING') && ( updateNote.id === note.id )) {
+      if( (stateNoteUpdate === 'REQUESTING') && ( editingId === note.id )) {
         return <div className="edit-content" >
           <textarea defaultValue={note.content} style={style} ref="content" disabled
             tabIndex="1"></textarea>
@@ -278,10 +278,7 @@ export default class RedBookNote extends Component {
 
     this.props.onSaveEditingNote(note, text, places);
     this.props.onUpdateNoteState({
-      updateNote: {
-        id: node.id,
-        state: 'REQUESTING'
-      }
+      stateNoteUpdate: 'REQUESTING'
     })
 
 
