@@ -153,12 +153,12 @@ export default class RedBookNote extends Component {
 
       } else {
  
-        // 노트 수정폼
-        setTimeout(function(){
-          const node = findDOMNode(this.refs.content);
-          const len = node.value.length * 2;
-          node.setSelectionRange(len, len);
-        }.bind(this), 0)
+        // // 노트 수정폼
+        // setTimeout(function(){
+        //   const node = findDOMNode(this.refs.content);
+        //   const len = node.value.length * 2;
+        //   node.setSelectionRange(len, len);
+        // }.bind(this), 0)
 
         return <div className="edit-content" >
           <textarea

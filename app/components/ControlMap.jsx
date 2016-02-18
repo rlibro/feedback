@@ -280,6 +280,13 @@ export default class ControlMap extends Component {
     marker.isEditing = false;
     marker.canEdit = true;
 
+    if( typeof marker.position.lat === 'function') {
+      marker.position = {
+        lat : marker.position.lat(),
+        lng : marker.position.lng()
+      }
+    }
+
     this.props.onAddPlace(marker);
 
     var {markers} = this.state;
