@@ -53,14 +53,21 @@ export default class RedBookCover extends Component {
   };
 
   handleNewNote = (e) => {
-    const {redBook} = this.props;
-    this.props.onPushState(`/guide/${redBook.uname}/create`);
+    const {redBook, noteState:{editingId}} = this.props;
+
+    if( editingId ) {
+      alert('please complete your editing note');
+
+    } else {
+      this.props.onPushState(`/guide/${redBook.uname}/create`);
+    }
   };
 }
 
 RedBookCover.propTypes = {
   loginUser: PropTypes.object.isRequired,
   redBook: PropTypes.object.isRequired,
+  noteState: PropTypes.object.isRequired,
   onPushState: PropTypes.func.isRequired,
   onCloseRedBook: PropTypes.func.isRequired
 }

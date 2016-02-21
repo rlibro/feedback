@@ -315,16 +315,16 @@ export function addRedBook(noteText){
   
   return (dispatch, getState) => {
 
-    let { pageForNewRedBook } = getState();
-    pageForNewRedBook.creator = Parse.User.current();
-    pageForNewRedBook.notes = [];
+    let { redBookState } = getState();
+    redBookState.creator = Parse.User.current();
+    redBookState.notes = [];
 
     return dispatch(function(){
       return {
         [PARSE]: {
           method: 'addRedBook',
           params: {
-            'RedBook': pageForNewRedBook,
+            'RedBook': redBookState,
             'Note': {
               comments: [],
               places: [],

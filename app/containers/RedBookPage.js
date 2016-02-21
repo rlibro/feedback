@@ -97,6 +97,7 @@ class RedBookPage extends Component {
     return <RedBookCover 
       loginUser={loginUser} 
       redBook={redBook}
+      noteState={noteState}
       onPushState={this.props.pushState}
       onCloseRedBook={this.handleCloseRedBook} />
   };
