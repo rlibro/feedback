@@ -2,6 +2,46 @@ import React, { Component, PropTypes } from 'react';
 import RedBook from '../components/RedBook';
 import _ from 'lodash';
 
+function getRedBoodCardClassName(index, className){
+
+  switch( index % 3 ){
+    case 0:
+      className += ' left';
+      break;
+    case 1:
+      className += ' middle';
+      break;
+    case 2:
+      className += ' right';
+      break;
+  }
+
+  if( index % 2 === 0 ){
+    className += ' odd'
+  } else {
+    className += ' even'
+  }
+
+  return className;
+}
+
+function insertAdsenceBetweenCards(cards){
+
+  // 광고 삽입
+  const length  = cards.length;
+  const adCount = (6 - length % 6);
+  
+  for(let i=0; i<adCount; ++i){
+    const index = Math.floor(Math.random() * length);
+    const start = cards.slice(0, index);
+    const last  = cards.slice(index, length);
+    start.push({id:'adsence'});
+    cards = start.concat(last);
+  }
+
+  return cards;
+}
+
 export default class RedBookList extends Component {
 
   /**
@@ -9,7 +49,7 @@ export default class RedBookList extends Component {
    */
   shouldComponentUpdate(nextProps, nextState) {
     const { redBooks, loginUser } = nextProps;
-  
+
     if( (redBooks !== this.props.redBooks) || (loginUser && loginUser.current_location) ) {   
       return true;
     }
@@ -21,11 +61,12 @@ export default class RedBookList extends Component {
 
     const { redBooks: {isFetching}, loginUser } = this.props;
     
-    if( isFetching ){ return this.renderLoadingState() } 
+    if( isFetching || typeof isFetching === 'undefined' ){ return this.renderLoadingState() } 
     else {
       return <div className="wrap-RedBookList">
-        {this.renderRedBooksByCurrentLocation(loginUser.current_location)}
-        {this.renderRedBooks(loginUser.current_location)}
+        {this.renderRedBooksByCurrentLocation()}
+        {this.renderRedBookStatics()}
+        {this.renderRedBooks()}
       </div>
     }
   }
@@ -47,22 +88,22 @@ export default class RedBookList extends Component {
     if( !hasThisCity ){
       return <li className="RedBook create-book" onClick={onCreateRedBook.bind(this,location)}>
         <h4>You are in {location.cityName}</h4>
-        <p>Be the pioneer of {location.countryName}</p>
+        <p>Be the first of {location.countryName}</p>
         <div className="sign">
           <i className="fa fa-plus-circle" />
         </div>
       </li>
+    } else {
+      return false;
     }
-    return false;
-
   };
 
-  renderRedBooksByCurrentLocation = (location) => {
+  renderRedBooksByCurrentLocation = () => {
 
     let { entities : { redBooks }, onOpenRedBook, onCreateRedBook, loginUser } = this.props;
-    let hasThisCity = false;
+    let hasThisCity = false, location = loginUser.current_location;
 
-    if( location && location.cityName ){
+    if( loginUser.id && location && location.cityName ){
 
       // 현재 위치에 있는 나라와 도시를 분리해 낸다.
       redBooks = _.filter(redBooks, function(book){
@@ -90,27 +131,17 @@ export default class RedBookList extends Component {
               count++;
             }
 
-            switch( count % 3 ){
-              case 0:
-                className = 'left';
-                break;
-              case 1:
-                className = 'middle';
-                break;
-              case 2:
-                className = 'right';
-                break;
-            }
-
-            if( count % 2 === 1 ){
-              className += ' alt'
-            }
+            className = getRedBoodCardClassName(count, 'RedBook');
 
             return <RedBook key={i}  klassName={className}
               redBook={redBook}
               loginUser={loginUser}
               onOpenRedBook={onOpenRedBook} />
-        })}
+          })}
+
+          {this.renderRequestNewRedBook(hasThisCity, redBooks.length)}
+
+          {this.renderAdsence(redBooks.length)}
         </ul>
 
       </div>
@@ -119,42 +150,81 @@ export default class RedBookList extends Component {
     return false;
   };
 
+  renderRequestNewRedBook = (hasThisCity, count) => {
+    let className = 'RedBook request-book'
+
+    if (hasThisCity) {
+
+      className = getRedBoodCardClassName(count, className);
+
+      return <li className={className}>
+        <h4>Request creating a city</h4>
+        <p>if don't have what you want</p>
+        <div className="sign">
+          <i className="fa fa-plus-circle" />
+        </div>
+      </li>
+
+    }
+
+  };
+
+  renderAdsence = (count) => {
+    let className = getRedBoodCardClassName(count, 'RedBook adsence');
+
+    return <li className={className}>
+      <h4>광고 영역</h4>
+      <p>레드북 갯수에 따라 빈공간에 <br/>자동 삽입될 예정</p>
+    </li>
+  };
+
+  renderRedBookStatics = () => {
+    return <div className="RedBookStatics">
+      <div className="StaticCard">
+        <div><strong>29</strong> books of <strong>6</strong> countries</div>
+        <div><strong>40</strong> notes & <strong>89</strong> places</div>
+        <div><strong>16</strong> rlibrians</div>
+        <div className="tagline">take this rlibro and travel all around world</div>
+      </div>
+    </div>
+  };
+
   // 사용자의 위치가 업데이트되면 원래 목록에서도 빼줘야한다.
-  renderRedBooks = (location) => {
+  renderRedBooks = () => {
 
     const { loginUser, redBooks, entities, onOpenRedBook } = this.props;
-    const { isFetching } = redBooks;
-    var ids = redBooks.ids || [];
+    const { isFetching } = redBooks, location = loginUser.current_location;
+    let ids = redBooks.ids || [];
 
-    if( location && location.cityName ) {
+    if( loginUser.id && location && location.cityName ) {
       ids = _.filter(ids, (id)=>{
         return entities.redBooks[id].countryName !== location.countryName;
       });
-    } 
+    }
+
+    ids = insertAdsenceBetweenCards(ids);
 
     return <ul className="RedBookList">{ ids.map((id, i) => {
 
       const redBook = entities.redBooks[id];
-      var className;
+      let className = getRedBoodCardClassName(i, 'RedBook');
 
-      switch( i % 3 ){
-        case 0:
-          className = 'left';
-          break;
-        case 1:
-          className = 'middle';
-          break;
-        case 2:
-          className = 'right';
-          break;
+      if(redBook) {
+
+        return <RedBook key={i} klassName={className} 
+          redBook={redBook} 
+          loginUser={loginUser}
+          onOpenRedBook={onOpenRedBook} />
+
+      } else {
+        className += ' adsence'
+
+        return <li key={i} className={className}>
+          <h4>광고 영역</h4>
+          <p>레드북 갯수에 따라 빈공간에 <br/>자동 삽입될 예정</p>
+        </li>
       }
-
-      return <RedBook key={i} klassName={className} 
-              redBook={redBook} 
-              loginUser={loginUser}
-              onOpenRedBook={onOpenRedBook} />
     
-
     }) }</ul>
 
   };

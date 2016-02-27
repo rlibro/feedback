@@ -242,8 +242,36 @@ button {
   .RedBookList-byLocation {
     width: 100%;
     overflow: hidden;
-    margin-bottom: 30px;
   }
+
+  .RedBookStatics {
+    position: relative;
+    float: left;
+    height: 170px;
+    width: 100%;
+    color: #fff;
+    margin-bottom: 5px;
+    text-align: center;
+    box-sizing: content-box;
+
+    .StaticCard {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: gray;
+      height: 100%;
+      padding: 20px;
+
+      strong {
+        font-size: 150%;
+        margin-left: 5px;
+      }
+
+      .tagline {
+        margin-top: 20px;
+      }
+    }
+  }
+
   .RedBookList {
     overflow: hidden;
     width: 100%;
@@ -321,6 +349,53 @@ button {
       height: 85px;
     }
   }
+
+  &.request-book {
+    background-color: #ff7872;
+    text-align: center;
+
+    h4 {
+      font-size: 15px;
+    }
+
+    p {
+      padding-top: 10px;
+      font-size: 12px;
+    }
+
+
+    &:hover {
+      background-color: #f17165;
+    }
+
+    .sign {
+      margin: 0 auto;
+      font-size: 32px;
+      margin-top: 28px;
+      width: 85px;
+      height: 85px;
+    }
+  }
+
+  &.adsence {
+    background-color: #5a8852;
+    text-align: center;
+
+    h4 {
+      font-size: 15px;
+    }
+
+    p {
+      padding-top: 10px;
+      font-size: 12px;
+    }
+
+
+    &:hover {
+      background-color: #3a6832;
+    }
+  }
+
 
   .youarehere {
     border: 1px solid #fff;
@@ -1579,16 +1654,23 @@ button {
 
     }
 
-    &.left, &.right {
-      margin: 0 5px;
-      margin-bottom: 5px;
+    &.left, &.right, &.middle {
+      margin: 0
     }
 
-    &.middle {
-      margin-top: 0px;
-      margin-bottom: 5px;
+    &.even {
+      float: right;
+      margin: 0 10px 5px 0;
     }
 
+    &.odd {
+      margin: 0 0 5px 10px;
+      float: left;
+    }
+  }
+
+  .StaticCard {
+    margin: 0 10px;
   }
 
   .AttachedPlaces {
@@ -1858,19 +1940,22 @@ button {
 
   .wrap-RedBookList, .SingleNotePage {
     margin-top: 54px;
-
-    .RedBookList-byLocation {
-      padding-top: 5px;
-    }
   }
 
   .RedBook {
     float: none;
     width: 97%;
 
-    &.middle {
-      margin-top: 5px;
+    &.left, &.middle, &.right, &.even, &.odd {
+      float: left;
+      margin: 0 5px 5px 5px;
     }
+
+  }
+
+  .StaticCard {
+    width: 97%;
+    margin: 0 5px;
   }
 
   .AttachedPlaces {
