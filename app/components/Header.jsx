@@ -3,6 +3,26 @@ import { findDOMNode } from 'react-dom';
 
 export default class Header extends Component {
   
+  constructor(props){
+    super(props);
+
+    this.state = {
+      tringLogin: false
+    }
+  }
+
+  componentWillReceiveProps(nextProps){
+
+    const { loginUser, appState:{ tringLogin }} = nextProps;
+
+    if( loginUser.id || !tringLogin ){
+      this.setState({
+        tringLogin: false
+      })
+    }
+
+  }
+
   render() {
     const { appState:{sidebar} } = this.props;
 
@@ -33,14 +53,22 @@ export default class Header extends Component {
 
   renderFaceBookLogin = () => {
     const { loginUser, appState:{ loadedFacebookSDK } } = this.props;
+    const { tringLogin } = this.state;
 
     if( !loadedFacebookSDK || loginUser.id ) {
       return false;
     }
 
-    return <ul className="account-menu">
-      <li><a href="#" className="fb-login" onClick={this.handleFacebookLogin}><i className="fa fa-facebook"/> Login with Facebook</a></li>
-    </ul>
+    if( tringLogin ){
+      return <ul className="account-menu">
+        <li><span className="fb-trying"><i className="fa fa-spinner fa-pulse"/> Login with Facebook</span></li>
+      </ul>
+    } else {
+      return <ul className="account-menu">
+        <li><a href="#" className="fb-login" onClick={this.handleFacebookLogin}><i className="fa fa-facebook"/> Login with Facebook</a></li>
+      </ul>
+    }
+
   };
 
   renderLoginUserInfo = () => {
@@ -76,6 +104,16 @@ export default class Header extends Component {
 
 
   handleFacebookLogin = (e) => {
+    e.preventDefault();
+
+    this.setState({
+      tringLogin: true
+    });
+    this.props.onUpdateAppState({
+      tringLogin: true
+    });
+
+
     this.props.onLogin();
   };
 
@@ -115,6 +153,7 @@ export default class Header extends Component {
 Header.propTypes = {
   loginUser: PropTypes.object.isRequired,
   appState: PropTypes.object.isRequired,
+  path: PropTypes.string.isRequired,
   onPushState: PropTypes.func.isRequired,
   onUpdateAppState: PropTypes.func.isRequired,
   onLogin: PropTypes.func.isRequired,

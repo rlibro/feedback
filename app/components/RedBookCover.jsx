@@ -16,7 +16,7 @@ export default class RedBookCover extends Component {
 
   render(){
 
-    const { loginUser, redBook, onCloseRedBook } = this.props;
+    const { redBook, onCloseRedBook } = this.props;
     const style = {
       color: 'white',
       backgroundSize: 'cover',
@@ -34,13 +34,33 @@ export default class RedBookCover extends Component {
       <div className="button-close">
         <i className="fa fa-times" onClick={onCloseRedBook}/>
       </div>
-      <div className="controls">
+      {this.renderButtons()}
+    </div>
+  }
+
+  renderButtons = () => {
+
+    const { loginUser } = this.props;
+
+    if( loginUser && loginUser.id ) {
+    
+      return <div className="controls">
         <button onClick={this.handleCityMap}><i className="fa icon-map" /> Map</button>
         <button onClick={this.handleCityPeople}><i className="fa icon-people" /> People</button>
         <button onClick={this.handleNewNote}><i className="fa icon-add-note" /> Note</button>
       </div>
-    </div>
-  }
+    
+    } else {
+
+      return <div className="controls">
+        <button onClick={this.handleCityMap}><i className="fa icon-map" /> Map</button>
+        <button className="disabled"><i className="fa icon-people" /> People</button>
+        <button className="disabled"><i className="fa icon-add-note" /> Note</button>
+      </div>
+
+    }
+
+  };
 
   handleCityMap = (e) => {
     const {redBook} = this.props;

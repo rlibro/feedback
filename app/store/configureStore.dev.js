@@ -13,6 +13,7 @@ const finalCreateStore = compose(
 
 window.__FaceBookAppID = '1155091951184116';
 Parse.initialize('oI9ho8CTpm5bFDliirnMFEdH3UGCzaBI8YHBtlnD', '97zh1DEXSPm7DiJjRZYy8KXJBMUVmSxUrScJlgAh');
+Parse.serverURL = 'http://localhost:1337/parse';
 
 export default function configureStore(initialState) {
   

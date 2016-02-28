@@ -74,7 +74,6 @@ const parseAPI = {
     });    
   },
 
-
   fetchRedBooks: function (schema) {
 
     let query = new Parse.Query(RedBook);
@@ -403,7 +402,6 @@ const parseAPI = {
       return Object.assign({}, normalize(placeObject, schema));
     });
 
-
   },
 
   updatePlace: function(schema, params){
@@ -431,8 +429,6 @@ const parseAPI = {
       return Object.assign({}, normalize(placeObject, schema));
     });
   },
-
-
 
   likeNote: function(schema, params){
 
@@ -622,6 +618,19 @@ const parseAPI = {
       return error.code + ', ' + error.message;
     });
     
+  },
+
+  leaveUser: function(schema, params){
+    let user = new Parse.User();
+    user.id = params.userId;
+
+    return user
+    .destroy()
+    .then(function(deleteUser){
+      return {
+        userId : deleteUser.id,
+      }
+    }); 
   }
 
 }

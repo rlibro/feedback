@@ -35,13 +35,15 @@ class App extends Component {
   }
 
   /**
-   * 레드북 목록을 가져왔는데 실제 필요한 레드북이 없으면 초기화면으로 보내야한다. 
+   * 레드북 목록을 가져왔는데 실제 필요한 레드북이 없으면 초기화면으로 보내야한다.
+   * 로그인 했는데, Email 주소가 없으면 프로필 페이지로 이동시켜야한다. 
    */
   componentWillReceiveProps(nextProps) {
 
     const { noteState:{ isFetching }, 
             params:{uname}, 
             path,
+            loginUser,
             entities:{ redBooks } 
     } = nextProps;
 
@@ -66,6 +68,13 @@ class App extends Component {
         this.props.pushState('/');    
       }
     }
+
+    // 로그인 했는데, 이메일이 없으면 제대로 가입된게 아니야!!
+    if( loginUser.id && (!loginUser.nationality||!loginUser.email) && path !== '/register' ){
+      this.props.pushState(`/register`); 
+    }
+
+
   }  
 
   render() {
@@ -77,6 +86,8 @@ class App extends Component {
         <Header 
           loginUser={loginUser}
           appState={appState}
+          path={path}
+
           onLogin={this.handleFacebookLogin}
           onLogOut={this.handleLogOut}
 
@@ -187,6 +198,7 @@ class App extends Component {
 
       case 'notes':
       case 'profile':
+      case 'register':
       case 'create':
       return <div className={klassName}>
         {this.props.children}
@@ -221,7 +233,26 @@ class App extends Component {
   };
 
   handleFacebookLogin = () => {
-    this.props.facebookLogin(this.props.updateLoginUserInfo);    
+    this.props.facebookLogin(function(result){
+
+      this.props.updateAppState({
+        tringLogin: false
+      })
+
+      if( result.success ){
+        const userInfo = result.success.parseUser.toJSON();
+        this.props.updateLoginUserInfo(userInfo);
+      } else {
+
+
+        if( result.error.code === 190){
+          this.handleLogOut();
+        }
+
+      }
+      
+    
+    }.bind(this));    
   };
 
   handleLogOut = (e) => {

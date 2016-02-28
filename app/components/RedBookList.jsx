@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import RedBook from '../components/RedBook';
+import RedBookStatics from '../components/RedBookStatics';
 import _ from 'lodash';
 
 function getRedBoodCardClassName(index, className){
@@ -27,11 +28,13 @@ function getRedBoodCardClassName(index, className){
 
 function insertAdsenceBetweenCards(cards){
 
-  // 광고 삽입
-  const length  = cards.length;
-  const adCount = (6 - length % 6);
+  const adCount = (6 - cards.length % 6);
+  let startIndex = 2;
   
   for(let i=0; i<adCount; ++i){
+    let length  = cards.length;
+
+    // startIndex + i*3; 내가 원하는 위치에 삽입 시킬수 있다.
     const index = Math.floor(Math.random() * length);
     const start = cards.slice(0, index);
     const last  = cards.slice(index, length);
@@ -65,7 +68,7 @@ export default class RedBookList extends Component {
     else {
       return <div className="wrap-RedBookList">
         {this.renderRedBooksByCurrentLocation()}
-        {this.renderRedBookStatics()}
+        <RedBookStatics />
         {this.renderRedBooks()}
       </div>
     }
@@ -170,23 +173,12 @@ export default class RedBookList extends Component {
   };
 
   renderAdsence = (count) => {
-    let className = getRedBoodCardClassName(count, 'RedBook adsence');
+    let className = getRedBoodCardClassName(count+1, 'RedBook adsence');
 
     return <li className={className}>
       <h4>광고 영역</h4>
       <p>레드북 갯수에 따라 빈공간에 <br/>자동 삽입될 예정</p>
     </li>
-  };
-
-  renderRedBookStatics = () => {
-    return <div className="RedBookStatics">
-      <div className="StaticCard">
-        <div><strong>29</strong> books of <strong>6</strong> countries</div>
-        <div><strong>40</strong> notes & <strong>89</strong> places</div>
-        <div><strong>16</strong> rlibrians</div>
-        <div className="tagline">take this rlibro and travel all around world</div>
-      </div>
-    </div>
   };
 
   // 사용자의 위치가 업데이트되면 원래 목록에서도 빼줘야한다.

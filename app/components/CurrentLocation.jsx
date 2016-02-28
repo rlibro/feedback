@@ -4,7 +4,7 @@ import {GoogleMap} from 'react-google-maps';
 
 
 export default class CurrentLocation extends Component {
-  static version = Math.ceil(Math.random() * 22);
+  static version = 22; //Math.ceil(Math.random() * 22);
 
   constructor(props){
     super(props);

@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { updateLoginUserInfo } from '../actions'
 import { connect } from 'react-redux'
+import { pushPath as pushState } from 'redux-simple-router'
 import { findDOMNode } from 'react-dom';
 import _ from 'lodash';
 
@@ -18,6 +19,14 @@ class UserProfilePage extends Component {
       isEditingName: false,
       message: '',
       checkinState: {}
+    }
+  }
+
+  componentWillMount() {
+    const {loginUser} = this.props;
+
+    if( loginUser && !loginUser.id ){
+      this.props.pushState('/');
     }
   }
 
@@ -324,6 +333,6 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, {
-  updateLoginUserInfo
-
+  updateLoginUserInfo,
+  pushState
 })(UserProfilePage)

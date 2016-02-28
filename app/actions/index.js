@@ -78,86 +78,65 @@ export function checkOutHere( uname ){
 }
 
 
-export function facebookLogin(update){
+export function facebookLogin(callback){
 
-  Parse.FacebookUtils.logIn('user_location,user_friends,email', {
+  Parse.FacebookUtils.logIn('email', {
     success: function(parseUser){
 
       // 로그아웃후 새로 로그인하면 페북에 있는 정보를 새로 가져온다.
-      FB.api('/me?fields=id,name,email,location,picture{url}', function(facebookUser) {
+      FB.api('/me?fields=id,name,email,picture{url}', function success(facebookUser){
 
-        FB.api(`/${facebookUser.location.id}/?fields=location`, function(res){
-
-          facebookUser.location = res.location;
-
-          // 매번 업데이트 하는 항목
-          let updatingUser = {
-            facebookId: facebookUser.id,
-            location: facebookUser.location,
-            picture: facebookUser.picture.data.url,
-            updatedAt: new Date()
-          }
-
-          // 최초 이름 없으면 업데이트
-          if( !parseUser.get('facebookId') && facebookUser.name ){
-            updatingUser.username = facebookUser.name;
-          }
-
-          // 최초 이메일이 없으면 업데이트
-          if( !parseUser.get('email') && facebookUser.email ){
-            updatingUser.email = facebookUser.email;
-          }
-
-          // 최초 국가 정보가 없으면 업데이트
-          if( !parseUser.get('nationality') && facebookUser.location ){
-            updatingUser.nationality = facebookUser.location.country;
-          }
-
-          parseUser.save(updatingUser);
-          update(parseUser.toJSON());
-
-        }, function(res){
-
-          // 위치정보를 공개하지 않은 경우,..
-
-          // 프로필 사진만 바꿀수 있다. 
-          let updatingUser = {
-            facebookId: facebookUser.id,
-            picture: facebookUser.picture.data.url,
-            updatedAt: new Date()
-          }
-
-           // 최초 이름 없으면 업데이트
-          if( !parseUser.get('facebookId') && facebookUser.name ){
-            updatingUser.username = facebookUser.name;
-          }
-
-          // 최초 이메일이 없으면 업데이트
-          if( !parseUser.get('email') && facebookUser.email ){
-            updatingUser.email = facebookUser.email;
-          }
-
-          parseUser.save(updatingUser);
-          update(parseUser.toJSON());
-
-        })
-
-      }, function(facebookUser){
-        // 기본 프로필 권한만 승인 요청한 경우,..
-
-        // 프로필 사진만 바꿀수 있다. 
         let updatingUser = {
           facebookId: facebookUser.id,
           picture: facebookUser.picture.data.url,
           updatedAt: new Date()
         }
 
+        // 최초 이름 없으면 업데이트
+        if( !parseUser.get('facebookId') && facebookUser.name ){
+          updatingUser.username = facebookUser.name;
+        }
+
+        // 최초 이메일이 없으면 업데이트
+        if( !parseUser.get('email') && facebookUser.email ){
+          updatingUser.email = facebookUser.email;
+        }
+
         parseUser.save(updatingUser);
-        update(parseUser.toJSON());
+        callback({success: {parseUser:parseUser}});
+
+
+      }, function error(facebookUser){
+
+        if( facebookUser.error ) {
+          return callback({error:facebookUser.error});
+        } 
+
+        let updatingUser = {
+          facebookId: facebookUser.id,
+          picture: facebookUser.picture.data.url,
+          updatedAt: new Date()
+        }
+
+        // 최초 이름 없으면 업데이트
+        if( !parseUser.get('facebookId') && facebookUser.name ){
+          updatingUser.username = facebookUser.name;
+        }
+
+        // 최초 이메일이 없으면 업데이트
+        if( !parseUser.get('email') && facebookUser.email ){
+          updatingUser.email = facebookUser.email;
+        }
+
+        parseUser.save(updatingUser);
+        callback({success: {parseUser:parseUser}});        
+
       });
 
     }.bind(this),
     error: function(err){
+
+      callback({error:err});
 
       console.log('이 에러가 발생하면 로그인 시도할때 Parse로 호출이 안되는걸껄?', err);
     }
@@ -206,6 +185,28 @@ export function logOutUser(){
 
 
 /**
+ * 회원 탈퇴 
+ */
+export function leaveUser(){
+  
+  return (dispatch, getState) => {
+    return dispatch(function() {
+      return {
+        [PARSE]: {
+          method: 'leaveUser',
+          types: [ 'LEAVE_USER_REQUEST', 'LEAVE_USER_SUCCESS', 'LEAVE_USER_FAILURE' ],
+          params: { userId: Parse.User.current().id },
+          schema: 'NONE'
+        }
+      }
+    }())
+  }
+}
+/* END OF leaveUser */
+
+
+
+/**
  * 사용자의 현재 위치를 로그인 정보에 업데이트 한다.
  */
  export function updateCurrentUserLocation(location){
@@ -217,31 +218,6 @@ export function logOutUser(){
   }
  }
 /* END OF updateCurrentUserLocation */
-
-/**
- * 키워드 검색후 검색어를 저장한다. 
- */
-export const FIND_KEYWORD_REQUEST = 'FIND_KEYWORD_REQUEST'
-export const FIND_KEYWORD_SUCCESS = 'FIND_KEYWORD_SUCCESS'
-export const FIND_KEYWORD_FAILURE = 'FIND_KEYWORD_FAILURE'
-
-function findKeyWord(keyword){
-  return {
-    [CALL_API]: {
-      types: [ FIND_KEYWORD_REQUEST, FIND_KEYWORD_SUCCESS, FIND_KEYWORD_FAILURE ],
-      endpoint: `/find?q=${keyword}`,
-      schema: Schemas.RESULT_ARRAY
-    }
-  } 
-}
-export function findingKeyWord(keyword) {
-  return (dispatch, getState) => {
-    return dispatch(findKeyWord(keyword));
-  }
-}
-/* END OF findingKeyWord */
-
-
 
 /**
  * 데이터 변경 사항을 저장한다. 
