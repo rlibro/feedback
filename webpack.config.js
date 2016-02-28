@@ -11,7 +11,7 @@ var HtmlwebpackPlugin = require('html-webpack-plugin');
 const TARGET = process.env.npm_lifecycle_event;
 const PATHS = {
   app: path.join(__dirname, 'app'),
-  build: path.join(__dirname, 'Parse/public/app')
+  build: path.join(__dirname, 'parser-server/public/app')
 };
 
 var common = {

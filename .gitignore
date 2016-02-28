@@ -7,6 +7,7 @@ node_modules
 
 # Parse Project
 Parse/
+parser-server
 
 # IDE Configuration
 *.iml
