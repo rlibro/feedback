@@ -244,7 +244,19 @@ class App extends Component {
         this.props.updateLoginUserInfo(userInfo);
       } else {
 
+        Parse.FacebookUtils.unlink(
+          Parse.User.current(), 
+          function success(a){
+            console.log('unlink success', a)
+          }, 
+          function error(b){
+            console.log('unlink error', b)
+          }
+        );
+        Parse.User.logOut();
 
+
+        console.log(result.error);
         if( result.error.code === 190){
           this.handleLogOut();
         }

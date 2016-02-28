@@ -399,6 +399,16 @@ class RegisterPage extends Component {
     let yes = confirm('정말로 가입을 취소하시겠습니까?');
     if( yes){
       const { loginUser } = this.props;
+      
+      Parse.FacebookUtils.unlink(
+        Parse.User.current(), 
+        function success(a){
+          console.log('unlink success', a)
+        }, 
+        function error(b){
+          console.log('unlink error', b)
+        }
+      );
       this.props.leaveUser();
       this.props.logOutUser();
       this.props.pushState('/');
