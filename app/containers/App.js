@@ -50,7 +50,7 @@ class App extends Component {
 
     let redBookId = null; 
     let isGuidePage = path.indexOf('/guide') > -1;
-    let isCreatePage = path.indexOf('/create') > -1;
+    let isCreatePage = path.indexOf('/create/') > -1;
 
     // 가이드 페이지일 경우엔, 레드북 아이디를 뽑아내서 넣어준다. 
     if( isGuidePage && uname && isFetching.redbooks === 'DONE' ) {
