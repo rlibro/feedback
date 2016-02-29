@@ -74,4 +74,7 @@ Parse Server로 만들어진 API 서버는 Heroku를 통해 배포된다. 따라
 
     Parse.serverURL = 'https://rlibro.herokuapp.com/'
 
+#### 5. 새로운 아이콘을 추가하고 싶을때
+[fontastic](https://app.fontastic.me/accounts/login/)을 이용해 아이콘을 폰트에 삽입하고 있다. 
+
         

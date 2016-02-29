@@ -9,11 +9,38 @@ import Header from '../components/Header'
 import SideBar from '../components/SideBar'
 import CurrentLocation from '../components/CurrentLocation'
 import Explore from '../components/Explore'
+
+import RedBookListByCountry from '../components/RedBookListByCountry';
+import RedBookStatics from '../components/RedBookStatistics';
+
 import RedBookList from '../components/RedBookList'
 import Footer from '../components/Footer'
 
 function fetchRedBooksFromServer(props) {
   props.fetchRedBooks()
+}
+
+function getRedBoodCardClassName(index, className){
+
+  switch( index % 3 ){
+    case 0:
+      className += ' left';
+      break;
+    case 1:
+      className += ' middle';
+      break;
+    case 2:
+      className += ' right';
+      break;
+  }
+
+  if( index % 2 === 0 ){
+    className += ' odd'
+  } else {
+    className += ' even'
+  }
+
+  return className;
 }
 
 class App extends Component {
@@ -44,7 +71,7 @@ class App extends Component {
         this.props.updateAppState({statCounts:count});
       }.bind(this));
 
-    }, 60*1000)
+    }.bind(this), 60*1000)
   }
 
   /**
@@ -138,14 +165,27 @@ class App extends Component {
           onFindThisKeyWord={this.props.findingKeyWord}
           />}*/}
 
-        <RedBookList 
-          appState={appState}
-          loginUser={loginUser}
-          redBooks={redBooks} 
-          entities={entities} 
-          onOpenRedBook={this.handleOpenRedBook}
-          onCreateRedBook={this.handleCreateRedBook}
-          />
+
+        <div className="wrap-RedBookList">
+
+          <RedBookListByCountry {...this.props} 
+            onOpenRedBook={this.handleOpenRedBook}
+            onCreateRedBook={this.handleCreateRedBook}
+            onGetRedBoodCardClassName={getRedBoodCardClassName} />
+          
+          <RedBookStatics appState={appState} />
+
+          <RedBookList 
+            appState={appState}
+            loginUser={loginUser}
+            redBooks={redBooks} 
+            entities={entities} 
+            onOpenRedBook={this.handleOpenRedBook}
+            onCreateRedBook={this.handleCreateRedBook}
+            onGetRedBoodCardClassName={getRedBoodCardClassName}
+            />
+        </div>
+
 
         {this.renderChildPage()}
 

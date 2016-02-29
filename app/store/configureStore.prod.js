@@ -9,7 +9,7 @@ const finalCreateStore = compose(
 
 window.__FaceBookAppID = '1155089597851018';
 Parse.initialize('oI9ho8CTpm5bFDliirnMFEdH3UGCzaBI8YHBtlnD', '97zh1DEXSPm7DiJjRZYy8KXJBMUVmSxUrScJlgAh');
-Parse.serverURL = 'https://rlibro.herokuapp.com/';
+Parse.serverURL = 'https://rlibro.herokuapp.com/api';
 
 export default function configureStore(initialState) {
   return finalCreateStore(rootReducer, initialState)

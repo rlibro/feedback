@@ -17,16 +17,25 @@ export default class RedBookStatistics extends Component {
     }
   }
 
+  // 외부에서 통계 카운드가 변경되면 내부에 반영한다.
   componentWillReceiveProps(nextProps){
-
     const { appState: {statCounts} } = nextProps;
-    this.setState({ count: statCounts });
+    if ( statCounts ){
+      this.setState({ count: statCounts });  
+    }
   }
+
+  // 통계 카운트가 달라질 경우에만 반영한다.
+  shouldComponentUpdate(nextProps, nextState) {
+    const { count } = nextState;
+    return count !== this.state.count;
+  }
+
 
   render(){
 
-    var { count } = this.state
-   
+    var { count } = this.state;
+
     return <div className="RedBookStatistics">
       <div className="StaticCard">
         <div><strong>{count.city}</strong> cities in <strong>{count.country}</strong> countries</div>
