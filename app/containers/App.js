@@ -32,9 +32,19 @@ class App extends Component {
    */   
   componentWillMount() {
     fetchRedBooksFromServer(this.props);
+
+    // 1분에 한번씩 불러오기
     Parse.Cloud.run('statCounts').then(function(count) {
       this.props.updateAppState({statCounts:count});
     }.bind(this));
+
+    setInterval(function(){
+
+      Parse.Cloud.run('statCounts').then(function(count) {
+        this.props.updateAppState({statCounts:count});
+      }.bind(this));
+
+    }, 60*1000)
   }
 
   /**

@@ -64,5 +64,14 @@ Parse Server로 만들어진 API 서버는 Heroku를 통해 배포된다. 따라
 
     $> mongorestore -h 127.0.0.1:27017 -d rlibro ./rlibro/
 
+#### 3. 로컬 개발 시작
+실시간 개발을 위해 클라이언트 개발 서버를 실행한다. 
+
+    $> npm start
+
+#### 4. 실서버 데이터를 이용해 디버깅
+로컬DB를 사용하다 실서버 데이터를 사용해보고 싶다면 configureStore.dev.js 파일을 아래와 같이 수정한다.
+
+    Parse.serverURL = 'https://rlibro.herokuapp.com/'
 
         
