@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import RedBook from '../components/RedBook';
-import RedBookStatics from '../components/RedBookStatics';
+import RedBookStatics from '../components/RedBookStatistics';
 import _ from 'lodash';
 
 function getRedBoodCardClassName(index, className){
@@ -51,9 +51,11 @@ export default class RedBookList extends Component {
    * 레드북 목록을 가져오거나 사용자의 위치정보가 업데이트 된 경우에만 다시 그림
    */
   shouldComponentUpdate(nextProps, nextState) {
-    const { redBooks, loginUser } = nextProps;
+    const { redBooks, loginUser, appState: {statCounts} } = nextProps;
 
-    if( (redBooks !== this.props.redBooks) || (loginUser && loginUser.current_location) ) {   
+    if( (redBooks !== this.props.redBooks) 
+      || statCounts !== this.props.appState.statCounts
+      || (loginUser && loginUser.current_location) ) {   
       return true;
     }
 
@@ -62,13 +64,13 @@ export default class RedBookList extends Component {
 
   render() {
 
-    const { redBooks: {isFetching}, loginUser } = this.props;
+    const { redBooks: {isFetching}, loginUser, appState } = this.props;
     
     if( isFetching || typeof isFetching === 'undefined' ){ return this.renderLoadingState() } 
     else {
       return <div className="wrap-RedBookList">
         {this.renderRedBooksByCurrentLocation()}
-        <RedBookStatics />
+        <RedBookStatics appState={appState} />
         {this.renderRedBooks()}
       </div>
     }
@@ -224,6 +226,7 @@ export default class RedBookList extends Component {
 }
 
 RedBookList.propTypes = {
+  appState : PropTypes.object.isRequired,
   loginUser : PropTypes.object.isRequired,
   redBooks : PropTypes.object.isRequired,
   entities : PropTypes.object.isRequired,

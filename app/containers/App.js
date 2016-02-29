@@ -31,7 +31,10 @@ class App extends Component {
    * 새로 업데이트된 레드북은 새로 고침한다. 
    */   
   componentWillMount() {
-    fetchRedBooksFromServer(this.props)
+    fetchRedBooksFromServer(this.props);
+    Parse.Cloud.run('statCounts').then(function(count) {
+      this.props.updateAppState({statCounts:count});
+    }.bind(this));
   }
 
   /**
@@ -126,6 +129,7 @@ class App extends Component {
           />}*/}
 
         <RedBookList 
+          appState={appState}
           loginUser={loginUser}
           redBooks={redBooks} 
           entities={entities} 
@@ -156,7 +160,14 @@ class App extends Component {
       
       const sessionUser = Parse.User.current();
       if( sessionUser ){
-        this.props.updateLoginUserInfo(sessionUser.toJSON())
+        this.props.updateLoginUserInfo(sessionUser.toJSON());
+
+        if( ga ){
+          console.log('---> ga userid', sessionUser.id);
+          ga('set', 'userId', sessionUser.id); // 로그인한 User-ID를 사용하여 User-ID를 설정합니다.
+        }
+
+
       } else {
         //console.log('세션 유저 없으면 아무일도 없어 그냥 로그인해!!!')
       }

@@ -62,8 +62,7 @@ Parse Server로 만들어진 API 서버는 Heroku를 통해 배포된다. 따라
 
 가져온 데이터를 로컬 몽고디비에 넣기 위해서 몽고가 먼저 실행되어있어야한다 
 
-    $> mongorestore -h 127.0.0.1:27017 ./rlibro/
+    $> mongorestore -h 127.0.0.1:27017 -d rlibro ./rlibro/
 
-#### 3. 설
 
         
