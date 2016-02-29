@@ -89,7 +89,7 @@ export default class RedBookList extends Component {
     const { onCreateRedBook } = this.props;
 
     if( !hasThisCity ){
-      return <li className="RedBook create-book" onClick={onCreateRedBook.bind(this,location)}>
+      return <li className="RedBook left odd create-book" onClick={onCreateRedBook.bind(this,location)}>
         <h4>You are in {location.cityName}</h4>
         <p>Be the first of {location.countryName}</p>
         <div className="sign">

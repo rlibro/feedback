@@ -284,11 +284,11 @@ const parseAPI = {
     });
     params.RedBook.geo = geoPoint;
 
+    delete params.RedBook.isFetching;
+
     redBook.set(params.RedBook);
     note.set(params.Note);
     note.set('redBook', redBook);
-
-
     
     return note.save()
     .then(function(note){
@@ -680,7 +680,7 @@ export default store => next => action => {
   next(actionWith({ type: requestType }))
 
   // For Debugging
-  if( requestType === 'ADD_NOTE_REQUEST') {
+  if( requestType === 'ADD_REDBOOK_REQUEST') {
   //  return;
   }
 

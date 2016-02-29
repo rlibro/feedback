@@ -41,6 +41,7 @@ class App extends Component {
   componentWillReceiveProps(nextProps) {
 
     const { noteState:{ isFetching }, 
+            appState: {isValidCreate},
             params:{uname}, 
             path,
             loginUser,
@@ -49,6 +50,7 @@ class App extends Component {
 
     let redBookId = null; 
     let isGuidePage = path.indexOf('/guide') > -1;
+    let isCreatePage = path.indexOf('/create') > -1;
 
     // 가이드 페이지일 경우엔, 레드북 아이디를 뽑아내서 넣어준다. 
     if( isGuidePage && uname && isFetching.redbooks === 'DONE' ) {
@@ -67,6 +69,11 @@ class App extends Component {
       } else {
         this.props.pushState('/');    
       }
+    }
+
+    // 레드북 생성 페이지일 경우, 
+    if( isCreatePage && ( !isValidCreate || !loginUser.id ) ) {
+      this.props.pushState('/');
     }
 
     // 로그인 했는데, 이메일이 없으면 제대로 가입된게 아니야!!
@@ -287,6 +294,7 @@ class App extends Component {
   handleCreateRedBook = (loc, e) => {
 
     const { cityName, countryName } = loc;
+    this.props.updateAppState({isValidCreate: true});
     this.props.pushState(`/create/${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`, `${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`);
     e.preventDefault();
   };

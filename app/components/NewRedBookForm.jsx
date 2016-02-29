@@ -3,37 +3,6 @@ import { findDOMNode } from 'react-dom';
 
 export default class NewRedBookForm extends Component {
 
-  renderFormWrite = () => {
-
-    const { loginUser, newRedBook, onCancelNewRedBook, onCreateNewRedBook } = this.props;
-
-    return <div className="RedBookNoteForm">
-      <div className="note-form-header">
-        <p className="notice">You are going to be the pioneer of {newRedBook.cityName}</p>
-      </div>
-  
-      <textarea tabIndex="1" ref="textarea" className="text" autoFocus={true} placeholder="Share your useful experiences of this city!">{newRedBook.noteText}</textarea>
-        
-      <div className="note-form-footer">
-        <button tabIndex="3" className="cancel" onClick={onCancelNewRedBook}>Cancel</button>
-        <button tabIndex="2" className="create" onClick={this.handleCreateNewRedBook}>Create</button>
-      </div>
-    </div>
-  };
-
-  renderFormReady = () => {
-    const { loginUser } = this.props;
-
-    return <div className="RedBookNoteForm">
-      <div className="note-form-header">
-        <button>정보</button>
-        <button>사진</button>
-        <button>마커</button>
-      </div>
-  
-      <textarea className="text" placeholder="이 도시에서 경험한 유용한 정보를 공유하세요!"></textarea>
-    </div>
-  };
 
   render() {
 
@@ -41,6 +10,42 @@ export default class NewRedBookForm extends Component {
     return loginUser.id ? this.renderFormWrite() : false;
     
   }
+
+  renderFormWrite = () => {
+
+    const { loginUser, newRedBook, onCancelNewRedBook, onCreateNewRedBook } = this.props;
+
+    return <div className="RedBookNoteForm">
+      <div className="note-form-header">
+        <p className="notice">You are the first!</p>
+      </div>
+  
+      <textarea tabIndex="1" ref="textarea" className="text" autoFocus={true} placeholder="Share your useful experiences of this city!">{newRedBook.noteText}</textarea>
+        
+      {this.renderButtons()}
+    </div>
+  };
+
+  renderButtons = () => {
+    const { redBookState: { isFetching } } = this.props;
+
+    if( isFetching.addRedBook === 'READY' ) {
+
+      return <div className="note-form-footer">
+        <button tabIndex="3" className="cancel" onClick={this.props.onCancelNewRedBook}>Cancel</button>
+        <button tabIndex="2" className="create" onClick={this.handleCreateNewRedBook}>Create</button>
+      </div>
+    } 
+
+    if( isFetching.addRedBook === 'REQUESTING') {
+
+      return <div className="note-form-footer">
+        <button disabled className="cancel">Cancel</button>
+        <button disabled className="create"><i className="fa fa-spinner fa-pulse"></i></button>
+      </div>
+
+    }
+  };
 
   handleCreateNewRedBook = (e) => {
 
@@ -54,7 +59,6 @@ export default class NewRedBookForm extends Component {
     }
 
     this.props.onCreateNewRedBook(text);
-    //node.value = '';
     e.preventDefault()
   };
 
@@ -62,6 +66,7 @@ export default class NewRedBookForm extends Component {
 
 NewRedBookForm.propTypes = {
   loginUser: PropTypes.object.isRequired,
+  redBookState: PropTypes.object.isRequired,
   onCreateNewRedBook: PropTypes.func.isRequired,
   onCancelNewRedBook: PropTypes.func.isRequired
 }

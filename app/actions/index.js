@@ -293,7 +293,6 @@ export function addRedBook(noteText){
 
     let { redBookState } = getState();
     redBookState.creator = Parse.User.current();
-    redBookState.notes = [];
 
     return dispatch(function(){
       return {

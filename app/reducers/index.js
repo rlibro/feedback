@@ -198,7 +198,7 @@ function appState(state = {
   return state
 }
 
-function redBookState(state = {}, action) {
+function redBookState(state = { isFetching: { addRedBook: 'READY'} }, action) {
 
   switch(action.type){
 
@@ -208,6 +208,23 @@ function redBookState(state = {}, action) {
       }
 
       return merge({}, state, action.data);
+
+
+    // 레드북 추가
+    case 'ADD_REDBOOK_REQUEST':
+      state.isFetching.addRedBook = 'REQUESTING';
+      return merge({}, state);
+
+    case 'ADD_REDBOOK_SUCCESS':
+    case 'ADD_REDBOOK_FAILURE':
+      state.isFetching.addRedBook = 'DONE';
+      return merge({}, state);
+
+    case 'RESET_ADD_NOTE': 
+      state.isFetching.addRedBook = 'READY';
+      return merge({}, state);
+
+
   }
   
   return state

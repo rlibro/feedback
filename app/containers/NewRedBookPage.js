@@ -7,37 +7,51 @@ import NewRedBookForm from '../components/NewRedBookForm'
 
 class NewRedBookPage extends Component {
 
-  shouldComponentUpdate(nextProps, nextSate) {
-  
-
-    if( !this.props.loginUser.id ){
-      this.props.pushState('/');
-      return false;
+  constructor(props){
+    super(props);
+    this.state = {
+      loadedGeoCoding: false
     }
-
-    return true;    
   }
-
 
   componentWillReceiveProps(nextProps){
 
-    if( nextProps.redBooks !== this.props.redBooks ) {
+    const { redBookState: { isFetching }, loginUser } = nextProps;
 
-      setTimeout(function(){
-        this.props.replacePath(`/guide/${this.props.redirect}`);
-      }.bind(this), 400)    
-      
+    if( isFetching.addRedBook === 'DONE' ) {
+      this.props.updateRedBookState({
+        isFetching: {addRedBook: 'READY'}
+      });
+      this.props.replacePath(`/guide/${this.props.redirect}`);
     }
+
+    if( !this.state.loadedGeoCoding && loginUser.current_location ){
+      this.setState({loadedGeoCoding:true});
+      this.loadGeoCoding();
+    }
+
+  }
+
+
+  shouldComponentUpdate(nextProps, nextSate) {
+    const { redBookState:{ uname, isFetching: {addRedBook}} } = nextProps;
+    const { redBookState } = this.props;
+
+    if( uname !== redBookState.uname || addRedBook !== 'READY'){
+      return true;
+    }
+
+
+    return false;    
   }
 
   render(){
 
-    const { loginUser, replacePath, location } = this.props;
+    const { loginUser, replacePath, location, redBookState } = this.props;
 
-    if( loginUser.current_location ){
-      this.loadGeoCoding();
+    if( !loginUser.id ) {
+      return false;
     }
-
 
     return <div className="NewRedBookPage">
       <NewRedBookCover 
@@ -47,10 +61,11 @@ class NewRedBookPage extends Component {
 
       <NewRedBookForm 
         loginUser={loginUser}
+        redBookState={redBookState}
         newRedBook={location}
         onCreateNewRedBook={this.handleCreateNewRedBook}
-        onCancelNewRedBook={this.handleCancelNewRedBook}
-      />
+        onCancelNewRedBook={this.handleCancelNewRedBook} />
+
       <div className="dimmed"></div>
     </div>
   }
@@ -91,17 +106,17 @@ class NewRedBookPage extends Component {
   handleCreateNewRedBook = (noteText) => {
 
     // newRedBook 데이터를 한번 검증해서 필요한 데이터가 다 안넘어오면 alret 으로 알려주자!
-    const {requiredInfo} = this.props;
+    const { redBookState } = this.props;
     const requiredFields = ['uname', 'cityName', 'countryName', 'coverImage'];
     let invalids = [];
 
     var isValid = requiredFields.every(function(fieldName, i){
 
-      if( !requiredInfo[fieldName] ){
+      if( !redBookState[fieldName] ){
         invalids.push(fieldName);
       }
 
-      return requiredInfo[fieldName]
+      return redBookState[fieldName]
 
     })
 
@@ -121,7 +136,7 @@ class NewRedBookPage extends Component {
 }
 
 NewRedBookPage.propTypes = {
-  requiredInfo: PropTypes.object.isRequired,
+  redBookState: PropTypes.object.isRequired,
   pushState: PropTypes.func.isRequired,
   replacePath: PropTypes.func.isRequired
 }
@@ -129,21 +144,33 @@ NewRedBookPage.propTypes = {
 
 function mapStateToProps(state) {
 
-  const { routing, entities:{ redBooks } } = state
-  const [ cityName, countryName ] = routing.state.split(',');
-  const location = {
-    uname: routing.state,
-    countryName: countryName.replace(/_/g,' '),
-    cityName: cityName.replace(/_/g,' ')
+  const { routing, entities:{ redBooks } } = state;
+  const isValidState = !!routing.state;
+
+  if( isValidState ){
+    const [ cityName, countryName ] = routing.state.split(',');
+    const position = {
+      uname: routing.state,
+      countryName: countryName.replace(/_/g,' '),
+      cityName: cityName.replace(/_/g,' ')
+    }
+
+    return {
+      redBookState: state.redBookState,
+      redirect: position.uname,
+      redBooks: redBooks,
+      loginUser: state.login,
+      location: position
+    }
+  } else {
+    return {
+      redBookState: state.redBookState,
+      redBooks: redBooks,
+      loginUser: state.login
+    };
   }
 
-  return {
-    requiredInfo: state.redBookState,
-    redirect: location.uname,
-    redBooks: redBooks,
-    loginUser: state.login,
-    location: location
-  }
+  
 }
 
 
