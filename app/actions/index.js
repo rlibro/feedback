@@ -286,8 +286,6 @@ export const SEARCH_REDBOOK_SUCCESS = 'SEARCH_REDBOOK_SUCCESS'
 export const SEARCH_REDBOOK_FAILURE = 'SEARCH_REDBOOK_FAILURE'
 export function searchRedbook(keyword) {
 
-  console.log('keyword ', keyword);
-
   return (dispatch, getState) => {
     return dispatch(function() {
       return {

@@ -208,8 +208,8 @@ button {
 }
 
 .Explore {
-  margin: 40px;
   text-align: center;
+  padding: 20px;
 
   .search-bar {
     position: relative;
@@ -237,6 +237,14 @@ button {
   }
 }
 
+.wrap-SearchList {
+  
+  h4 {
+    padding: 5px 10px;
+    font-size: 14px;
+  }
+}
+
 .sub .wrap-RedBookList {
   display: none;
 }
@@ -261,7 +269,7 @@ button {
     box-sizing: content-box;
 
     .StaticCard {
-      //border: 1px solid #ccc;
+      border: 1px solid #ccc;
       border-radius: 5px;
       background-color: #fff;
       height: 100%;
@@ -279,7 +287,8 @@ button {
   }
 
   .RedBookList {
-    overflow: hidden;
+    background-color: #efefef;
+    overflow: auto;
     width: 100%;
   }
 
@@ -1770,9 +1779,27 @@ button {
     display: none;
   }
 
+  .Explore {
+    background-color: #fff;
+    padding: 10px 0;
+    .search-bar {
+      width: 480px;
+    }
+  }
+
+  .wrap-SearchList {
+    background-color: #fff;
+    overflow: auto;
+  }
+
   .wrap-RedBookList {
     background-color: #fff;
-    top: 0;
+    overflow: auto;
+
+    .RedBookList {
+      overflow: auto;
+      background-color: #fff;
+    }
   }
 
   .RedBook {
@@ -2058,20 +2085,29 @@ button {
   }
 
   .Explore {
+    padding: 8px 8px 0 5px;
+    margin-top: 54px;
 
-    p {
-      font-size: 13px;
-    }
     .search-bar {
       width: 100%;
+
+      input {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      button {
+        height: 28px;
+        margin: 6px;
+      }
     }
   }
 
   .UserProfilePage {
     margin-top: 54px;
   }
-
-  .wrap-RedBookList, .SingleNotePage {
+ 
+  .SingleNotePage {
     margin-top: 54px;
   }
 
