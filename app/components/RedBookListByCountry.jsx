@@ -18,12 +18,8 @@ export default class RedBookListByCountry extends Component {
   render(){
     const { loginUser } = this.props;
     let location = loginUser.current_location;
-    location = {
-      cityName : 'Puno!',
-      countryName: 'Peru'
-    }
 
-    if( location && location.cityName ){
+    if( loginUser.id && location && location.cityName ){
       return this.renderListByLocation(location);
     } else {
       return false;
@@ -50,7 +46,7 @@ export default class RedBookListByCountry extends Component {
     });
 
 
-    redBooks = insertAdsenceBetweenCards(redBooks);
+    //redBooks = insertAdsenceBetweenCards(redBooks);
 
 
     return <div className="RedBookList-byLocation">
@@ -91,7 +87,7 @@ export default class RedBookListByCountry extends Component {
 
         })}
 
-        {this.renderRequestNewRedBook(hasThisCity, redBooks.length)}
+        {/*this.renderRequestNewRedBook(hasThisCity, redBooks.length)*/}
 
       </ul>
 

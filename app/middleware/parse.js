@@ -53,6 +53,32 @@ function clearObjectId(obj, key){
 
 const parseAPI = {
 
+  searchRedbook: function(schema, params){
+
+    let query = new Parse.Query(RedBook);
+    let regex = new RegExp(`${params.keyword}`, 'i')
+
+    query.ascending('cityName');
+    query.matches('uname', regex);
+
+    return query.find()
+    .then(function(data) {
+      data.forEach(function(o, i, a){
+        const camelizedJson = camelizeKeys(o.toJSON());
+      
+        clearObjectId(camelizedJson, 'creator');
+
+        a[i] = camelizedJson;
+      });
+
+      return Object.assign({}, normalize(data, schema));
+         
+    }, function(error) {
+      return error.code + ', ' + error.message;
+    });
+
+  },
+
   fetchCityPeoples: function(schema, params){
 
     let query = new Parse.Query(Parse.User);

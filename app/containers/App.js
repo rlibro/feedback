@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { pushPath as pushState } from 'redux-simple-router'
-import { fetchRedBooks } from '../actions'
+import { fetchRedBooks, searchRedbook } from '../actions'
 import { updateCurrentUserLocation, updateLoginUserInfo, logOutUser } from '../actions'
 import { resetErrorMessage, facebookLogin, updateAppState } from '../actions'
 
@@ -60,18 +60,9 @@ class App extends Component {
   componentWillMount() {
     fetchRedBooksFromServer(this.props);
 
-    // 1분에 한번씩 불러오기
     Parse.Cloud.run('statCounts').then(function(count) {
       this.props.updateAppState({statCounts:count});
     }.bind(this));
-
-    setInterval(function(){
-
-      Parse.Cloud.run('statCounts').then(function(count) {
-        this.props.updateAppState({statCounts:count});
-      }.bind(this));
-
-    }.bind(this), 60*1000)
   }
 
   /**
@@ -160,33 +151,13 @@ class App extends Component {
         />
 
         {this.renderErrorMessage()}
-{/*
-        {<Explore 
-          onFindThisKeyWord={this.props.findingKeyWord}
-          />}*/}
 
-
-        <div className="wrap-RedBookList">
-
-          <RedBookListByCountry {...this.props} 
-            onOpenRedBook={this.handleOpenRedBook}
-            onCreateRedBook={this.handleCreateRedBook}
-            onGetRedBoodCardClassName={getRedBoodCardClassName} />
-          
-          <RedBookStatics appState={appState} />
-
-          <RedBookList 
-            appState={appState}
-            loginUser={loginUser}
-            redBooks={redBooks} 
-            entities={entities} 
-            onOpenRedBook={this.handleOpenRedBook}
-            onCreateRedBook={this.handleCreateRedBook}
-            onGetRedBoodCardClassName={getRedBoodCardClassName}
-            />
-        </div>
-
-
+        <Explore 
+          onUpdateAppState={this.props.updateAppState}
+          onFindThisKeyWord={this.props.searchRedbook} />
+        
+        {this.renderSearchResult()}
+        {this.renderRedBookList()}
         {this.renderChildPage()}
 
         <Footer />
@@ -213,7 +184,6 @@ class App extends Component {
         this.props.updateLoginUserInfo(sessionUser.toJSON());
 
         if( ga ){
-          console.log('---> ga userid', sessionUser.id);
           ga('set', 'userId', sessionUser.id); // 로그인한 User-ID를 사용하여 User-ID를 설정합니다.
         }
 
@@ -235,7 +205,80 @@ class App extends Component {
 
   }
 
-  renderChildPage = () => {
+  renderErrorMessage = () => {
+    const { errorMessage } = this.props
+    if (!errorMessage) {
+      return null
+    }
+
+    return (
+      <p style={{ backgroundColor: '#e99', padding: 10 }}>
+        <b>{errorMessage}</b>
+        {' '}
+        (<a href="#"
+            onClick={this.handleDismissClick.bind(this)}>
+          Dismiss
+        </a>)
+      </p>
+    )
+  };
+
+  renderSearchResult = () => {
+
+    const { loginUser, entities, path, appState: {search} } = this.props
+
+    let serchResult = {
+      isFetching: false, isSearchResult: true, ids: search.result
+    }
+
+    if( 0 < search.result.length ) {
+      return <div className="wrap-SearchList">
+        <h4>{`검색결과 총 ${search.result.length}건`}</h4>
+        <RedBookList 
+          loginUser={loginUser}
+          redBooks={serchResult} 
+          entities={entities} 
+          onOpenRedBook={this.handleOpenRedBook}
+          onGetRedBoodCardClassName={getRedBoodCardClassName}
+          />
+      </div>
+
+    } else {
+      return <div className="wrap-SearchList hide"></div>;
+    }
+
+  };
+
+  renderRedBookList = () => {
+
+    const { loginUser,redBooks, entities, path, appState } = this.props
+    let klassName = 'wrap-RedBookList'
+
+    if( 0 < appState.search.result.length ) { 
+      klassName += ' hide';
+    }
+    
+    return <div className={klassName}>
+
+      <RedBookListByCountry {...this.props} 
+        onOpenRedBook={this.handleOpenRedBook}
+        onCreateRedBook={this.handleCreateRedBook}
+        onGetRedBoodCardClassName={getRedBoodCardClassName} />
+      
+      <RedBookStatics appState={appState} />
+
+      <RedBookList 
+        loginUser={loginUser}
+        redBooks={redBooks} 
+        entities={entities} 
+        onOpenRedBook={this.handleOpenRedBook}
+        onGetRedBoodCardClassName={getRedBoodCardClassName}
+        />
+    </div>
+
+  };
+
+   renderChildPage = () => {
 
     const { path, params:{uname}, entities:{ redBooks } } = this.props;
     const { redBookId } = this.state;
@@ -280,24 +323,6 @@ class App extends Component {
 
     }
 
-  };
-
-  renderErrorMessage = () => {
-    const { errorMessage } = this.props
-    if (!errorMessage) {
-      return null
-    }
-
-    return (
-      <p style={{ backgroundColor: '#e99', padding: 10 }}>
-        <b>{errorMessage}</b>
-        {' '}
-        (<a href="#"
-            onClick={this.handleDismissClick.bind(this)}>
-          Dismiss
-        </a>)
-      </p>
-    )
   };
 
   handleFacebookLogin = () => {
@@ -390,6 +415,7 @@ export default connect(mapStateToProps, {
   resetErrorMessage,
   pushState,
   fetchRedBooks,
+  searchRedbook,
   updateAppState,
   updateCurrentUserLocation,
   updateLoginUserInfo,

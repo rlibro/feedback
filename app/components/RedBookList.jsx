@@ -42,7 +42,7 @@ export default class RedBookList extends Component {
 
   render() {
 
-    const { redBooks: {isFetching}, loginUser, appState } = this.props;
+    const { redBooks: {isFetching}, loginUser } = this.props;
     
     if( isFetching || typeof isFetching === 'undefined' ){ 
       return this.renderLoadingState() 
@@ -75,7 +75,9 @@ export default class RedBookList extends Component {
       });
     }
 
-    ids = insertAdsenceBetweenCards(ids);
+    if(!redBooks.isSearchResult){
+      ids = insertAdsenceBetweenCards(ids);  
+    }
 
     return <ul className="RedBookList">{ ids.map((id, i) => {
 
@@ -105,10 +107,8 @@ export default class RedBookList extends Component {
 }
 
 RedBookList.propTypes = {
-  appState : PropTypes.object.isRequired,
   loginUser : PropTypes.object.isRequired,
   redBooks : PropTypes.object.isRequired,
   entities : PropTypes.object.isRequired,
-  onOpenRedBook : PropTypes.func.isRequired,
-  onCreateRedBook: PropTypes.func.isRequired
+  onOpenRedBook : PropTypes.func.isRequired
 }

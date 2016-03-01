@@ -2,6 +2,15 @@ import React, { Component, PropTypes } from 'react'
 
 export default class Explore extends Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isKeepTyping: false,
+      checkTimer: null
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.value !== this.props.value) {
       this.setInputValue(nextProps.value)
@@ -16,11 +25,10 @@ export default class Explore extends Component {
     return <div className="Explore">
       <div className="search-bar">
         <input ref="input"
-               placeholder="Countries, Cites, Friends "
+               placeholder="Search Cites & Countries"
                defaultValue={this.props.value}
                onKeyUp={this.handleKeyUp} />
-        <button onClick={this.handleFind}>
-          Find!
+        <button onClick={this.handleFind}><i className="fa icon-search"></i>
         </button>
       </div>
     </div>
@@ -28,20 +36,34 @@ export default class Explore extends Component {
   }
 
   handleKeyUp = (e) => {
-    if (e.keyCode === 13) {
-      this.handleFind()
+
+    if( this.state.checkTimer ){
+      clearTimeout(this.state.checkTimer);
     }
+
+    let timer = setTimeout(function(){
+      this.handleFind()
+    }.bind(this), 500);
+    this.setState({checkTimer: timer});
+
+        
   };
 
   handleFind = () => {
     var keyword = this.refs.input.value;
 
-    this.props.onFindThisKeyWord(keyword);
+    if( keyword ){
+      this.props.onFindThisKeyWord(keyword);
+    } else {
+      this.props.onUpdateAppState({
+        search: {result: []}
+      });
+    }
 
-    console.log('TODO: Serach with Keyword - ', keyword);
   };
 }
 
 Explore.propTypes = {
+  onUpdateAppState: PropTypes.func.isRequired,
   onFindThisKeyWord: PropTypes.func.isRequired
 }

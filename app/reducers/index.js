@@ -184,12 +184,30 @@ function login(state = {}, action) {
 function appState(state = {
   loadedFacebookSDK: false,
   loadedGoogleSDK: false,
-  sidebar: false
+  sidebar: false,
+  search: {
+    result: [] 
+  }
 }, action) {
 
   switch(action.type){
 
     case 'UPDATE_APP_STATE':
+
+      if( action.state.search ){
+        state.search.result = [];
+      }
+
+      return merge({}, state, action.state);
+
+
+    case 'SEARCH_REDBOOK_SUCCESS':
+
+      const {result} = action.response;
+
+      if( result && result.length ) {
+        state.search.result = result;
+      }
       
       return merge({}, state, action.state);
   }

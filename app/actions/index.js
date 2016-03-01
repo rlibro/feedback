@@ -281,6 +281,29 @@ export function fetchRedBooks() {
   }
 }
 
+export const SEARCH_REDBOOK_REQUEST = 'SEARCH_REDBOOK_REQUEST'
+export const SEARCH_REDBOOK_SUCCESS = 'SEARCH_REDBOOK_SUCCESS'
+export const SEARCH_REDBOOK_FAILURE = 'SEARCH_REDBOOK_FAILURE'
+export function searchRedbook(keyword) {
+
+  console.log('keyword ', keyword);
+
+  return (dispatch, getState) => {
+    return dispatch(function() {
+      return {
+        [PARSE]: {
+          method: 'searchRedbook',
+          types: [ SEARCH_REDBOOK_REQUEST, SEARCH_REDBOOK_SUCCESS, SEARCH_REDBOOK_FAILURE ],
+          schema: Schemas.REDBOOK_ARRAY,
+          params: {
+            keyword: keyword
+          }
+        }
+      }
+    }())
+  }
+}
+
 /**
  * 새로운 레드북을 만든다. 
  */
