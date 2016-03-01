@@ -69,13 +69,15 @@ export default class RedBookList extends Component {
     const { isFetching } = redBooks, location = loginUser.current_location;
     let ids = redBooks.ids || [];
 
-    if( loginUser.id && location && location.cityName ) {
-      ids = _.filter(ids, (id)=>{
-        return entities.redBooks[id].countryName !== location.countryName;
-      });
-    }
 
     if(!redBooks.isSearchResult){
+
+      if( loginUser.id && location && location.cityName ) {
+        ids = _.filter(ids, (id)=>{
+          return entities.redBooks[id].countryName !== location.countryName;
+        });
+      }
+    
       ids = insertAdsenceBetweenCards(ids);  
     }
 
