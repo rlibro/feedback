@@ -46,7 +46,7 @@ export default class RedBookListByCountry extends Component {
     });
 
 
-    //redBooks = insertAdsenceBetweenCards(redBooks);
+    redBooks = insertAdsenceBetweenCards(redBooks);
 
 
     return <div className="RedBookList-byLocation">
@@ -87,7 +87,7 @@ export default class RedBookListByCountry extends Component {
 
         })}
 
-        {/*this.renderRequestNewRedBook(hasThisCity, redBooks.length)*/}
+        {this.renderRequestNewRedBook(hasThisCity, redBooks.length)}
 
       </ul>
 

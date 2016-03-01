@@ -24,12 +24,11 @@ export default class Explore extends Component {
   render() {
     return <div className="Explore">
       <div className="search-bar">
-        <input ref="input"
-               placeholder="Search Cites & Countries"
+        <i className="fa icon-search"></i>
+        <input ref="input" className="ip-search"
+               placeholder="Search Cities or Countries"
                defaultValue={this.props.value}
                onKeyUp={this.handleKeyUp} />
-        <button onClick={this.handleFind}><i className="fa icon-search"></i>
-        </button>
       </div>
     </div>
     
