@@ -65,10 +65,7 @@ export default class RedBookNote extends Component {
         
       </div>
       {this.renderContentByState()}
-      <div className="controls">
-        {/*<div className="like" onClick={this.handleToggleLike.bind(null, note.id)}><i className="fa fa-thumbs-o-up"/> </div>*/}
-        {this.renderCommentControl()}
-      </div>
+      {this.renderControls()}
 
       <NoteCommentList 
         loginUser={loginUser}
@@ -104,7 +101,7 @@ export default class RedBookNote extends Component {
     const { hideContextMenu, loginUser, note, noteState } = this.props;
     const { isOpenContext } = this.state;
 
-    if( hideContextMenu ){
+    if( hideContextMenu || noteState.editingId ){
       return false;
     }
 
@@ -186,6 +183,21 @@ export default class RedBookNote extends Component {
       
     }else {
       return <div className="content" onClick={this.handleContentLink} dangerouslySetInnerHTML={{__html: contentText}}></div>  
+    }
+  };
+
+  renderControls = () => {
+
+    const { noteState: { editingId }} = this.props;
+
+    if( editingId ){ 
+      return false 
+    } else {
+      return <div className="controls">
+        {/*<div className="like" onClick={this.handleToggleLike.bind(null, note.id)}><i className="fa fa-thumbs-o-up"/> </div>*/}
+        {this.renderCommentControl()}
+      </div>
+
     }
   };
 

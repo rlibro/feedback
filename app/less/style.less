@@ -221,7 +221,7 @@ button {
 
     input {
       width: 100%;
-      padding: 0px 60px 0px 30px;
+      padding: 0px 60px 0px 35px;
       font-size: 14px;
       height: 40px;
       background-color: #fff;
@@ -943,6 +943,10 @@ button {
 .RedBookNoteList {
   position: relative;
   overflow: auto;
+
+  &.editing {
+    top: -140px;
+  }
 
   &.empty-note {
     border: 1px solid;

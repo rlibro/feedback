@@ -233,7 +233,7 @@ class App extends Component {
 
     if( 0 < search.result.length ) {
       return <div className="wrap-SearchList">
-        <h4>{`검색결과 총 ${search.result.length}건`}</h4>
+        <h4>{`Search Results: ${search.result.length}`}</h4>
         <RedBookList 
           loginUser={loginUser}
           redBooks={serchResult} 

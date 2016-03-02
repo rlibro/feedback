@@ -220,6 +220,13 @@ class RedBookPage extends Component {
   };
 
   handleCloseRedBook = (e) => {
+    const { noteState } = this.props;
+
+    if( noteState.editingId ) {
+      return alert('you are editing a note!');
+    }
+
+
     this.props.updateNoteState({ places: [] });
     this.props.pushState('/');
   };

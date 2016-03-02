@@ -13,7 +13,12 @@ export default class RedBookNoteList extends Component {
             onDeleteNote, onDeleteComment, onLikeNote
           } = this.props;
 
-    return <div className="RedBookNoteList">
+    let klassName = 'RedBookNoteList';
+    if( noteState.editingId ) {
+      klassName = 'RedBookNoteList editing';
+    }
+
+    return <div className={klassName}>
       { noteIds.map( (noteId, i) => {
         
         const note = entityNotes[noteId];
