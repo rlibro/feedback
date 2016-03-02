@@ -22,15 +22,24 @@ export default class Explore extends Component {
   }
 
   render() {
-    return <div className="Explore">
-      <div className="search-bar">
-        <i className="fa icon-search"></i>
-        <input ref="input" className="ip-search"
-               placeholder="Search Cities or Countries"
-               defaultValue={this.props.value}
-               onKeyUp={this.handleKeyUp} />
+    const {path} = this.props;
+
+    if( path.indexOf('/notes/') > -1){
+      
+      return false
+
+    } else {
+      
+      return <div className="Explore">
+        <div className="search-bar">
+          <i className="fa icon-search"></i>
+          <input ref="input" className="ip-search"
+                 placeholder="Search Cities or Countries"
+                 defaultValue={this.props.value}
+                 onKeyUp={this.handleKeyUp} />
+        </div>
       </div>
-    </div>
+    }
     
   }
 

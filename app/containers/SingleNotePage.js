@@ -8,7 +8,7 @@ import {
   resetUpdateNote
 } from '../actions'
 import { connect } from 'react-redux'
-import { pushPath as pushState } from 'redux-simple-router'
+import { pushPath as pushState, replacePath } from 'redux-simple-router'
 import RedBookNote from '../components/RedBookNote'
 import _ from 'lodash'
 
@@ -75,7 +75,7 @@ class SingleNotePage extends Component {
     const note = notes[noteId];
 
     if( !note ){
-      return <div className="RedBookNote">
+      return <div className="LoadingState Note">
         <div className="loading">
           <p><i className="fa fa-spinner fa-pulse"></i> Now loading a note, <br/>please wait a moment</p>
         </div>
@@ -101,6 +101,11 @@ class SingleNotePage extends Component {
 
 
     return <div className="SingleNotePage">
+      <div className="Navigation">
+        <a className="return" href={`/guide/${note.redBook.uname}`} onClick={this.handleReturn}>
+          <i className="fa icon-return"></i> Back to the {note.redBook.cityName}
+        </a>
+      </div>
 
       {this.props.children && 
         React.cloneElement(this.props.children, {
@@ -129,6 +134,11 @@ class SingleNotePage extends Component {
         />
     </div>
   }
+
+  handleReturn = (e) => {
+    this.props.replacePath(e.currentTarget.href);
+    e.preventDefault();
+  };
 
   handleFacebookLogin = () => {
     this.props.facebookLogin(this.props.updateLoginUserInfo);    
@@ -190,5 +200,6 @@ export default connect(mapStateToProps, {
   addComment,
   deleteComment,
   resetUpdateNote,
-  pushState
+  pushState,
+  replacePath
 })(SingleNotePage)

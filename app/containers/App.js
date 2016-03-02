@@ -111,16 +111,23 @@ class App extends Component {
     if( loginUser.id && (!loginUser.nationality||!loginUser.email) && path !== '/register' ){
       this.props.pushState(`/register`); 
     }
-
-
   }  
+
+  shouldComponentUpdate(nextProps, nextState) {
+
+    const { noteState:{isFetching} } = nextProps;
+
+    if( isFetching === this.props.noteState.isFetching ){
+      return false
+    }
+
+    return true;
+  }
+
 
   render() {
     const { loginUser, redBooks, entities, path, appState} = this.props
     let klass = (path !== '/')? 'sub':''
-
-
-
 
     return (
       <div id="app" className={klass}>
@@ -156,6 +163,7 @@ class App extends Component {
         {this.renderErrorMessage()}
 
         <Explore 
+          path={path}
           onUpdateAppState={this.props.updateAppState}
           onFindThisKeyWord={this.props.searchRedbook} />
         
@@ -211,7 +219,7 @@ class App extends Component {
 
   renderLoadingRedBooks = () =>{
     const { noteState:{isFetching} } = this.props;
-    
+ 
     if( isFetching.redbooks === 'REQUESTING' ){ 
       return <div className="LoadingState">
         <div className="loading">
@@ -221,7 +229,8 @@ class App extends Component {
         <div className="dimmed"></div>
       </div>
     } else {
-      return false;
+      return <div className="LoadingState hide">
+      </div>;
     }
 
   };

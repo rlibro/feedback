@@ -298,6 +298,14 @@ button {
 
 .LoadingState {
 
+  &.Note {
+    margin-top: 60px;
+
+    .loading {
+      color: #000;
+    }
+  }
+
   .loading {
     position: relative;
     float: left;
@@ -636,6 +644,7 @@ button {
     height: 100%;
     border-radius: 5px;
     overflow: hidden;
+    border: 1px solid #ccc;
 
     .markerSearchBox {
       border: 1px solid transparent;
@@ -978,11 +987,6 @@ button {
     &:hover {
       text-decoration: underline;
     }
-  }
-
-  .loading {
-    padding: 20px;
-    text-align: center;
   }
 
   .note-header {
@@ -1692,7 +1696,23 @@ button {
 
 
 .SingleNotePage {
-  margin-top: 5px;
+  margin-top: 54px;
+
+  .Navigation {
+    background-color: #ff4842;    
+    height: 48px;
+
+    .return {
+      border: 1px solid #FFF;
+      padding: 8px 20px 8px 14px;
+      border-radius: 5px;
+      color: #fff;
+      font-weight: bold;
+      margin: 5px;
+      display: inline-block;
+    }
+  }
+
 }
 
 .SingleNotePlacePage {
@@ -1720,7 +1740,6 @@ button {
   left: 50%;
   margin-left: -500px;
   background-color: #ccc;
-  border: 1px solid #ccc;
   margin-bottom: 5px;
   border-radius: 5px;
 
@@ -2978,6 +2997,9 @@ button {
 }
 .icon-search:before {
   content: "\78";
+}
+.icon-return:before {
+  content: "\79";
 }
 
 
