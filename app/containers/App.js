@@ -119,6 +119,9 @@ class App extends Component {
     const { loginUser, redBooks, entities, path, appState} = this.props
     let klass = (path !== '/')? 'sub':''
 
+
+
+
     return (
       <div id="app" className={klass}>
         <Header 
@@ -156,6 +159,7 @@ class App extends Component {
           onUpdateAppState={this.props.updateAppState}
           onFindThisKeyWord={this.props.searchRedbook} />
         
+        {this.renderLoadingRedBooks()}
         {this.renderSearchResult()}
         {this.renderRedBookList()}
         {this.renderChildPage()}
@@ -183,7 +187,7 @@ class App extends Component {
       if( sessionUser ){
         this.props.updateLoginUserInfo(sessionUser.toJSON());
 
-        if( ga ){
+        if( typeof ga === 'function'){
           ga('set', 'userId', sessionUser.id); // 로그인한 User-ID를 사용하여 User-ID를 설정합니다.
         }
 
@@ -204,6 +208,23 @@ class App extends Component {
     }(document, 'script', 'facebook-jssdk'));
 
   }
+
+  renderLoadingRedBooks = () =>{
+    const { noteState:{isFetching} } = this.props;
+    
+    if( isFetching.redbooks === 'REQUESTING' ){ 
+      return <div className="LoadingState">
+        <div className="loading">
+          <h2> <i className="fa fa-circle-o-notch fa-spin" /> loading...</h2>
+
+        </div>
+        <div className="dimmed"></div>
+      </div>
+    } else {
+      return false;
+    }
+
+  };
 
   renderErrorMessage = () => {
     const { errorMessage } = this.props

@@ -30,10 +30,9 @@ export default class RedBookList extends Component {
    * 레드북 목록을 가져오거나 사용자의 위치정보가 업데이트 된 경우에만 다시 그림
    */
   shouldComponentUpdate(nextProps, nextState) {
-    const { redBooks, loginUser } = nextProps;
+    const { redBooks: {isFetching}, loginUser } = nextProps;
 
-    if( (redBooks !== this.props.redBooks) 
-      || (loginUser && loginUser.current_location) ) {   
+    if( !isFetching || (loginUser && loginUser.current_location) ) {   
       return true;
     }
 
@@ -45,21 +44,11 @@ export default class RedBookList extends Component {
     const { redBooks: {isFetching}, loginUser } = this.props;
     
     if( isFetching || typeof isFetching === 'undefined' ){ 
-      return this.renderLoadingState() 
+      return <div className="RedBookList"></div>
     } else {
       return this.renderRedBooks();
     }
   }
-
-  renderLoadingState = () =>{
-    return <div className="RedBookList">
-      <div className="loading">
-        <h2> <i className="fa fa-circle-o-notch fa-spin" /> loading...</h2>
-
-      </div>
-      <div className="dimmed"></div>
-    </div>
-  };
 
 
   // 사용자의 위치가 업데이트되면 원래 목록에서도 빼줘야한다.

@@ -706,8 +706,8 @@ export default store => next => action => {
   next(actionWith({ type: requestType }))
 
   // For Debugging
-  if( requestType === 'ADD_REDBOOK_REQUEST') {
-  //  return;
+  if( requestType === 'REDBOOKS_REQUEST') {
+    //return;
   }
 
   // 성공과 실패에 대한 응답은 Promise 패턴으로 처리한다. 

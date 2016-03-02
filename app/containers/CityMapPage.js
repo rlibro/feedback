@@ -6,33 +6,16 @@ import { findDOMNode } from 'react-dom'
 import _ from 'lodash'
 import DisplayMap from '../components/DisplayMap'
 
-
-function fetchPlacesFromServer(props){
-
-  const { redBook } = props
-
-  if( redBook ){
-    props.fetchPlaces( {redBookId: redBook.id}) 
-  }
-
-}
-
 class CityMapPage extends Component {
 
   constructor(props){
     super(props);
 
-    this.state = {
-      sharedPlaces : {isFetching:true, ids:[]}
-    }
-  }
+    const { redBook:{id}, pagingPlacesByRedBookId } = props;
 
-  /**
-   * 최소에 한번만 호출된다. 
-   * 서버에서 현재 이곳에 있는 사람들 정보를 긁어와야한다.
-   */ 
-  componentWillMount(){
-    fetchPlacesFromServer(this.props);
+    this.state = {
+      sharedPlaces : pagingPlacesByRedBookId[id]
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -44,11 +27,6 @@ class CityMapPage extends Component {
     });
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const { appState:{loadedGoogleSDK} } = nextProps;
-
-    return loadedGoogleSDK;
-  }
 
   render() {
 
