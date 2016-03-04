@@ -71,7 +71,11 @@ const parseAPI = {
         a[i] = camelizedJson;
       });
 
-      return Object.assign({}, normalize(data, schema));
+      
+      let response = Object.assign({}, normalize(data, schema));
+      response.query = params.keyword;
+
+      return response;
          
     }, function(error) {
       return error.code + ', ' + error.message;

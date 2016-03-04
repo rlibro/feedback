@@ -113,18 +113,6 @@ class App extends Component {
     }
   }  
 
-  shouldComponentUpdate(nextProps, nextState) {
-
-    const { noteState:{isFetching} } = nextProps;
-
-    if( isFetching === this.props.noteState.isFetching ){
-      return false
-    }
-
-    return true;
-  }
-
-
   render() {
     const { loginUser, redBooks, entities, path, appState} = this.props
     let klass = (path !== '/')? 'sub':''
@@ -163,6 +151,7 @@ class App extends Component {
         {this.renderErrorMessage()}
 
         <Explore 
+          appState={appState}
           path={path}
           onUpdateAppState={this.props.updateAppState}
           onFindThisKeyWord={this.props.searchRedbook} />
@@ -261,8 +250,14 @@ class App extends Component {
       isFetching: false, isSearchResult: true, ids: search.result
     }
 
+    let klassName = 'wrap-SearchList';
+
+    if( path !== '/' ) {  // 루트에서만 검색이 가능하다.
+      klassName += ' hide'
+    }
+
     if( 0 < search.result.length ) {
-      return <div className="wrap-SearchList">
+      return <div className={klassName}>
         <h4>{`Search Results: ${search.result.length}`}</h4>
         <RedBookList 
           loginUser={loginUser}

@@ -136,7 +136,10 @@ class SingleNotePage extends Component {
   }
 
   handleReturn = (e) => {
-    this.props.replacePath(e.currentTarget.href);
+
+    var url = e.currentTarget.href;
+    url = url.split('/guide');
+    this.props.replacePath('/guide' + url[1]);
     e.preventDefault();
   };
 

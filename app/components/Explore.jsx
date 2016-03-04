@@ -11,18 +11,8 @@ export default class Explore extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.value !== this.props.value) {
-      this.setInputValue(nextProps.value)
-    }
-  }
-
-  setInputValue(val) {
-    this.refs.input.value = val
-  }
-
   render() {
-    const {path} = this.props;
+    const {path, appState: { search: { query } }} = this.props;
 
     if( path.indexOf('/notes/') > -1){
       
@@ -35,7 +25,7 @@ export default class Explore extends Component {
           <i className="fa icon-search"></i>
           <input ref="input" className="ip-search"
                  placeholder="Search Cities or Countries"
-                 defaultValue={this.props.value}
+                 defaultValue={query}
                  onKeyUp={this.handleKeyUp} />
         </div>
       </div>
@@ -64,7 +54,10 @@ export default class Explore extends Component {
       this.props.onFindThisKeyWord(keyword);
     } else {
       this.props.onUpdateAppState({
-        search: {result: []}
+        search: {
+          query: '',
+          result: []
+        }
       });
     }
 
@@ -72,6 +65,7 @@ export default class Explore extends Component {
 }
 
 Explore.propTypes = {
+  appState: PropTypes.object.isRequired,
   onUpdateAppState: PropTypes.func.isRequired,
   onFindThisKeyWord: PropTypes.func.isRequired
 }

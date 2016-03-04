@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { pushPath as pushState } from 'redux-simple-router'
-import { updateDataForRedBook, fetchPlaces } from '../actions'
+import { updateNoteState, fetchPlaces } from '../actions'
 import { findDOMNode } from 'react-dom'
 import DisplayMap from '../components/DisplayMap'
 import _ from 'lodash'
@@ -72,7 +72,7 @@ class SingleNotePlacePage extends Component {
         zoomLevel={16}
         markers={markers}
         isReadOnly={true}
-        onUpdateNoteState={this.props.updateDataForRedBook}
+        onUpdateNoteState={this.props.updateNoteState}
       />
 
     </div>
@@ -98,6 +98,6 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, {
-  updateDataForRedBook,
+  updateNoteState,
   fetchPlaces
 })(SingleNotePlacePage)
