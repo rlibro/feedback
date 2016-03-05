@@ -460,7 +460,7 @@ class RegisterPage extends Component {
     }
 
     Parse.User.current().save(updatingUser);
-    alert('알리브로에 오신걸 환영합니다.\n등록 메일을 보냈습니다.');
+    alert('알리브로에 오신걸 환영합니다.');
 
     const userInfo = Parse.User.current().toJSON();
     this.props.updateLoginUserInfo(userInfo);
