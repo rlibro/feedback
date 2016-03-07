@@ -43,7 +43,7 @@ class SingleNotePlacePage extends Component {
     }
 
 
-    let markers = [], mapCenter;
+    let markers = [], mapCenter, centerMarkerId;
     _.each(places, function(place){
 
       if( place.id === placeId ) {
@@ -51,6 +51,7 @@ class SingleNotePlacePage extends Component {
           lat: place.geo.latitude,
           lng: place.geo.longitude
         }
+        centerMarkerId = placeId
       }
 
       markers.push({
@@ -71,6 +72,7 @@ class SingleNotePlacePage extends Component {
         mapCenter={mapCenter}
         zoomLevel={16}
         markers={markers}
+        centerMarkerId={centerMarkerId}
         isReadOnly={true}
         onUpdateNoteState={this.props.updateNoteState}
       />

@@ -79,9 +79,9 @@ export default class ControlMap extends Component {
         (<Circle key="circle" center={mapCenter} clickable={false} radius={50} options={{
             fillColor: 'blue',
             fillOpacity: 0.2,
-            strokeColor: 'red',
-            strokeOpacity: 1,
-            strokeWeight: 2,
+            strokeColor: 'blue',
+            strokeOpacity: 0.8,
+            strokeWeight: 0.5,
           }} />),
       ]);
       

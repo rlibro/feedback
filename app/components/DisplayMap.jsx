@@ -1,13 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import {default as update} from 'react-addons-update';
 import {GoogleMapLoader, GoogleMap, Marker, InfoWindow, Circle, SearchBox} from 'react-google-maps';
-import {triggerEvent} from 'react-google-maps/lib/utils';
 
-/*
- * This is the modify version of:
- * https://developers.google.com/maps/documentation/javascript/examples/event-arguments
+
+/**
+ * 뷰 전용 맵
  *
- * Loaded using async loader.
+ * @depends SingleNotePlacePage
  */
 export default class DisplayMap extends Component {
 
@@ -17,34 +16,50 @@ export default class DisplayMap extends Component {
     super(props);
 
     this.state = {
-      markers: props.markers.concat()
+      markers: props.markers.concat(),
+      usedUserLocation: false,
+      moveToCenter: true
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({moveToCenter: true})
+  }
+
   render () {
-    return <div className="DisplayMap Map">
+    const { usedUserLocation } = this.state;
+    let klassName = 'DisplayMap Map';
+
+    if( usedUserLocation ){
+      klassName += ' user-loaction-on'
+    }
+
+    return <div className={klassName}>
       {this.renderMapButtons()}
       <GoogleMapLoader
         containerElement={ <div {...this.props} />}
         googleMapElement={this.renderGoogleMap()}
       />
     </div>
-  };
+  }
 
+  /**
+   * 읽기 전용맵 일경우 지도 닫기 버튼이 없다. 
+   * 
+   * SingleNotePlacePage의 경우가 readOnly
+   */
   renderMapButtons = () => {
     const { isReadOnly, loginUser } = this.props;
-    const { isExpanded } = this.state;
-    if( isReadOnly ){
-      return false;
-    }
-
+   
     return <div className="btn-groups">
-      <div className="map-btn close">
-        <i className="fa fa-times" onClick={this.handleClosePlaceMap}/>
-      </div>  
- {/*     <div className="map-btn marker-add">
-        <i className="fa icon-pin" onClick={this.handleToggleMarker}/>
-      </div>*/}
+      {function(){
+        if (!isReadOnly){
+          return <div className="map-btn close">
+            <i className="fa fa-times" onClick={this.handleClosePlaceMap}/>
+          </div>  
+        }
+      }.bind(this)()}
+      
       {function(){
         if( loginUser.current_location ){
           return <div className="map-btn current-location">
@@ -60,9 +75,10 @@ export default class DisplayMap extends Component {
   };
 
   renderGoogleMap = () => {
-    const { isReadOnly, loginUser, disableMoveCenter } = this.props;
-    const { markers } = this.state;
+    const { isReadOnly, loginUser } = this.props;
+    const { markers, usedUserLocation, moveToCenter } = this.state;
     let { zoomLevel = 13, mapCenter } = this.props;
+    let userLocationMarkups = [];
 
     const defaultOptions = {
       mapTypeControl: true,
@@ -75,6 +91,23 @@ export default class DisplayMap extends Component {
       defaultOptions.mapTypeControl = false;
     }
 
+    // 사용자 위치를 사용할 경우 사용자 위치로 중심을 이동시킨다. 
+    if( usedUserLocation ){
+      zoomLevel = 17;
+      mapCenter = loginUser.current_location.latlng;
+      userLocationMarkups = userLocationMarkups.concat([
+        (<Circle key="circle" center={mapCenter} clickable={false} radius={50} 
+          options={{
+            fillColor: 'blue',
+            fillOpacity: 0.2,
+            strokeColor: 'blue',
+            strokeOpacity: 0.8,
+            strokeWeight: 0.5,
+          }} />),
+      ]);
+  
+    }
+
     let finalMapOptions = {
       ref: function (map){ this._googleMapComponent = map }.bind(this),
       defaultOptions: defaultOptions,
@@ -84,25 +117,33 @@ export default class DisplayMap extends Component {
       center: mapCenter
     }
 
-    if( disableMoveCenter ){
+    if( !moveToCenter ){
       delete finalMapOptions.zoom;
       delete finalMapOptions.center;   
     }
 
     return <GoogleMap { ...finalMapOptions}>
       {this.renderMarkers()}
+      {userLocationMarkups}
     </GoogleMap>
   };
 
   renderMarkers = () => {
 
-    const { isReadOnly } = this.props;
-    const { markers } = this.state;
-    //var bounds = new google.maps.LatLngBounds();
+    const { isReadOnly, centerMarkerId } = this.props;
+    const { markers, moveToCenter } = this.state;
     var markerArray = [];
 
     markers.forEach((marker, index) => {
       const ref = `marker_${index}`;
+
+      if( moveToCenter ){
+        if( centerMarkerId === marker.key ) {
+          marker.showInfo = true;
+        } else {
+          marker.showInfo = false;
+        }
+      }
 
       //bounds.extend(new google.maps.LatLng(marker.position));
       markerArray.push(<Marker key={ref} ref={ref}
@@ -114,7 +155,8 @@ export default class DisplayMap extends Component {
       
     });
     
-    // FitBound 
+    //FitBound 
+    // var bounds = new google.maps.LatLngBounds();
     // console.log('bounds ==> ', bounds);
     // setTimeout(function(bounds){
     //   console.log('panToBounds', bounds, this._googleMapComponent.fitBounds);
@@ -145,34 +187,34 @@ export default class DisplayMap extends Component {
 
   handleMarkerClick = (marker) => {
     marker.showInfo = !marker.showInfo;
-    this.setState(this.state);
+    this.setState({
+      moveToCenter : false
+    });
   };
 
   handleCloseclick = (marker) => {
     marker.showInfo = false;
-    this.setState(this.state);
   };
 
   handleToggleMarker = () => {
     this.setState({
-      isMarkerMode: !this.state.isMarkerMode,
-      moveToCenter: false
+      isMarkerMode: !this.state.isMarkerMode
     });
   };
 
   handleMoveCenterToCurrentUser = () => {
     const { loginUser } = this.props;
-    const {usedUserLocation} = this.state;
+    const { usedUserLocation } = this.state;
     
     if( !usedUserLocation ) {
       this.setState({
         usedUserLocation: true,
-        moveToCenter:  true
+        moveToCenter: true
       });
     } else{
       this.setState({
         usedUserLocation: false,
-        moveToCenter:  false
+        moveToCenter: false
       });
     }
   };
