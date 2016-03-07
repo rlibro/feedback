@@ -44,6 +44,7 @@ export default class RedBookNoteList extends Component {
 
         return <RedBookNote key={i}
           appState={this.props.appState}
+          routing={this.props.routing}
           loginUser={loginUser}
           noteState={noteState}
           note={note}
@@ -69,6 +70,7 @@ export default class RedBookNoteList extends Component {
 
 RedBookNoteList.propTypes = {
   appState: PropTypes.object.isRequired,
+  routing: PropTypes.object.isRequired,
   loginUser: PropTypes.object.isRequired,
   noteState: PropTypes.object.isRequired,
   onUpdateNoteState: PropTypes.func.isRequired,

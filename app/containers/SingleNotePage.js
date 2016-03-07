@@ -64,10 +64,11 @@ class SingleNotePage extends Component {
 
     const { 
       appState,
+      routing,
       params:{noteId}, 
       loginUser, 
       noteState, 
-      notes, 
+      notes,
       entitiyComments, 
       entitiyPlaces
     } = this.props;
@@ -99,10 +100,9 @@ class SingleNotePage extends Component {
 
     });
 
-
     return <div className="SingleNotePage">
       <div className="Navigation">
-        <a className="return" href={`/guide/${note.redBook.uname}`} onClick={this.handleReturn}>
+        <a className="return" href={`/guide/${note.redBook.uname}`} onClick={this.handleReturn.bind(this, note.redBook.uname)}>
           <i className="fa icon-return"></i> Back to the {note.redBook.cityName}
         </a>
       </div>
@@ -115,6 +115,7 @@ class SingleNotePage extends Component {
       
       <RedBookNote 
         appState={appState}
+        routing={routing}
         loginUser={loginUser}
         noteState={noteState}
         note={note} 
@@ -135,12 +136,19 @@ class SingleNotePage extends Component {
     </div>
   }
 
-  handleReturn = (e) => {
+  handleReturn = (uname, e) => {
 
-    var url = e.currentTarget.href;
-    url = url.split('/guide');
-    this.props.replacePath('/guide' + url[1]);
+    
+    const { routing } = this.props;
+    let returnUrl = `/guide/${uname}`;
     e.preventDefault();
+
+    if( routing.state && routing.state.referer ){
+      returnUrl = routing.state.referer;
+    }
+
+    this.props.replacePath(returnUrl);
+    
   };
 
   handleFacebookLogin = () => {
@@ -193,6 +201,7 @@ function mapStateToProps(state) {
     entitiyPlaces: places,
     loginUser: state.login,
     noteState: noteState,
+    routing: state.routing
   }
 }
 

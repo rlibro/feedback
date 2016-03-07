@@ -193,6 +193,7 @@ class RedBookPage extends Component {
 
     return <RedBookNoteList
       appState={this.props.appState}
+      routing={this.props.routing}
       loginUser={loginUser}
       noteState={noteState}
       entityNotes={entities.notes} 
@@ -324,7 +325,8 @@ function mapStateToProps(state) {
     pagingNotesByRedBookId: notesByRedBookId,
     pagingCommentsByNoteId: commentsByNoteId,
     pagingPlacesByRedBookId: placesByRedBookId,
-    entities: state.entities
+    entities: state.entities,
+    routing: state.routing
   }
 }
 

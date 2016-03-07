@@ -11,7 +11,7 @@ class SingleNotePlacePage extends Component {
   render() {
 
     const { loginUser, appState, note, entitiyPlaces, 
-      params : {placeId, noteId}
+      params : {placeId, noteId}, routing
     } = this.props;
 
 
@@ -45,7 +45,6 @@ class SingleNotePlacePage extends Component {
 
     let markers = [], mapCenter, centerMarkerId;
     _.each(places, function(place){
-
       if( place.id === placeId ) {
         mapCenter = {
           lat: place.geo.latitude,
@@ -61,7 +60,8 @@ class SingleNotePlacePage extends Component {
         position: {
           lat: place.geo.latitude,
           lng: place.geo.longitude
-        }
+        },
+        note: place.note
       })
     });
 
@@ -74,6 +74,9 @@ class SingleNotePlacePage extends Component {
         markers={markers}
         centerMarkerId={centerMarkerId}
         isReadOnly={true}
+        hideMarkerNoteLink={true}
+        referer= {routing.path}
+        onPushState={this.props.pushState}
         onUpdateNoteState={this.props.updateNoteState}
       />
 
@@ -94,6 +97,7 @@ function mapStateToProps(state) {
 
   return {
     appState,
+    routing: state.routing,
     entitiyPlaces: places,
     loginUser: login
   }
@@ -101,5 +105,6 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps, {
   updateNoteState,
-  fetchPlaces
+  fetchPlaces,
+  pushState
 })(SingleNotePlacePage)

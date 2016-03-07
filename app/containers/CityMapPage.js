@@ -30,7 +30,9 @@ class CityMapPage extends Component {
 
   render() {
 
-    const { appState:{loadedGoogleSDK}, loginUser, redBook, entities:{places} } = this.props;
+    const { appState:{loadedGoogleSDK}, 
+            loginUser, redBook, routing,
+            entities:{places} } = this.props;
     const { sharedPlaces } = this.state;
     
     if( !loadedGoogleSDK ){
@@ -55,7 +57,8 @@ class CityMapPage extends Component {
           position: {
             lat: place.geo.latitude,
             lng: place.geo.longitude
-          }
+          },
+          note: place.note
         })
       });
     }
@@ -68,8 +71,9 @@ class CityMapPage extends Component {
           lat: redBook.geo.latitude,
           lng: redBook.geo.longitude
         }}
+        referer= {routing.path}
         markers = {markers}
-        disableMoveCenter={true}
+        onPushState={this.props.pushState}
         onUpdateNoteState={this.hanldeCloseMap}
       />
     </div>
@@ -95,6 +99,7 @@ function mapStateToProps(state) {
     appState: state.appState,
     loginUser: state.login,
     entities: state.entities,
+    routing: state.routing,
     pagingPlacesByRedBookId: placesByRedBookId,
   }
 }

@@ -86,7 +86,7 @@ export default class RedBookNote extends Component {
 
     return <div className="date">
 
-      <a href={`/notes/${note.id}`} onClick={this.handleMoveNote} >{ moment(note.createdAt).format('LLL') }</a>
+      <a href={`/notes/${note.id}`} onClick={this.handleMoveNote.bind(this, `/notes/${note.id}`)} >{ moment(note.createdAt).format('LLL') }</a>
       {function(){
         if( hasUpdated ) {
           return <p className="updated">{`updated ${moment(note.modifiedAt.iso).format('lll')}`}</p>
@@ -224,10 +224,9 @@ export default class RedBookNote extends Component {
 
   };
 
-  handleMoveNote = (e) => {
+  handleMoveNote = (url, e) => {
 
-    var link = e.target.href.split('notes')[1];
-    this.props.onPushState('/notes' + link);
+    this.props.onPushState(url, {referer: this.props.routing.path});
     e.preventDefault();
 
   };
@@ -367,6 +366,7 @@ export default class RedBookNote extends Component {
 
 RedBookNote.propTypes = {
   appState: PropTypes.object.isRequired,
+  routing: PropTypes.object.isRequired,
   loginUser: PropTypes.object.isRequired,
   noteState: PropTypes.object.isRequired,
   note: PropTypes.object.isRequired,
