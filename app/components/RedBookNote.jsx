@@ -121,7 +121,7 @@ export default class RedBookNote extends Component {
   renderContentByState = ()=> {
 
     const { note, places, noteState: { stateNoteUpdate, editingId } } = this.props;
-    const contentText = render(note.content, note.id);
+    const contentText = render(note.content, note.id, note.places, places);
     
     let style = {height:'36px'};
     let lineCount = this.state.lineCount ? this.state.lineCount : note.content.split('\n').length;
