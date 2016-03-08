@@ -74,6 +74,7 @@ const parseAPI = {
       
       let response = Object.assign({}, normalize(data, schema));
       response.query = params.keyword;
+      response.mode = params.mode;
 
       return response;
          

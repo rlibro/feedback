@@ -26,7 +26,8 @@ export default class Explore extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { routing : { path } } = nextProps;
+    const { appState: {search: {query}}, routing : { path } } = nextProps;
+
     let mode = 'none';
 
     switch(path){
@@ -42,6 +43,10 @@ export default class Explore extends Component {
 
     this.setState({mode: mode});
 
+
+    if( this.props.appState.search.mode !== mode && query ){
+      this.handleFind();
+    } 
   }
 
   render() {
