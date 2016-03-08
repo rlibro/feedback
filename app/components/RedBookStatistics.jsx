@@ -40,14 +40,21 @@ export default class RedBookStatistics extends Component {
       <div className="StaticCard">
         <div><strong>{count.city}</strong> cities in <strong>{count.country}</strong> countries</div>
         <div><strong>{count.note}</strong> notes & <strong>{count.place}</strong> places</div>
-        <div><strong>{count.user}</strong> rlibrians of <strong>{count.nationality}</strong> countries</div>
+        <div><strong className="link" onClick={this.handleMoveToUsers}>{count.user}</strong> rlibrians of <strong>{count.nationality}</strong> countries</div>
         <div className="tagline">take this rlibro and travel all around world</div>
       </div>
     </div>
 
   }
+
+  handleMoveToUsers = (e) =>{
+    this.props.onPushState('/rlibrians');
+  };
+
 }
 
+
 RedBookStatistics.propTypes = {
-  appState : PropTypes.object.isRequired
+  appState : PropTypes.object.isRequired,
+  onPushState: PropTypes.func.isRequired
 }

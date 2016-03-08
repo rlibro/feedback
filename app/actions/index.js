@@ -284,22 +284,45 @@ export function fetchRedBooks() {
 export const SEARCH_REDBOOK_REQUEST = 'SEARCH_REDBOOK_REQUEST'
 export const SEARCH_REDBOOK_SUCCESS = 'SEARCH_REDBOOK_SUCCESS'
 export const SEARCH_REDBOOK_FAILURE = 'SEARCH_REDBOOK_FAILURE'
-export function searchRedbook(keyword) {
+export function findThisKeyWord(keyword, mode) {
 
-  return (dispatch, getState) => {
-    return dispatch(function() {
-      return {
-        [PARSE]: {
-          method: 'searchRedbook',
-          types: [ SEARCH_REDBOOK_REQUEST, SEARCH_REDBOOK_SUCCESS, SEARCH_REDBOOK_FAILURE ],
-          schema: Schemas.REDBOOK_ARRAY,
-          params: {
-            keyword: keyword
+  if( mode === 'book'){
+    return (dispatch, getState) => {
+      return dispatch(function() {
+        return {
+          [PARSE]: {
+            method: 'searchRedbook',
+            types: [ SEARCH_REDBOOK_REQUEST, SEARCH_REDBOOK_SUCCESS, SEARCH_REDBOOK_FAILURE ],
+            schema: Schemas.REDBOOK_ARRAY,
+            params: {
+              keyword: keyword,
+              mode: mode
+            }
           }
         }
-      }
-    }())
+      }())
+    }
   }
+
+  if( mode === 'user' ) {
+    return (dispatch, getState) => {
+      return dispatch(function() {
+        return {
+          [PARSE]: {
+            method: 'searchUser',
+            types: [ 'SEARCH_USER_REQUEST', 'SEARCH_USER_SUCCESS', 'SEARCH_USER_FAILURE' ],
+            schema: Schemas.USER_ARRAY,
+            params: {
+              keyword: keyword, 
+              mode: mode
+            }
+          }
+        }
+      }())
+    }
+  }
+
+  
 }
 
 /**

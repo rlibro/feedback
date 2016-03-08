@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { pushPath as pushState } from 'redux-simple-router'
-import { fetchRedBooks, searchRedbook } from '../actions'
+import { fetchRedBooks, findThisKeyWord } from '../actions'
 import { updateCurrentUserLocation, updateLoginUserInfo, logOutUser } from '../actions'
 import { resetErrorMessage, facebookLogin, updateAppState } from '../actions'
 
@@ -74,7 +74,7 @@ class App extends Component {
     const { noteState:{ isFetching }, 
             appState: {isValidCreate},
             params:{uname}, 
-            path,
+            routing:{path},
             loginUser,
             entities:{ redBooks } 
     } = nextProps;
@@ -114,15 +114,15 @@ class App extends Component {
   }  
 
   render() {
-    const { loginUser, redBooks, entities, path, appState} = this.props
-    let klass = (path !== '/')? 'sub':''
+    const { loginUser, redBooks, entities, routing, appState} = this.props
+    let klass = (routing.path !== '/')? 'sub':''
 
     return (
       <div id="app" className={klass}>
         <Header 
           loginUser={loginUser}
           appState={appState}
-          path={path}
+          path={routing.path}
 
           onLogin={this.handleFacebookLogin}
           onLogOut={this.handleLogOut}
@@ -152,12 +152,12 @@ class App extends Component {
 
         <Explore 
           appState={appState}
-          path={path}
+          routing={this.props.routing}
           onUpdateAppState={this.props.updateAppState}
-          onFindThisKeyWord={this.props.searchRedbook} />
+          onFindThisKeyWord={this.props.findThisKeyWord} />
         
         {this.renderLoadingRedBooks()}
-        {this.renderSearchResult()}
+        {this.renderSearchBooks()}
         {this.renderRedBookList()}
         {this.renderChildPage()}
 
@@ -242,9 +242,9 @@ class App extends Component {
     )
   };
 
-  renderSearchResult = () => {
+  renderSearchBooks = () => {
 
-    const { loginUser, entities, path, appState: {search} } = this.props
+    const { loginUser, entities, routing:{path}, appState: {search} } = this.props
 
     let serchResult = {
       isFetching: false, isSearchResult: true, ids: search.result
@@ -256,7 +256,7 @@ class App extends Component {
       klassName += ' hide'
     }
 
-    if( 0 < search.result.length ) {
+    if( search.mode === 'book' && 0 < search.result.length ) {
       return <div className={klassName}>
         <h4>{`Search Results: ${search.result.length}`}</h4>
         <RedBookList 
@@ -276,7 +276,7 @@ class App extends Component {
 
   renderRedBookList = () => {
 
-    const { loginUser,redBooks, entities, path, appState } = this.props
+    const { loginUser,redBooks, entities, routing:{path}, appState } = this.props
     let klassName = 'wrap-RedBookList'
 
     if( 0 < appState.search.result.length ) { 
@@ -290,7 +290,10 @@ class App extends Component {
         onCreateRedBook={this.handleCreateRedBook}
         onGetRedBoodCardClassName={getRedBoodCardClassName} />
       
-      <RedBookStatics appState={appState} />
+      <RedBookStatics 
+        appState={appState}
+        onPushState={this.props.pushState}
+      />
 
       <RedBookList 
         loginUser={loginUser}
@@ -305,7 +308,7 @@ class App extends Component {
 
    renderChildPage = () => {
 
-    const { path, params:{uname}, entities:{ redBooks } } = this.props;
+    const { routing: {path}, params:{uname}, entities:{ redBooks } } = this.props;
     const { redBookId } = this.state;
     let klassName = 'detail';
     let cityName = null, countryName = null, redBook=null;
@@ -336,6 +339,7 @@ class App extends Component {
       case 'profile':
       case 'register':
       case 'create':
+      case 'rlibrians':
       return <div className={klassName}>
         {this.props.children}
       </div> 
@@ -425,7 +429,7 @@ App.propTypes = {
 function mapStateToProps(state) {
 
   return {
-    path: state.routing.path,
+    routing: state.routing,
     appState: state.appState,
     noteState: state.noteState,
     errorMessage: state.errorMessage,
@@ -440,7 +444,7 @@ export default connect(mapStateToProps, {
   resetErrorMessage,
   pushState,
   fetchRedBooks,
-  searchRedbook,
+  findThisKeyWord,
   updateAppState,
   updateCurrentUserLocation,
   updateLoginUserInfo,

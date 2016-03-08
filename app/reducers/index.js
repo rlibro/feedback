@@ -202,12 +202,14 @@ function appState(state = {
 
 
     case 'SEARCH_REDBOOK_SUCCESS':
+    case 'SEARCH_USER_SUCCESS':
 
-      const {result, query} = action.response;
+      const {result, query, mode} = action.response;
 
       if( result && result.length ) {
         state.search.result = result;
         state.search.query = query;
+        state.search.mode = mode;
       }
       
       return merge({}, state, action.state);

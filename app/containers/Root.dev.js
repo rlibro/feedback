@@ -12,6 +12,7 @@ import SingleNotePage from './SingleNotePage'
 import CreateNotePage from './CreateNotePage'
 import SingleNotePlacePage from './SingleNotePlacePage'
 import RegisterPage from './RegisterPage'
+import RlibriansPage from './RlibriansPage'
 import DevTools from './DevTools'
 
 
@@ -27,6 +28,7 @@ export default class Root extends Component {
             <Route path="/" component={App}>
               <Route path="/profile" component={UserProfilePage}/>
               <Route path="/register" component={RegisterPage}/>
+              <Route path="/rlibrians" component={RlibriansPage}/>
               <Route path="/guide/:uname" component={RedBookPage}>
                 <Route path="/guide/:uname/people" component={CityPeoplePage}/>
                 <Route path="/guide/:uname/map" component={CityMapPage}/>

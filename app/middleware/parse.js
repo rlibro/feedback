@@ -83,6 +83,41 @@ const parseAPI = {
 
   },
 
+  searchUser: function(schema, params){
+
+    let query1 = new Parse.Query(Parse.User);
+    let query2 = new Parse.Query(Parse.User);
+    let regex = new RegExp(`${params.keyword}`, 'i')
+
+    query1.matches('username', regex);
+    query2.matches('nationality', regex);
+
+    var compoundQuery = Parse.Query.or(query1, query2);
+    compoundQuery.ascending('username');
+
+    return compoundQuery.find()
+    .then(function(data) {
+      data.forEach(function(o, i, a){
+        const camelizedJson = camelizeKeys(o.toJSON());
+      
+        clearObjectId(camelizedJson, 'creator');
+
+        a[i] = camelizedJson;
+      });
+
+      
+      let response = Object.assign({}, normalize(data, schema));
+      response.query = params.keyword;
+      response.mode = params.mode;
+
+      return response;
+         
+    }, function(error) {
+      return error.code + ', ' + error.message;
+    });
+
+  },
+
   fetchCityPeoples: function(schema, params){
 
     let query = new Parse.Query(Parse.User);

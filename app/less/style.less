@@ -275,6 +275,15 @@ button {
       strong {
         font-size: 150%;
         margin-left: 5px;
+
+        &.link {
+          cursor: pointer;
+          color: #ff7872;  
+
+          &:hover{
+            color: #ee6761;  
+          }
+        }
       }
 
       .tagline {
@@ -1583,6 +1592,48 @@ button {
 
 }
 
+.RlibriansPage {
+  padding: 5px 0;
+  overflow: auto;
+  text-align: center;
+
+  .user {
+    background-color: #ccc;
+    margin: 2px;
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+    border-radius: 5px;
+
+    img {
+      border-radius: 5px;
+    }
+
+    &:hover, &:focus {
+      .username {
+        display: block;
+      }
+    }
+
+    .username {
+      display: none;
+      width: 50px;
+      position: absolute;
+      font-size: 10px;
+      padding: 2px;
+      color: #fff;
+      bottom: 0px;
+      background-color: #222;
+      text-align: center;
+      opacity: 0.7;
+      border-radius: 0 0 5px 5px; 
+    }
+
+  }
+}
+
 .RegisterPage {
 
   .propfile {
@@ -2229,10 +2280,12 @@ button {
   }
 
   .RedBookNote .note-header .meta .updated {
+    
     margin-left: 0px;
   }
 
   .Page {
+
     top: 0px;
   }
 
@@ -2245,6 +2298,10 @@ button {
         margin: 0 0 5px 0;
       }
     }
+  }
+
+  .RlibriansPage {
+    margin-top: -54px;
   }
 
   .Footer {
