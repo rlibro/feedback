@@ -1,0 +1,259 @@
+@media screen and (max-width: 500px) /* Mobile */ {
+
+  .detail {
+    margin-top: 54px;
+  }
+
+  .Header {
+
+    .stack-menu {
+      margin-left: -10px;
+      margin-top: 0px;
+      float: left;
+      display: inline-block;
+      width: 54px;
+      height: 54px;
+      text-align: center;
+      cursor: pointer;
+
+      &.opened {
+        i {
+          -webkit-transform: translate3d(0,5px,0);
+          transform: translate3d(0,5px,0);
+        }
+      }
+
+      i {
+        margin-top: 10px;
+        color: #fff;
+        font-size: 32px;
+
+        -webkit-transform: translate3d(-15px,5px,0);
+        transform: translate3d(-15px,5px,0);
+        -webkit-transition-duration: 0.5s; /* Safari */
+        transition-duration: 0.5s;
+
+      }
+    }
+
+    .logo {
+      margin-left: -10px;
+    }
+
+
+    .account-menu {
+      li .message, li .photo, li .fb-login {
+        //display: none;
+      }
+    }
+  }
+
+  .SideBar {
+    display: block;
+    position: fixed;
+
+    &.opened{
+      //left: 0px;
+      -webkit-transform: translate3d(280px,0,0);
+      transform: translate3d(280px,0,0);
+    }
+
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+    -webkit-transition-duration: 0.5s; /* Safari */
+    transition-duration: 0.5s;
+
+
+    top: 54px;
+    width: 280px;
+    min-height: 400px;
+    padding: 5px 0;
+    z-index: 2;
+
+    -webkit-background-clip: padding-box;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
+
+    .account-menu {
+      text-align: center;
+
+      .photo {
+        width: 50px;
+        margin: 0 auto;
+        cursor: pointer;
+        img {
+          border-radius: 5px;
+        }
+      }
+
+      .separator {
+        border-bottom: 1px solid #e9eaed;
+        margin: 5px 7px 6px;
+        padding-top: 1px;
+      }
+
+
+      button {
+        background-color: #fff;
+        border-radius: 3px;
+        border: 1px solid #ccc;
+        padding: 5px 10px;
+        font-size: 14px;
+      }
+    }
+
+    .Footer {
+      display: block;
+    }
+  }
+
+  .wrap-SideBar {
+    .dimmed {
+      //top: 54px;
+      z-index: 1;
+    }
+  }
+
+  .Explore {
+    .search-bar {
+      input {
+        text-align: left;
+      }
+    }
+  }
+
+  .UserProfilePage {
+    margin-top: 54px;
+  }
+ 
+  .SingleNotePage {
+    margin-top: 54px;
+  }
+
+  .RedBook {
+    float: none;
+    width: 97%;
+
+    &.create-book {margin: 0px 5px 5px 5px}
+    &.left, &.middle, &.right, &.even, &.odd {
+      float: left;
+      margin: 0 5px 5px 5px;
+    }
+
+  }
+
+  .StaticCard {
+    width: 97%;
+    margin: 0 5px;
+  }
+
+  .AttachedPlaces {
+    .title {
+      width: 110px;
+    }
+  }
+
+  .SingleNotePlacePage {
+    .DisplayMap.Map {
+      height: 320px;
+       .GoogleMap {
+        height: 320px;
+      }
+    }
+  }
+
+  .DisplayMap.Map {
+    top: 0px;
+    height: 460px;
+     .GoogleMap {
+      height: 460px;
+    }
+  }
+
+  .Map {
+    height: 460px;
+
+    .GoogleMap {
+      height: 460px;
+    }
+  }
+
+  .RedMapPlace {
+    .markerSearchBox {
+      margin-top: 50px;
+      width: 200px;
+    }
+  }
+
+  .RedBookPage, .NewRedBookPage {
+    position: absolute;
+    top: 10px;
+    width: 95%;
+    z-index: 1000;
+    margin: 0 5px;
+    min-width: 310px;
+
+    .loading {
+      top: 120px;
+    }
+  }
+
+
+  .RedBookCover {
+    min-height: 260px;
+
+    .shadow {
+      height: 64px;
+    }
+    .cover-title-header {
+      .city-name {
+        font-size: 30px;
+      }
+      .country-name {
+        font-size: 20px;
+      }
+    }
+    .button-close {
+      top: 10px;
+      right: 10px;
+
+      i {
+        padding: 5px;
+        font-size: 20px;
+      }
+    }
+  }
+
+  .RedBookNote .note-header .meta .updated {
+    
+    margin-left: 0px;
+  }
+
+  .Page {
+
+    top: 0px;
+  }
+
+  .CityPeoplePage {
+
+    .people {
+      width: 98%;
+      margin: 0 0 5px 0;
+      &.alt {
+        margin: 0 0 5px 0;
+      }
+    }
+  }
+
+  .RlibriansPage {
+    margin-top: -54px;
+  }
+
+  .Footer {
+    display: none;
+  }
+
+}

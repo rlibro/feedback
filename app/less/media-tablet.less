@@ -1,0 +1,181 @@
+@media screen  and (max-width: 819px) /* Tablet */ {
+  body {
+    background-color: #fff;
+  }
+
+  #root {
+    width: 100%;
+    margin: 0;
+  }
+
+  .CurrentLocation {
+    display: none;
+  }
+
+  .Header {
+    width: 100%;
+  }
+
+  .Explore {
+
+  }
+
+  .wrap-SearchList {
+    background-color: #fff;
+    overflow: auto;
+  }
+
+  .wrap-RedBookList {
+    background-color: #fff;
+    overflow: auto;
+
+    .RedBookList {
+      overflow: auto;
+      background-color: #fff;
+    }
+  }
+
+  .RedBook {
+    width: 48%;
+    min-width: 240px;
+
+    &.create-book {
+      margin: 0px 5px 0px 10px;
+    }
+
+    &.left, &.right, &.middle {
+      margin: 0
+    }
+
+    &.even {
+      float: right;
+      margin: 0 10px 5px 0;
+    }
+
+    &.odd {
+      margin: 0 0 5px 10px;
+      float: left;
+    }
+  }
+
+  .StaticCard {
+
+    margin: 0 10px;
+  }
+
+  .AttachedPlaces {
+    .title {
+      width: 210px;
+    }
+  }
+
+  .SingleNotePlacePage {
+    .DisplayMap.Map {
+      height: 400px;
+       .GoogleMap {
+        height: 400px;
+      }
+    }
+  }
+
+  .DisplayMap.Map {
+    width: 100%;
+    top:-35px;
+    height: 600px;
+    left: auto;
+    margin-left: auto;
+
+     .GoogleMap {
+      width: 100%;
+      height: 600px;
+      left: auto;
+      margin-left: auto;
+    }
+  }
+
+  .Map {
+    width: 100%;
+    height: 600px;
+    left: auto;
+    margin-left: auto;
+    overflow: hidden;
+
+    .GoogleMap {
+      height: 600px;
+      width: 100%;
+      margin-left: auto;
+      left: auto;
+    }
+  }
+
+  .RedMapPlace {
+    .markerSearchBox {
+      width: 250px;
+    }
+  }
+
+  .RedBookPage, .NewRedBookPage {
+    position: absolute;
+    top: 20px;
+    width: 97%;
+    z-index: 1000;
+    margin: 0 10px;
+  }
+
+  .RedBookCover {
+    min-height: 300px;
+
+    .shadow {
+      height: 80px;
+    }
+
+    .cover-title-header {
+      
+      .city-name {
+        font-size: 40px;
+      }
+      .country-name {
+        font-size: 25px;
+      }  
+    
+    }
+
+    .button-close {
+      top: 10px;
+      right: 10px;
+
+      i {
+        font-size: 24px;
+      }
+    }
+
+    .join-us {
+      button {
+        font-size: 14px;
+        padding: 5px 10px;
+      }
+    }
+  }
+
+  .Page {
+
+    top: 25px;
+  }
+
+  .CityPeoplePage {
+    &.Page{ height: 0px;}
+
+    .people {
+      margin: 0px 5px 5px 0;
+      width: 48%;
+
+      &.alt {
+        margin: 0 0 5px 5px; 
+      }
+    }
+  }
+
+  .Footer {
+    background-color: #fff;
+  }
+}
