@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { updateLoginUserInfo, logOutUser, leaveUser } from '../actions'
-import { pushPath as pushState } from 'redux-simple-router'
+import { browserHistory } from 'react-router'
 import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom';
 import _ from 'lodash';
@@ -27,7 +27,7 @@ class RegisterPage extends Component {
     const {loginUser} = this.props;
 
     if( loginUser && !loginUser.id ){
-      this.props.pushState('/');
+      browserHistory.push('/');
     }
   }
 
@@ -411,7 +411,7 @@ class RegisterPage extends Component {
       );
       this.props.leaveUser();
       this.props.logOutUser();
-      this.props.pushState('/');
+      browserHistory.push('/');
       Parse.User.logOut();
     } 
 
@@ -464,7 +464,7 @@ class RegisterPage extends Component {
 
     const userInfo = Parse.User.current().toJSON();
     this.props.updateLoginUserInfo(userInfo);
-    this.props.pushState('/');
+    browserHistory.push('/');
 
   };
 
@@ -482,7 +482,6 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps, {
   updateLoginUserInfo,
-  pushState,
   logOutUser,
   leaveUser
 })(RegisterPage)

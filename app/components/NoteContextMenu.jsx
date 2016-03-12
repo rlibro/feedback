@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
 
-export default class RedBookNoteContextMenu extends Component {
+class NoteContextMenu extends Component {
 
   render(){
 
@@ -56,11 +57,24 @@ export default class RedBookNoteContextMenu extends Component {
 
 }
 
-RedBookNoteContextMenu.propTypes = {
-  noteAuthor: PropTypes.object.isRequired,
-  noteState: PropTypes.object.isRequired,
+NoteContextMenu.propTypes = {
   loginUser: PropTypes.object.isRequired,
+  noteState: PropTypes.object.isRequired,
+
+  // 외부 주입
   isOpenContext: PropTypes.bool.isRequired,
-  onDeleteNote: PropTypes.func.isRequired,
-  onEditNote: PropTypes.func.isRequired
+  noteAuthor: PropTypes.object.isRequired,
+  onEditNote: PropTypes.func.isRequired,
+  onDeleteNote: PropTypes.func.isRequired
+  
 }
+
+function mapStateToProps(state) {
+  return {
+    loginUser: state.login,
+    noteState: state.noteState
+  }
+}
+
+export default connect(mapStateToProps, {
+})(NoteContextMenu)

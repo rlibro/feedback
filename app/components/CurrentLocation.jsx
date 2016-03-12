@@ -1,9 +1,11 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
+import { updateAppState, updateCurrentUserLocation } from '../actions'
+
 import {default as ScriptjsLoader} from 'react-google-maps/lib/async/ScriptjsLoader';
 import {GoogleMap} from 'react-google-maps';
 
-
-export default class CurrentLocation extends Component {
+class CurrentLocation extends Component {
   static version = 22; //Math.ceil(Math.random() * 22);
 
   constructor(props){
@@ -36,6 +38,15 @@ export default class CurrentLocation extends Component {
   }
 
   render(){
+
+    const { appState: { loadedGoogleSDK } } = this.props;
+
+    //console.log('####> CurrentLocation Render: isGoogleSDK? ', loadedGoogleSDK);
+    // if( !loadedGoogleSDK ){
+    //   return false;
+    // }
+
+
     return <ScriptjsLoader
       hostname={'maps.googleapis.com'}
       pathname={'/maps/api/js'}
@@ -73,7 +84,7 @@ export default class CurrentLocation extends Component {
   onLoadedGoogle = () => {
 
     // google SDK 로드 완료!
-    this.props.onUpdateAppState({
+    this.props.updateAppState({
       loadedGoogleSDK: true
     })
 
@@ -146,7 +157,7 @@ export default class CurrentLocation extends Component {
 
       });
 
-      self.props.onUpdateCurrentUserLocation({ 
+      self.props.updateCurrentUserLocation({ 
         'cityName' : cityName, 
         'countryName' : countryName, 
         'latlng': latlng    
@@ -165,6 +176,18 @@ export default class CurrentLocation extends Component {
 
 CurrentLocation.propTypes = {
   loginUser: PropTypes.object.isRequired,
-  onUpdateAppState: PropTypes.func.isRequired,
-  onUpdateCurrentUserLocation: PropTypes.func.isRequired
+  updateAppState: PropTypes.func.isRequired,
+  updateCurrentUserLocation: PropTypes.func.isRequired
 }
+
+
+function mapStateToProps(state, ownProps) {
+  return {
+    appState: state.appState,
+    loginUser: state.login
+  }
+}
+
+export default connect(mapStateToProps, {
+  updateAppState, updateCurrentUserLocation
+})(CurrentLocation)

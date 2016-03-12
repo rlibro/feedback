@@ -1,4 +1,8 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
+import { updateNoteState, resetAddNote, addNote } from '../actions'
+
 import { findDOMNode } from 'react-dom';
 import _ from 'lodash';
 import AttachedPlaces from '../components/AttachedPlaces';
@@ -21,11 +25,11 @@ export default class RedBookNoteForm extends Component {
         lineCount: 0
       });
       
-      this.props.onUpdateNoteState({
+      this.props.updateNoteState({
         formText: ''
       });
 
-      this.props.onAddNoteDone();
+      this.handleAddNoteDone();
     }
   }
 
@@ -82,10 +86,7 @@ export default class RedBookNoteForm extends Component {
       <div className="note-form-footer">
         {/*this.renderAttachPlaces()*/}
         <AttachedPlaces 
-          appState={this.props.appState} 
-          noteState={this.props.noteState}
           onInsertPlace={this.handleInsertPlace}
-          onUpdateNoteState={this.props.onUpdateNoteState}
         />
         {this.renderPostButton()}
       </div>
@@ -97,7 +98,7 @@ export default class RedBookNoteForm extends Component {
 
     const node = findDOMNode(this.refs.textarea);
     node.value += str;
-    this.props.onUpdateNoteState({
+    this.props.updateNoteState({
       formText: node.value
     });   
 
@@ -127,7 +128,7 @@ export default class RedBookNoteForm extends Component {
       return alert('the content is empty');
     }
 
-    this.props.onAddNote(text, places);    
+    this.handleAddNote(text, places);    
     node.value = '';
     e.preventDefault()
   };
@@ -159,13 +160,51 @@ export default class RedBookNoteForm extends Component {
 
   };
 
+  handleAddNote = (noteText, markers) => {
+
+    const { redBookId } = this.props;
+    
+    let placeIds = [];
+     // 지도에 첨부된 마커(DB에 임시저장되어 있다) 
+     // 키값(DB에 저장된 ID) 뽑아서 노트에 넣어준다.
+    _.each(markers, function(marker){
+      placeIds.push(marker.key);
+    }.bind(this));
+
+    this.props.addNote(redBookId, noteText, placeIds, markers); 
+  };
+
+  handleAddNoteDone = () => {
+    this.props.resetAddNote();
+    this.props.onClose();
+  };
 }
 
 RedBookNoteForm.propTypes = {
   appState: PropTypes.object.isRequired,
   loginUser: PropTypes.object.isRequired,
   noteState: PropTypes.object.isRequired,
-  onUpdateNoteState: PropTypes.func.isRequired,
-  onAddNote: PropTypes.func.isRequired,
-  onAddNoteDone: PropTypes.func.isRequired
+  updateNoteState: PropTypes.func.isRequired,
+
+  // 외부 주입
+  redBookId: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired
 }
+
+function mapStateToProps(state) {
+  const {
+    pagination: { placesByRedBookId },
+  } = state
+
+
+  return {
+    appState: state.appState,
+    loginUser: state.login,
+    noteState: state.noteState,
+    
+  }
+}
+
+export default connect(mapStateToProps, {
+  updateNoteState, resetAddNote, addNote
+})(RedBookNoteForm)

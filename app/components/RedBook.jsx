@@ -1,10 +1,12 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
 
-export default class RedBook extends Component {
+class RedBook extends Component {
 
   render() {
 
-    const { redBook, onOpenRedBook, klassName } = this.props
+    const { redBook, klassName } = this.props
     const style = {
       color: 'white',
       backgroundSize: 'cover',
@@ -13,7 +15,7 @@ export default class RedBook extends Component {
       msTransition: 'all' // 'ms' is the only lowercase vendor prefix
     };
 
-    return <li style={style} className={klassName} onClick={onOpenRedBook.bind(this,redBook)}>
+    return <li style={style} className={klassName} onClick={this.handleOpenRedBook.bind(this,redBook)}>
       <a href={`/${redBook.uname}`}>
         <h3>{redBook.cityName}</h3>
         <h4>{redBook.countryName}</h4>
@@ -34,11 +36,30 @@ export default class RedBook extends Component {
       </div>
     }
   };
+
+  handleOpenRedBook = (redBook, e) => {
+    browserHistory.push({
+      pathname: `/guide/${redBook.uname}`,
+      state: {referer: '/'}
+    });
+    e.preventDefault()
+  };
 }
 
 RedBook.propTypes = {
-  klassName: PropTypes.string.isRequired,
   loginUser: PropTypes.object.isRequired,
-  redBook : PropTypes.object.isRequired,
-  onOpenRedBook : PropTypes.func.isRequired
+
+  // 외부 주입
+  klassName: PropTypes.string.isRequired,
+  redBook : PropTypes.object.isRequired
 }
+
+function mapStateToProps(state, ownProps) {
+  return {
+    loginUser: state.login
+  }
+}
+
+export default connect(mapStateToProps, {
+})(RedBook)
+

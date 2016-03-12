@@ -1,12 +1,12 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
+
 import { facebookLogin, updateLoginUserInfo, updateNoteState } from '../actions'
 import { fetchNotes, fetchPlaces,
-         updateNote, resetUpdateNote,
-         addPlace, updatePlace, deletePlace,
-         deleteNote, likeNote } from '../actions'
-import { fetchComments, addComment, deleteComment } from '../actions'
-import { pushPath as pushState } from 'redux-simple-router'
+         updateNote,
+         addPlace, updatePlace, deletePlace } from '../actions'
+
 import RedBookCover from '../components/RedBookCover'
 import ControlMap from '../components/ControlMap'
 import RedBookNoteList from '../components/RedBookNoteList'
@@ -94,12 +94,7 @@ class RedBookPage extends Component {
 
   renderCover = () => {
     const { loginUser, redBook, noteState, entities } = this.props;
-    return <RedBookCover 
-      loginUser={loginUser} 
-      redBook={redBook}
-      noteState={noteState}
-      onPushState={this.props.pushState}
-      onCloseRedBook={this.handleCloseRedBook} />
+    return <RedBookCover redBook={redBook} />
   };
 
   renderControlMap = () => {
@@ -114,19 +109,13 @@ class RedBookPage extends Component {
           canEdit: true,
           label: place.label,
           title: place.title,
-          position: place.position
+          position: place.position,
+          showInfo: place.showInfo || false,
+          isEditing: place.isEditing || false,
+          isNew: place.isNew || false
         }
-
-        if( place.showInfo ){
-          marker.showInfo = place.showInfo;
-        }
-
-        if( place.isEditing ) {
-          marker.isEditing = place.isEditing;
-        }
-
+        
         markers.push(marker)
-
       });
 
       return <ControlMap className="GoogleMap" 
@@ -189,62 +178,15 @@ class RedBookPage extends Component {
       </div>
     }
 
-
-
-    return <RedBookNoteList
-      appState={this.props.appState}
-      routing={this.props.routing}
-      loginUser={loginUser}
-      noteState={noteState}
-      entityNotes={entities.notes} 
-      entityComments={entities.comments}
-      entityPlaces={entities.places}
-      noteIds={notes.ids}
-      pagingCommentsByNoteId={pagingCommentsByNoteId}
-      
-      onUpdateNoteState={this.props.updateNoteState}
-      onLogin={this.handleFacebookLogin}
-      onPushState={this.props.pushState}
-      onFetchComments={this.handleFetchComments}
-      onSaveEditingNote={this.handleSaveEditingNote}
-      onSaveEditingNoteDone={this.props.resetUpdateNote}
-      onDeleteNote={this.handleDeleteNote}
-      onAddComment={this.handleAddComment}
-      onDeleteComment={this.handleDeleteComment}
-      onDeletePlace={this.handleDeletePlace}
-      onLikeNote={this.handleLikeNote}
-      />
+    return <RedBookNoteList noteIds={notes.ids} />
   };
 
-  handleFacebookLogin = () => {
-    this.props.facebookLogin(this.props.updateLoginUserInfo);    
-  };
-
-  handleCloseRedBook = (e) => {
-    const { noteState } = this.props;
-
-    if( noteState.editingId ) {
-      return alert('you are editing a note!');
-    }
-
-
-    this.props.updateNoteState({ places: [] });
-    this.props.pushState('/');
-  };
-
-  handleFetchComments =(noteId)=>{
-    this.props.fetchComments(noteId)
-  };
-
-  handleAddComment = (noteId, commentText) => {
-    this.props.addComment(noteId, commentText)
-  };
-
+  
   handleAddPlace = (marker) => {
     const {loginUser, noteState: {editingId}} = this.props;
 
     if( typeof marker.key === 'string'){
-      this.props.updatePlace(this.props.redBook.id, editingId, marker)
+      this.props.updatePlace(this.props.redBook.id, editingId, marker, true)
     }else{
       this.props.addPlace(marker.key, loginUser.id, editingId, marker.title, marker.label, {lat: marker.position.lat, lng: marker.position.lng});
     }
@@ -254,57 +196,13 @@ class RedBookPage extends Component {
   handleDeletePlace = (marker) => {
     this.props.deletePlace(marker.key);
   };
-
-  handleDeleteNote = (noteId) => {
-    this.props.deleteNote(noteId, this.props.redBook.id);
-  };
-
-  handleDeleteComment = (noteId, commentId) => {
-    this.props.deleteComment(commentId, noteId)
-  };
-
-  handleSaveEditingNote = (note, newText, places) => {
-
-    let placeIds = [];
-    let deletedPlaceId = note.places; 
-
-    // 첨부된 최종 위치를 확인해서 새로운 것은 추가하고, 삭제된 녀석을 뽑아낸다. 
-    _.each(places, function(place){
-
-      if( place.isNew ){
-        this.props.updatePlace(this.props.redBook.id, note.id, place);
-      }
-
-      placeIds.push(place.key);
-
-      deletedPlaceId = _.without(deletedPlaceId, place.key);
-
-    }.bind(this));
-
-
-    // 삭제할 녀석이 있다면 삭제 진행
-    _.each(deletedPlaceId, function(placeId){
-      this.props.deletePlace(placeId);
-    }.bind(this));
-
-
-    this.props.updateNote(this.props.redBook.id, note.id, newText, placeIds);
-  };
-
-  handleLikeNote = (noteId) => {
-    this.props.likeNote(noteId);
-  };
   
 }
 
 RedBookPage.propTypes = {
   noteState: PropTypes.object.isRequired,
-  pushState: PropTypes.func.isRequired,
   fetchNotes: PropTypes.func.isRequired,
   facebookLogin: PropTypes.func.isRequired,
-  addComment: PropTypes.func.isRequired,
-  deleteNote: PropTypes.func.isRequired,
-  deleteComment: PropTypes.func.isRequired,
   children: PropTypes.node
 }
 
@@ -313,20 +211,20 @@ function mapStateToProps(state) {
   const {
     pagination: { notesByRedBookId, placesByRedBookId, commentsByNoteId },
     entities: { redBooks },
-    routing: { path },
+    routing: { locationBeforeTransitions: { pathname } },
     noteState
   } = state
 
   return {
     appState: state.appState,
-    childPath: path,
+    childPath: pathname,
     noteState: noteState,
     loginUser: state.login,
     pagingNotesByRedBookId: notesByRedBookId,
     pagingCommentsByNoteId: commentsByNoteId,
     pagingPlacesByRedBookId: placesByRedBookId,
     entities: state.entities,
-    routing: state.routing
+    routing: state.routing.locationBeforeTransitions
   }
 }
 
@@ -337,16 +235,8 @@ export default connect(mapStateToProps, {
  
   fetchNotes,
   fetchPlaces,
-  fetchComments,
-  addComment,
   addPlace,
   updatePlace,
   updateNote,
-  resetUpdateNote,
-  deleteNote,
-  deleteComment,
-  deletePlace,
-  likeNote,
-
-  pushState
+  deletePlace
 })(RedBookPage)

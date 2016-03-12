@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { updateLoginUserInfo } from '../actions'
 import { connect } from 'react-redux'
-import { pushPath as pushState } from 'redux-simple-router'
+import { browserHistory } from 'react-router'
 import { findDOMNode } from 'react-dom';
 import _ from 'lodash';
 
@@ -26,7 +26,7 @@ class UserProfilePage extends Component {
     const {loginUser} = this.props;
 
     if( loginUser && !loginUser.id ){
-      this.props.pushState('/');
+      browserHistory.push('/');
     }
   }
 
@@ -333,6 +333,5 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, {
-  updateLoginUserInfo,
-  pushState
+  updateLoginUserInfo
 })(UserProfilePage)

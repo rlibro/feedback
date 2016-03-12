@@ -4,14 +4,13 @@ import React from 'react'
 import { render } from 'react-dom'
 import Root from './containers/Root'
 import configureStore from './store/configureStore'
-import { createHistory } from 'history'
-import { syncReduxAndRouter  } from 'redux-simple-router'
+import { browserHistory } from 'react-router'
+import { syncHistoryWithStore  } from 'react-router-redux'
 
 const initialState = window.__INITIAL_STATE__;
 const store = configureStore(initialState);
-const history = createHistory()
+const history = syncHistoryWithStore(browserHistory, store)
 
-syncReduxAndRouter(history, store)
 
 render(
   <Root store={store} history={history} />, 

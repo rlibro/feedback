@@ -1,13 +1,18 @@
 import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
+import { updateAppState, findThisKeyWord } from '../actions'
+import { findDOMNode } from 'react-dom';
 
-export default class Explore extends Component {
+class Explore extends Component {
 
   constructor(props) {
     super(props);
 
     let mode = 'none';
+    const { routing:{ pathname } } = props;
 
-    switch(props.routing.path){
+    switch(pathname){
 
       case '/':
       mode = 'book';
@@ -26,11 +31,14 @@ export default class Explore extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { appState: {search: {query}}, routing : { path } } = nextProps;
+    const { 
+      appState: {search: {query}}, 
+      routing:{ pathname },      
+    } = nextProps;
 
     let mode = 'none';
 
-    switch(path){
+    switch(pathname){
 
       case '/':
       mode = 'book';
@@ -43,14 +51,13 @@ export default class Explore extends Component {
 
     this.setState({mode: mode});
 
-
     if( this.props.appState.search.mode !== mode && query ){
-      this.handleFind();
+      this.handleFind(query);
     } 
   }
 
   render() {
-    const {routing, appState: { search: { query } }} = this.props;
+    const { appState: { search: { query } }} = this.props;
     const { mode } = this.state;
 
     if( mode === 'none' ){
@@ -70,7 +77,7 @@ export default class Explore extends Component {
           <input ref="input" className="ip-search"
                  placeholder={placeholder}
                  defaultValue={query}
-                 onKeyUp={this.handleKeyUp} />
+                 onKeyUp={this.handleKeyUp.bind(this)} />
         </div>
       </div>
     }
@@ -86,20 +93,22 @@ export default class Explore extends Component {
     let timer = setTimeout(function(){
       this.handleFind()
     }.bind(this), 500);
-    this.setState({checkTimer: timer});
-
-        
+    this.setState({checkTimer: timer});    
   };
 
-  handleFind = () => {
-    var keyword = this.refs.input.value;
-
+  handleFind = (query) => {
+    let keyword = query;
+    const node = findDOMNode(this.refs.input);
     const { mode } = this.state;
 
+    if( !keyword ) {
+      keyword = node.value;
+    }
+
     if( keyword ){
-      this.props.onFindThisKeyWord(keyword, mode);
+      this.props.findThisKeyWord(keyword, mode);
     } else {
-      this.props.onUpdateAppState({
+      this.props.updateAppState({
         search: {
           mode: mode,
           query: '',
@@ -114,6 +123,17 @@ export default class Explore extends Component {
 Explore.propTypes = {
   appState: PropTypes.object.isRequired,
   routing: PropTypes.object.isRequired,
-  onUpdateAppState: PropTypes.func.isRequired,
-  onFindThisKeyWord: PropTypes.func.isRequired
+  updateAppState: PropTypes.func.isRequired,
+  findThisKeyWord: PropTypes.func.isRequired
 }
+
+function mapStateToProps(state, ownProps) {
+  return {
+    routing: state.routing.locationBeforeTransitions,
+    appState: state.appState
+  }
+}
+
+export default connect(mapStateToProps, {
+  updateAppState, findThisKeyWord
+})(Explore)

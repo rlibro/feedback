@@ -1,8 +1,34 @@
 import React, { Component, PropTypes } from 'react';
-import {default as update} from 'react-addons-update';
+import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
+import { updateNoteState, addPlace, updatePlace} from '../actions'
+
 import {GoogleMapLoader, GoogleMap, Marker, InfoWindow, Circle, SearchBox} from 'react-google-maps';
 import {triggerEvent} from 'react-google-maps/lib/utils';
 import _ from 'lodash'
+
+
+function findUniqLabel( markers ) {
+
+  if( markers.length === 0 ){
+    return '1';
+  }
+
+  markers.sort(function(m1, m2){
+    return m1.label - m2.label;
+  });
+
+
+  let i=0;
+  for(; i<markers.length; ++i) {
+
+    if( markers[i].label != i+1 ){
+      return (i+1)+'';
+    }
+  }
+  return (markers.length + 1) +'';
+
+};
 
 /*
  * This is the modify version of:
@@ -10,7 +36,7 @@ import _ from 'lodash'
  *
  * Loaded using async loader.
  */
-export default class ControlMap extends Component {
+class ControlMap extends Component {
 
   static version = Math.ceil(Math.random() * 22);
 
@@ -20,25 +46,46 @@ export default class ControlMap extends Component {
     this.state = {
       moveToCenter: false,
       usedUserLocation: false,
-      isMarkerMode: false,
+      isAddMarker: false,
       markers: props.markers.concat()
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  shouldComponentUpdate(nextProps, nextState) {
 
-    this.setState({
-      markers: nextProps.markers.concat()
-    });
+    const { markers } = nextState;
+    const { isAddMarker, usedUserLocation } = nextState;
+    let isUpdate = false;
+
+    if( markers.length !== this.state.markers.length ) { return true; } 
+
+    // 마커 인스턴스는 매번 변경되므로 실제 속성이 변경되는지를 확인해야한다.
+    markers.forEach(function(marker, i){
+      const prevMarker = this.state.markers[i];
+      if( !prevMarker ) { isUpdate = true; }  // 새로 추가 됐으면 무조건 업데이트!
+      if(  marker.showInfo  !== prevMarker.showInfo 
+        || marker.title     !== prevMarker.title 
+        || marker.isEditing !== prevMarker.isEditing ) {
+        isUpdate = true;
+      }
+    }.bind(this));
+
+    // 상단의 버튼이 달라지는 경우
+    if ( isAddMarker      !== this.state.isAddMarker 
+      || usedUserLocation !== this.state.usedUserLocation ) {
+      return true;
+    }
+
+    return isUpdate;
   }
 
 
   render () {
-    const { isExpanded, isMarkerMode, usedUserLocation } = this.state;
-    let klassName = 'AddPlace2Note Map';
+    const { isAddMarker, usedUserLocation } = this.state;
+    let klassName = 'ControlMap Map';
     let style = {}
 
-    if( isMarkerMode ){
+    if( isAddMarker ){
       klassName += ' add-marker-on';
     }
 
@@ -57,8 +104,8 @@ export default class ControlMap extends Component {
   };
 
   renderGoogleMap = () => {
-    const { isReadOnly, loginUser } = this.props;
-    const { markers, usedUserLocation, moveToCenter, isMarkerMode } = this.state;
+    const { loginUser } = this.props;
+    const { markers, usedUserLocation, moveToCenter, isAddMarker } = this.state;
     let { zoomLevel = 13, disableMoveCenter, mapCenter } = this.props;
 
     const defaultOptions = {
@@ -120,11 +167,7 @@ export default class ControlMap extends Component {
   };
 
   renderMapButtons = () => {
-    const { isReadOnly, loginUser } = this.props;
-    const { isExpanded } = this.state;
-    if( isReadOnly ){
-      return false;
-    }
+    const { loginUser } = this.props;
 
     return <div className="btn-groups">
       <div className="map-btn close">
@@ -149,7 +192,6 @@ export default class ControlMap extends Component {
 
   renderMarkers = () => {
 
-    const { isReadOnly } = this.props;
     const { markers } = this.state;
     //var bounds = new google.maps.LatLngBounds();
     var markerArray = [];
@@ -179,34 +221,37 @@ export default class ControlMap extends Component {
 
   renderInfoWindow = (ref, marker) => {
 
-    const { isReadOnly } = this.props;
-    
-    let InfoContent = <div id={marker.key} 
-      className="infoWindow" 
+    let InfoContent = <div id={marker.key} className="infoWindow" 
       onClick={this.handleEditInfoWindowTitle.bind(this, marker)}>
-      <i className="fa fa-pencil-square-o" /> {marker.title}
+      <div className="iw-title"><i className="fa fa-pencil-square-o" /> {marker.title}</div>
     </div>;
 
-    if( isReadOnly || !marker.canEdit ) {
+    if( !marker.canEdit ) {
       InfoContent = <div id={marker.key} className="infoWindow">{marker.title}</div>;
     }
 
     if( marker.isEditing ){
       InfoContent = <div id={marker.key} className="infoWindow">
-        <input type="text" 
-          defaultValue={marker.title}
-          placeholder={'Input your place name'}
-          autoFocus={true}
-          onKeyDown={this.handleKeyDownInfoWindow.bind(this, marker)}
-          onBlur={this.handleEditDoneInfoWindowTitle.bind(this, marker)}/>
-        <button>OK</button>
+        <div>
+          <input type="text" className="place-name"
+            defaultValue={marker.title}
+            placeholder={'Input your place name'}
+            autoFocus={true}
+            onKeyDown={this.handleKeyDownInfoWindow.bind(this, marker)}
+            /> 
+        </div>
+        <div>
+          <button className="save-btn" onClick={this.handleEditInfoWindowTitleDone.bind(this, marker)}>SAVE</button>
+          <button className="delete-btn" onClick={this.handleDeleteMarker.bind(this, marker)}>DEL</button>
+        </div>
       </div>;
     }
 
     return (
-      <InfoWindow key={`${ref}_info_window`}
-        onClick={this.handleInfoWindow}        
-        onCloseclick={this.handleCloseclick.bind(this, marker)}>{InfoContent}
+      <InfoWindow key={`${ref}_info_window`} 
+        onClick={this.handleInfoWindow}
+        onCloseclick={this.handleCloseInfoWindow.bind(this, marker)}>
+        {InfoContent}
       </InfoWindow>
     )    
   };
@@ -221,7 +266,7 @@ export default class ControlMap extends Component {
   handlePlacesChanged = () => {
     const places = this.refs.searchBox.getPlaces();
     let { markers } = this.state;
-    let uniqLabelName = this.findUniqLabel();
+    let uniqLabelName = findUniqLabel(markers);
 
     // 검색창에서 검색한 마커를 지도에 꼽는다.
     places.forEach(function (place) {
@@ -253,129 +298,160 @@ export default class ControlMap extends Component {
   };
 
   handleEditInfoWindowTitle = (marker) => {
-    marker.isEditing = true;
 
-    var { markers } = this.state;
-    update(markers, { $set: [marker] });
-    this.setState({ markers });
+    const { markers } = this.state;
+    const clones = _.cloneDeep(markers)
 
+    for( var i=0; i < clones.length ; ++i){
+      if( clones[i].key === marker.key ){
+        clones[i].isEditing = true;
+        break;
+      }
+    }
+
+    this.setState({markers: clones});
   };
 
   handleKeyDownInfoWindow = (marker, e) => {
     if(e.key === 'Enter') {
-      this.handleEditDoneInfoWindowTitle(marker, e);
+      this.handleEditInfoWindowTitleDone(marker, e);
     }
   };
 
 
   // 이게 사실상 저장!
-  handleEditDoneInfoWindowTitle = (marker, e) => {
+  handleEditInfoWindowTitleDone = (editMarker, e) => {
 
-    if( e.target.value.length === 0){
+    const {loginUser, noteState: {editingId}, notes} = this.props;
+    const markerTitle = $(`#${editMarker.key} input`).val();
+    const { markers } = this.state;
+    const clones = _.cloneDeep(markers);
+
+    if ( markerTitle === '' ){
       alert('palce name is empty!');
       return;
-    }
+    } 
 
-    marker.title = e.target.value;
-    marker.isEditing = false;
-    marker.canEdit = true;
+    for( var i=0; i < clones.length ; ++i){
+      let marker = clones[i];
 
-    if( typeof marker.position.lat === 'function') {
-      marker.position = {
-        lat : marker.position.lat(),
-        lng : marker.position.lng()
+      if( marker.key === editMarker.key ){
+        marker.isEditing = true;
+        marker.title = markerTitle;
+        marker.isEditing = false;
+        marker.canEdit = true;
+
+        if( typeof editMarker.position.lat === 'function') {
+          marker.position = {
+            lat : editMarker.position.lat(),
+            lng : editMarker.position.lng()
+          }
+        }
+
+        if( typeof editMarker.key === 'number') {
+          // 지도에 핀을 꼽으면 DB에 임시로 마커를 저장한다
+          this.props.addPlace(marker.key, 
+            loginUser.id, editingId, marker.title, marker.label, 
+            {lat: marker.position.lat, lng: marker.position.lng}
+          );
+        } else {
+
+          // 임시핀이 아니면 이름만 수정한다.
+          var note = notes[editingId];
+          var redBookId = null;
+          if( note ) {
+            redBookId = note.redBook.objectId
+          } 
+
+          this.props.updatePlace(redBookId, editingId, marker);
+        }
+
+        break;
       }
     }
-
-    this.props.onAddPlace(marker);
-
-    var {markers} = this.state;
-
-    update(markers, { $set: [marker] });
-    this.setState({ markers });
-    this.props.onUpdateNoteState({
-      places: markers
+   
+    this.setState({markers: clones});
+    this.props.updateNoteState({
+      places: clones
     });
-
-  };
-
-  findUniqLabel = () => {
-    let {markers} = this.state;
-
-    if( markers.length === 0 ){
-      return '1';
-    }
-
-    markers.sort(function(m1, m2){
-      return m1.label - m2.label;
-    });
-
-
-    let i=0;
-    for(; i<markers.length; ++i) {
-
-      if( markers[i].label != i+1 ){
-        return (i+1)+'';
-      }
-    }
-    return (markers.length + 1) +'';
 
   };
 
   handleMapClick =(event) =>{
+    if( !this.state.isAddMarker ) { return false; }
 
-    const { isReadOnly } = this.props;
-    const { isMarkerMode } = this.state;
+    const { markers } = this.state;
+    const clones = _.cloneDeep(markers);
 
-    if( isReadOnly ) {
-      return false;
-    }
-
-    if( !isMarkerMode ) { return false; }
-
-    let {markers} = this.state;
-    let uniqLabelName = this.findUniqLabel();
-    let self = this;
-    let marker = {
+    // 새로운 임시 마커를 추가
+    clones.push({
       position: event.latLng,
       defaultAnimation: 5,
       title: '',
-      label: uniqLabelName,
+      label: findUniqLabel(markers),
       key: Date.now(),
       showInfo: true,
       isEditing: true 
-    };
-
-    markers = update(markers, { $push: [marker] });
-    this.setState({ markers });
-    this.setState({
-      isMarkerMode: false
     });
 
-    this.props.onUpdateNoteState({
+    this.setState({ 
+      markers: clones,
+      isAddMarker: false
+    });
+
+    this.props.updateNoteState({
       places: markers
-    })
-
-
+    });
   };
 
   handleMarkerClick = (marker) => {
-    marker.showInfo = !marker.showInfo;
-    this.setState(this.state);
+
+    const { markers } = this.state;
+    const clones = _.cloneDeep(markers);
+
+    for( var i=0; i < clones.length ; ++i){
+      if( clones[i].key === marker.key ){
+        clones[i].showInfo = !marker.showInfo;
+        break;
+      }
+    }
+
+    this.setState({markers: clones});
   };
 
-  handleCloseclick = (marker) => {
-    let {markers} = this.state;
-    markers = _.without(markers, marker);
-    this.setState({ markers });
-    this.props.onUpdateNoteState({
-      places: markers
-    })
+  handleCloseInfoWindow = (marker) => {
+
+    const { markers } = this.state;
+    const clones = _.cloneDeep(markers);
+
+    for( var i=0; i < clones.length ; ++i){
+      if( clones[i].key === marker.key ){
+        clones[i].showInfo = false;
+        clones[i].isEditing = false;
+        break;
+      }
+    }
+
+    this.setState({markers: clones});
+  };
+
+
+  handleDeleteMarker = (marker) => {
+    let yes = confirm('delete this marker');
+    if( yes ){
+      let {markers} = this.state;
+      let newMarkers = _.without(markers, marker);
+
+      this.setState({ markers : newMarkers });
+      this.props.updateNoteState({
+        places: newMarkers
+      });
+    }
   };
 
   handleToggleMarker = () => {
     this.setState({
-      isMarkerMode: !this.state.isMarkerMode,
+      isAddMarker: !this.state.isAddMarker,
       moveToCenter: false
     });
   };
@@ -400,16 +476,23 @@ export default class ControlMap extends Component {
   handleClosePlaceMap = () => {
 
     let {markers} = this.state;
-    let i=0; 
+    let i=0, isEditing = false;
 
     for(; i<markers.length; ++i ){
       let marker = markers[i];
       if( marker.title.length === 0){
-        return alert('make sure place name!');
+        marker.showInfo = true;
+        marker.isEditing = true;
+        isEditing = true;
       }
     }
 
-    this.props.onUpdateNoteState({
+    if(isEditing){
+      this.setState({markers:markers});
+      return alert('make sure your place name!');
+    }
+
+    this.props.updateNoteState({
       openMap: false
     })
   };
@@ -417,10 +500,28 @@ export default class ControlMap extends Component {
 
 ControlMap.propTypes = {
   loginUser: PropTypes.object.isRequired,
+  noteState: PropTypes.object.isRequired,
+  updateNoteState: PropTypes.func.isRequired,
+
+  // 외부 주입
+  markers: PropTypes.array.isRequired,
   mapCenter : PropTypes.shape({
     lat: React.PropTypes.number,
     lng: React.PropTypes.number
-  }),
-  onAddPlace: PropTypes.func.isRequired,
-  onUpdateNoteState: PropTypes.func.isRequired
+  })
+  
 }
+
+function mapStateToProps(state) {
+  
+  return {
+    appState: state.appState,
+    noteState: state.noteState,
+    loginUser: state.login,
+    notes: state.entities.notes
+  }
+}
+
+export default connect(mapStateToProps, {
+  updateNoteState, addPlace, updatePlace
+})(ControlMap)

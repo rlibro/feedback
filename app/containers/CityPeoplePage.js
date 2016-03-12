@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { pushPath as pushState, replacePath } from 'redux-simple-router'
+import { browserHistory } from 'react-router'
 import { checkInHere, checkOutHere } from '../actions'
 import { fetchCityPeoples } from '../actions'
 import { findDOMNode } from 'react-dom'
@@ -225,24 +225,21 @@ class CityPeoplePage extends Component {
 
 
   hanldeCloseRedBook = () => {
-    this.props.pushState(`/guide/${this.props.uname}`)
+    browserHistory.push(`/guide/${this.props.uname}`)
   };
 }
 
-CityPeoplePage.propTypes = {
-  pushState: PropTypes.func.isRequired,
-}
-
+CityPeoplePage.propTypes = {}
 
 function mapStateToProps(state) {
 
   const {
     entities : { users, redBooks },
     pagination: { peoplesByUname },
-    routing: { path }
+    routing: { locationBeforeTransitions: {pathname} }
   } = state
 
-  let uname = /\/guide\/(.*)\/people/.exec(path)[1];  
+  let uname = /\/guide\/(.*)\/people/.exec(pathname)[1];  
   let redBookId = null;
   for ( let id in redBooks ){
     if( redBooks[id].uname === uname ){
@@ -250,7 +247,6 @@ function mapStateToProps(state) {
       break;
     }
   }
-
 
   return {
     loginUser: state.login,
@@ -264,7 +260,5 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, {
   checkInHere,
   checkOutHere,
-  
-  pushState,
   fetchCityPeoples
 })(CityPeoplePage)

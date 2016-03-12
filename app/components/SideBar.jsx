@@ -1,7 +1,11 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
+import { updateAppState } from '../actions'
+
 import Footer from '../components/Footer'
 
-export default class SideBar extends Component {
+class SideBar extends Component {
 
   render(){
 
@@ -103,14 +107,14 @@ export default class SideBar extends Component {
   };
 
   handleToggleSideBar = (e) => {
-    this.props.onUpdateAppState({
+    this.props.updateAppState({
       sidebar: false
     });
   };
 
   handleProfile = (e) => {
-    this.props.onPushState('/profile');
-    this.props.onUpdateAppState({
+    browserHistory.push('/profile');
+    this.props.updateAppState({
       sidebar: false
     });
 
@@ -118,7 +122,7 @@ export default class SideBar extends Component {
 
   handleFacebookLogin = (e) => {
     this.props.onLogin();
-    this.props.onUpdateAppState({
+    this.props.updateAppState({
       sidebar: false
     });
 
@@ -127,7 +131,7 @@ export default class SideBar extends Component {
   handleFacebookLogout = (e) => {
     this.props.onLogOut();
     e.preventDefault();
-    this.props.onUpdateAppState({
+    this.props.updateAppState({
       sidebar: false
     });
   };
@@ -139,6 +143,18 @@ SideBar.propTypes = {
   loginUser: PropTypes.object.isRequired,
   onLogin: PropTypes.func.isRequired,
   onLogOut: PropTypes.func.isRequired,
-  onUpdateAppState: PropTypes.func.isRequired,
-  onPushState: PropTypes.func.isRequired
+  updateAppState: PropTypes.func.isRequired
 }
+
+
+function mapStateToProps(state, ownProps) {
+  return {
+    appState: state.appState,
+    loginUser: state.login
+  }
+}
+
+export default connect(mapStateToProps, {
+  updateAppState
+})(SideBar)
+

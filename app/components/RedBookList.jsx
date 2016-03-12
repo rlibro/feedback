@@ -1,4 +1,8 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
+import { fetchRedBooks, findThisKeyWord } from '../actions'
+
 import RedBook from '../components/RedBook';
 
 import RedBookListByCountry from '../components/RedBookListByCountry';
@@ -24,7 +28,7 @@ function insertAdsenceBetweenCards(cards){
   return cards;
 }
 
-export default class RedBookList extends Component {
+class RedBookList extends Component {
 
   /**
    * 레드북 목록을 가져오거나 사용자의 위치정보가 업데이트 된 경우에만 다시 그림
@@ -54,7 +58,7 @@ export default class RedBookList extends Component {
   // 사용자의 위치가 업데이트되면 원래 목록에서도 빼줘야한다.
   renderRedBooks = () => {
 
-    const { loginUser, redBooks, entities, onOpenRedBook } = this.props;
+    const { loginUser, redBooks, entities } = this.props;
     const { isFetching } = redBooks, location = loginUser.current_location;
     let ids = redBooks.ids || [];
 
@@ -80,7 +84,7 @@ export default class RedBookList extends Component {
         return <RedBook key={i} klassName={className} 
           redBook={redBook} 
           loginUser={loginUser}
-          onOpenRedBook={onOpenRedBook} />
+        />
 
       } else {
         className += ' adsence'
@@ -99,7 +103,18 @@ export default class RedBookList extends Component {
 
 RedBookList.propTypes = {
   loginUser : PropTypes.object.isRequired,
-  redBooks : PropTypes.object.isRequired,
   entities : PropTypes.object.isRequired,
-  onOpenRedBook : PropTypes.func.isRequired
+  redBooks : PropTypes.object.isRequired,
+  onGetRedBoodCardClassName: PropTypes.func.isRequired
 }
+
+function mapStateToProps(state, ownProps) {
+  return {
+    loginUser: state.login,
+    entities: state.entities
+  }
+}
+
+export default connect(mapStateToProps, {
+})(RedBookList)
+

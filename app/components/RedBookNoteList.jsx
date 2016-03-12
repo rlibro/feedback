@@ -1,17 +1,17 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
+import { updateNoteState } from '../actions'
+
 import RedBookNote from '../components/RedBookNote'
 
-export default class RedBookNoteList extends Component {
+class RedBookNoteList extends Component {
 
   render(){
 
     const { entityNotes, entityComments, entityPlaces,
             noteIds, loginUser, noteState } = this.props;
-    const { onLogin, onPushState, childPath,
-            onFetchComments, onAddComment, onDeletePlace,
-            onSaveEditingNote, onSaveEditingNoteDone, 
-            onDeleteNote, onDeleteComment, onLikeNote
-          } = this.props;
+    const { childPath } = this.props;
 
     let klassName = 'RedBookNoteList';
     if( noteState.editingId ) {
@@ -43,25 +43,11 @@ export default class RedBookNoteList extends Component {
         });
 
         return <RedBookNote key={i}
-          appState={this.props.appState}
-          routing={this.props.routing}
-          loginUser={loginUser}
-          noteState={noteState}
+          
           note={note}
           comments={comments}
           places={places}
 
-          onUpdateNoteState={this.props.onUpdateNoteState}
-          onLogin={onLogin}
-          onFetchComments={onFetchComments}
-          onDeleteNote={onDeleteNote}
-          onAddComment={onAddComment} 
-          onSaveEditingNote={onSaveEditingNote}
-          onSaveEditingNoteDone={onSaveEditingNoteDone}
-          onDeleteComment={onDeleteComment}
-          onDeletePlace={onDeletePlace}
-          onLikeNote={onLikeNote}
-          onPushState={onPushState}
           />
       }) }
     </div>
@@ -73,21 +59,34 @@ RedBookNoteList.propTypes = {
   routing: PropTypes.object.isRequired,
   loginUser: PropTypes.object.isRequired,
   noteState: PropTypes.object.isRequired,
-  onUpdateNoteState: PropTypes.func.isRequired,
-  noteIds: PropTypes.array.isRequired,
   
   entityNotes: PropTypes.object.isRequired,
   entityComments: PropTypes.object.isRequired,
   entityPlaces: PropTypes.object.isRequired,
 
-  onLogin: PropTypes.func.isRequired,
-  onFetchComments: PropTypes.func.isRequired,
-  onAddComment: PropTypes.func.isRequired,
-  onSaveEditingNote: PropTypes.func.isRequired,
-  onSaveEditingNoteDone: PropTypes.func.isRequired,
-  onDeleteNote: PropTypes.func.isRequired,
-  onDeleteComment: PropTypes.func.isRequired,
-  onDeletePlace: PropTypes.func.isRequired,
-  onLikeNote: PropTypes.func.isRequired,
-  onPushState: PropTypes.func.isRequired
+  // 외부에서 주입
+  noteIds: PropTypes.array.isRequired
 }
+
+function mapStateToProps(state, ownProps) {
+
+  const {
+    pagination: { commentsByNoteId }
+  } = state
+
+  return {
+    routing: state.routing.locationBeforeTransitions,
+    appState: state.appState,
+    loginUser: state.login,
+    noteState: state.noteState,
+    entityNotes: state.entities.notes,
+    entityComments: state.entities.comments,
+    entityPlaces: state.entities.places,
+    pagingCommentsByNoteId: commentsByNoteId,
+
+  }
+}
+
+export default connect(mapStateToProps, {
+  
+})(RedBookNoteList)

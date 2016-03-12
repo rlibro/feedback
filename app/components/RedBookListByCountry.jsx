@@ -1,4 +1,8 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
+import { updateAppState } from '../actions'
+
 import RedBook from '../components/RedBook';
 
 function insertAdsenceBetweenCards(cards){
@@ -13,7 +17,7 @@ function insertAdsenceBetweenCards(cards){
   return cards;
 }
 
-export default class RedBookListByCountry extends Component {
+class RedBookListByCountry extends Component {
 
   render(){
     const { loginUser } = this.props;
@@ -29,7 +33,7 @@ export default class RedBookListByCountry extends Component {
 
   renderListByLocation = (location) => {
 
-    let { entities : { redBooks }, onOpenRedBook, onCreateRedBook, loginUser } = this.props;
+    let { entities : { redBooks }, loginUser } = this.props;
     let hasThisCity = false;
     
     // 현재 위치에 있는 나라와 도시를 분리해 낸다.
@@ -69,8 +73,7 @@ export default class RedBookListByCountry extends Component {
             return <RedBook key={i}  
               klassName={className}
               redBook={redBook}
-              loginUser={loginUser}
-              onOpenRedBook={onOpenRedBook} />
+            />
 
           } else {
 
@@ -82,9 +85,6 @@ export default class RedBookListByCountry extends Component {
             </li>
 
           }
-
-          
-
         })}
 
         {this.renderRequestNewRedBook(hasThisCity, redBooks.length)}
@@ -97,10 +97,8 @@ export default class RedBookListByCountry extends Component {
 
   renderNewRedBookCard = (hasThisCity, location) => {
 
-    const { onCreateRedBook } = this.props;
-
     if( !hasThisCity ){
-      return <li className="RedBook left odd create-book" onClick={onCreateRedBook.bind(this,location)}>
+      return <li className="RedBook left odd create-book" onClick={this.handleCreateRedBook.bind(this,location)}>
         <h4>You are in {location.cityName}</h4>
         <p>Be the first of {location.countryName}</p>
         <div className="sign">
@@ -130,8 +128,37 @@ export default class RedBookListByCountry extends Component {
     }
 
   };
+
+  handleCreateRedBook = (loc, e) => {
+
+    const { cityName, countryName } = loc;
+    this.props.updateAppState({isValidCreate: true});
+    browserHistory.push({
+      pathname: `/create/${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`, 
+      state: `${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`
+    });
+    e.preventDefault();
+  };
 }
 
 RedBookListByCountry.propTypes = {
-  onGetRedBoodCardClassName : PropTypes.func.isRequired,
+  loginUser : PropTypes.object.isRequired,
+  entities : PropTypes.object.isRequired,
+  updateAppState: PropTypes.func.isRequired,
+
+  // 외부 주입
+  onGetRedBoodCardClassName : PropTypes.func.isRequired
 }
+
+
+function mapStateToProps(state, ownProps) {
+  return {
+    loginUser: state.login,
+    entities: state.entities
+  }
+}
+
+export default connect(mapStateToProps, {
+  updateAppState
+})(RedBookListByCountry)
+

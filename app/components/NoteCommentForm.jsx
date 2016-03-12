@@ -1,20 +1,46 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
+import { facebookLogin, updateAppState, updateLoginUserInfo, logOutUser } from '../actions'
 import { findDOMNode } from 'react-dom';
 
-export default class NoteCommentForm extends Component {
+class NoteCommentForm extends Component {
 
   constructor(props){
     super(props)
-
-    this.state = {
-      commentText: ''
-    }
+    this.state = { commentText: '' }
   }
 
-  renderLogin = () => {
-    return <div className="NoteCommentForm"> 
-      if you leave a comment, please <a href="#" onClick={this.handleFacebookLogin}><i className="fa fa-facebook" />  login with facebook</a>
+  render() {
+
+    const { loginUser } = this.props;
+
+    if( !loginUser.id ) {
+      return <div className="NoteCommentForm"> 
+        if you leave a comment, please <a href="#" onClick={this.handleFacebookLogin}><i className="fa fa-facebook" />  login with facebook</a>
+      </div>      
+    } 
+
+    return <div className="NoteCommentForm">
+      <div className="profile photo">
+        <img src={loginUser.picture} />
+      </div>
+      {this.renderCommentByState()}
     </div>
+  }
+
+  renderCommentByState = () => {
+
+    const { noteState:{ stateAddComment } } = this.props;
+
+
+    if( stateAddComment === 'READY') {
+      return this.renderCommentReady();
+    } 
+
+    if (stateAddComment === 'REQUESTING') {
+      return this.renderCommentRequesting();
+    }
+
   };
 
   renderCommentReady = () => {
@@ -42,39 +68,7 @@ export default class NoteCommentForm extends Component {
 
   };
 
-  renderCommentByState = (stateComment) => {
-
-    if( stateComment === 'READY') {
-      return this.renderCommentReady();
-    } 
-
-    if (stateComment === 'REQUESTING') {
-      return this.renderCommentRequesting();
-    }
-
-  };
-
-
-  renderForm = (stateComment) => {
-    const { loginUser } = this.props;
-
-    return <div className="NoteCommentForm">
-    
-      <div className="profile photo">
-        <img src={loginUser.picture} />
-      </div>
-      {this.renderCommentByState(stateComment)}
-    </div>
-
-  };
-
-  render() {
-
-    const { loginUser, noteState:{ stateAddComment } } = this.props;
-
-    return loginUser.id ? this.renderForm(stateAddComment) : this.renderLogin();
-  }
-
+  
   handleCheckEnter = (e) => {
     if(e.key === 'Enter') {
       this.handleSendComment(e);
@@ -102,15 +96,60 @@ export default class NoteCommentForm extends Component {
   };
 
   handleFacebookLogin = (e) => {
-    this.props.onLogin();
+    this.props.facebookLogin(function(result){
+
+      this.props.updateAppState({
+        tringLogin: false
+      })
+
+      if( result.success ){
+        const userInfo = result.success.parseUser.toJSON();
+        this.props.updateLoginUserInfo(userInfo);
+      } else {
+
+        Parse.FacebookUtils.unlink(
+          Parse.User.current(), 
+          function success(a){
+            console.log('unlink success', a)
+          }, 
+          function error(b){
+            console.log('unlink error', b)
+          }
+        );
+        Parse.User.logOut();
+
+
+        console.log(result.error);
+        if( result.error.code === 190){
+          this.handleLogOut();
+        }
+
+      }
+      
+    
+    }.bind(this));
     e.preventDefault();
+ 
   };
+
 }
 
 NoteCommentForm.propTypes = {
   loginUser: PropTypes.object.isRequired,
   noteState: PropTypes.object.isRequired,
+
+  // 외부에서 주입
   isOpenComment: PropTypes.bool.isRequired,
-  onAddComment: PropTypes.func.isRequired,
-  onLogin: PropTypes.func.isRequired
+  onAddComment: PropTypes.func.isRequired
 }
+
+function mapStateToProps(state) {
+  return {
+    loginUser: state.login,
+    noteState: state.noteState,
+  }
+}
+
+export default connect(mapStateToProps, {
+  facebookLogin, updateAppState, updateLoginUserInfo, logOutUser
+})(NoteCommentForm)

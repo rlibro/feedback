@@ -1,7 +1,7 @@
 import * as ActionTypes from '../actions'
 import merge from 'lodash/merge'
 import paginate from './paginate'
-import { routeReducer } from 'redux-simple-router'
+import { routerReducer } from 'react-router-redux'
 import { combineReducers } from 'redux'
 
 // API 응답은 캐시를 위해 모두 entities에 저장한다. 
@@ -22,6 +22,9 @@ function entities(state = { redBooks: {}, notes:{}, comments:{}, users:{}, place
       // 댓글이 추가 되면 노트의 댓글 목록에 아이디를 추가하고 엔터티에 저장한다.
       case ActionTypes.ADD_COMMENT_SUCCESS: 
         state.notes[action.noteId].comments.push(result);
+
+      case ActionTypes.UPDATE_NOTE_SUCCESS: 
+        state.notes[result] = entities.notes[result];
 
       // 나머지는 모두 새로운 entities를 만들어 저장한다.
       default: 
@@ -427,7 +430,7 @@ const rootReducer = combineReducers({
   pagination,
   errorMessage,
   login,
-  routing: routeReducer,
+  routing: routerReducer,
   appState,
   redBookState,
   noteState

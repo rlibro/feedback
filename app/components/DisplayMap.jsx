@@ -1,5 +1,8 @@
 import React, { Component, PropTypes } from 'react';
-import {default as update} from 'react-addons-update';
+import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
+import { updateNoteState } from '../actions'
+
 import {GoogleMapLoader, GoogleMap, Marker, InfoWindow, Circle, SearchBox} from 'react-google-maps';
 
 
@@ -133,7 +136,6 @@ export default class DisplayMap extends Component {
     const { isReadOnly, centerMarkerId, isFitBound } = this.props;
     const { markers, moveToCenter } = this.state;
     var markerArray = [];
-//    var bounds = new google.maps.LatLngBounds();
 
     markers.forEach((marker, index) => {
       const ref = `marker_${index}`;
@@ -145,11 +147,6 @@ export default class DisplayMap extends Component {
           marker.showInfo = false;
         }
       }
-
-      // if( isFitBound ) {
-      //   bounds.extend(new google.maps.LatLng(marker.position));  
-      // }
-
       
       markerArray.push(<Marker key={ref} ref={ref}
         {...marker}
@@ -159,14 +156,6 @@ export default class DisplayMap extends Component {
       </Marker>);
       
     });
-    
-    //FitBound 
-    // 
-    // console.log('bounds ==> ', bounds);
-    // setTimeout(function(bounds){
-    //   console.log('panToBounds', bounds, this._googleMapComponent.fitBounds);
-    //   this._googleMapComponent.fitBounds(bounds);
-    // }.bind(this, bounds), 1000)
 
     return markerArray;
   };
@@ -196,79 +185,71 @@ export default class DisplayMap extends Component {
     return (
       <InfoWindow key={`${ref}_info_window`}
         onDomready={this.handleInfoWindowReady}
-        onCloseclick={this.handleCloseclick.bind(this, marker)}>{InfoContent}        
+        onCloseclick={this.handleCloseInfoWindow.bind(this, marker)}>{InfoContent}        
       </InfoWindow>
     )    
   };
 
   handleInfoWindowReady = () => {
 
-    // Reference to the DIV which receives the contents of the infowindow using jQuery
     var iwOuter = $('.gm-style-iw');
     var iwBackground = iwOuter.prev();
 
-    // Remove the background shadow DIV
     iwBackground.children(':nth-child(2)').css({'display' : 'none'});
-
-    // Remove the white background DIV
     iwBackground.children(':nth-child(4)').css({'display' : 'none'});
-
-    //iwOuter.parent().parent().css({left: '0px'});
-
-    // Moves the shadow of the arrow 76px to the left margin 
-    //iwBackground.children(':nth-child(1)').attr('style', function(i,s){ return s + 'left: 76px !important;'});
-
-    // Moves the arrow 76px to the left margin 
-    //iwBackground.children(':nth-child(3)').attr('style', function(i,s){ return s + 'left: 76px !important;'});
+    iwBackground.children(':nth-child(3)').find('div').children().css({'box-shadow': 'rgba(200, 200, 200, 0.6) 0px 1px 6px', 'z-index' : '1'});
   
-    iwBackground.children(':nth-child(3)').find('div').children().css({'box-shadow': 'rgba(72, 181, 233, 0.6) 0px 1px 6px', 'z-index' : '1'});
-  
-
-
     var iwCloseBtn = iwOuter.next();
-    // Apply the desired effect to the close button
     iwCloseBtn.css({
-      opacity: '0.7', // by default the close button has an opacity of 0.7
+      opacity: '0.7', 
       width: '19px',
       height: '19px',
-      right: '10px', top: '10px', // button repositioning
-      border: '3px solid #48b5e9', // increasing button border and new color
-      'border-radius': '13px', // circular effect
-      'box-shadow': '0 0 5px #3990B9' // 3D effect to highlight the button
+      'background-color': '#fff',
+      right: '10px', top: '10px',
+      border: '3px solid #ccc',
+      'border-radius': '13px',
     });
-
-    // // The API automatically applies 0.7 opacity to the button after the mouseout event.
-    // // This function reverses this event to the desired value.
-    // iwCloseBtn.mouseout(function(){
-    //   $(this).css({opacity: '1'});
-    // });
-    //iwCloseBtn.css({'display': 'none'});
-
   };
 
   handleMovetoNote = (marker, e) => {
-
     e.preventDefault(); 
-
-    this.props.onPushState(`/notes/${marker.note.objectId}`, {referer:this.props.referer});
+    browserHistory.push({
+      pathname: `/notes/${marker.note.objectId}`, 
+      state: {referer:this.props.referer} 
+    });
 
   };
 
   handleMarkerClick = (marker) => {
-    marker.showInfo = !marker.showInfo;
+  
+    const { markers } = this.state;
+    const clones = _.cloneDeep(markers);
+
+    for( var i=0; i < clones.length ; ++i){
+      if( clones[i].key === marker.key ){
+        clones[i].showInfo = !marker.showInfo;
+        break;
+      }
+    }
+
     this.setState({
-      moveToCenter : false
+      moveToCenter: false,
+      markers: clones
     });
   };
 
-  handleCloseclick = (marker) => {
-    marker.showInfo = false;
-  };
+  handleCloseInfoWindow = (marker) => {
+    const { markers } = this.state;
+    const clones = _.cloneDeep(markers);
 
-  handleToggleMarker = () => {
-    this.setState({
-      isMarkerMode: !this.state.isMarkerMode
-    });
+    for( var i=0; i < clones.length ; ++i){
+      if( clones[i].key === marker.key ){
+        clones[i].showInfo = false;
+        break;
+      }
+    }
+
+    this.setState({markers: clones});
   };
 
   handleMoveCenterToCurrentUser = () => {
@@ -289,19 +270,33 @@ export default class DisplayMap extends Component {
   };
 
   handleClosePlaceMap = () => {
-    this.props.onUpdateNoteState({
+    this.props.updateNoteState({
       openMap: false
-    })
+    });
+    this.props.onCloseMap && this.props.onCloseMap();
   };
 }
 
 DisplayMap.propTypes = {
   loginUser: PropTypes.object.isRequired,
+  updateNoteState: PropTypes.func.isRequired,
+
+  // 외부 주입
+  markers: PropTypes.array.isRequired,
   mapCenter : PropTypes.shape({
     lat: PropTypes.number,
     lng: PropTypes.number
   }),
-  referer: PropTypes.string.isRequired,
-  onPushState: PropTypes.func.isRequired,
-  onUpdateNoteState: PropTypes.func.isRequired
+  referer: PropTypes.string.isRequired
 }
+
+function mapStateToProps(state) {
+  
+  return {
+    loginUser: state.login
+  }
+}
+
+export default connect(mapStateToProps, {
+  updateNoteState
+})(DisplayMap)

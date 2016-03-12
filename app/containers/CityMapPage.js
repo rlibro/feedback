@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { pushPath as pushState, replacePath } from 'redux-simple-router'
+import { browserHistory } from 'react-router'
 import { fetchPlaces, updateDataForRedBook } from '../actions'
 import { findDOMNode } from 'react-dom'
 import _ from 'lodash'
@@ -38,7 +38,16 @@ class CityMapPage extends Component {
     if( !loadedGoogleSDK ){
 
       console.log('Google SDK need loaded.')
-      return false;
+      return <div className="CityMapPage Page">
+        <div className="GoogleMap">
+          <div className="LoadingState">
+            <div className="loading">
+              <h2> <i className="fa fa-circle-o-notch fa-spin" /> loading Map...</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
     }
 
     if( sharedPlaces.isFetching  ) {
@@ -66,26 +75,24 @@ class CityMapPage extends Component {
     return <div className="CityMapPage Page">
 
       <DisplayMap className="GoogleMap" 
-        loginUser={loginUser}
+        markers = {markers}
         mapCenter={{
           lat: redBook.geo.latitude,
           lng: redBook.geo.longitude
         }}
-        referer= {routing.path}
-        markers = {markers}
-        onPushState={this.props.pushState}
-        onUpdateNoteState={this.hanldeCloseMap}
+        referer= {routing.pathname}
+       
+        onCloseMap={this.hanldeCloseMap}
       />
     </div>
   }
 
   hanldeCloseMap = () => {
-    this.props.pushState(`/guide/${this.props.params.uname}`)
+    browserHistory.push(`/guide/${this.props.params.uname}`)
   };
 }
 
 CityMapPage.propTypes = {
-  pushState: PropTypes.func.isRequired,
 }
 
 
@@ -99,13 +106,12 @@ function mapStateToProps(state) {
     appState: state.appState,
     loginUser: state.login,
     entities: state.entities,
-    routing: state.routing,
+    routing: state.routing.locationBeforeTransitions,
     pagingPlacesByRedBookId: placesByRedBookId,
   }
 }
 
 export default connect(mapStateToProps, {
   updateDataForRedBook,
-  pushState,
   fetchPlaces
 })(CityMapPage)

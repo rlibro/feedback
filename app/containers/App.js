@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { pushPath as pushState } from 'redux-simple-router'
-import { fetchRedBooks, findThisKeyWord } from '../actions'
-import { updateCurrentUserLocation, updateLoginUserInfo, logOutUser } from '../actions'
+import { browserHistory } from 'react-router'
+import { fetchRedBooks } from '../actions'
+import { updateLoginUserInfo, logOutUser } from '../actions'
 import { resetErrorMessage, facebookLogin, updateAppState } from '../actions'
 
 import Header from '../components/Header'
@@ -74,14 +74,14 @@ class App extends Component {
     const { noteState:{ isFetching }, 
             appState: {isValidCreate},
             params:{uname}, 
-            routing:{path},
+            routing:{ pathname },
             loginUser,
             entities:{ redBooks } 
     } = nextProps;
 
     let redBookId = null; 
-    let isGuidePage = path.indexOf('/guide') > -1;
-    let isCreatePage = path.indexOf('/create/') > -1;
+    let isGuidePage = pathname.indexOf('/guide') > -1;
+    let isCreatePage = pathname.indexOf('/create/') > -1;
 
     // 가이드 페이지일 경우엔, 레드북 아이디를 뽑아내서 넣어준다. 
     if( isGuidePage && uname && isFetching.redbooks === 'DONE' ) {
@@ -98,63 +98,41 @@ class App extends Component {
           redBookId : redBookId
         });
       } else {
-        this.props.pushState('/');    
+        browserHistory.push('/');    
       }
     }
 
     // 레드북 생성 페이지일 경우, 
     if( isCreatePage && ( !isValidCreate || !loginUser.id ) ) {
-      this.props.pushState('/');
+      browserHistory.push('/');
     }
 
     // 로그인 했는데, 이메일이 없으면 제대로 가입된게 아니야!!
-    if( loginUser.id && (!loginUser.nationality||!loginUser.email) && path !== '/register' ){
-      this.props.pushState(`/register`); 
+    if( loginUser.id && (!loginUser.nationality||!loginUser.email) && pathname !== '/register' ){
+      browserHistory.push(`/register`); 
     }
   }  
 
   render() {
-    const { loginUser, redBooks, entities, routing, appState} = this.props
-    let klass = (routing.path !== '/')? 'sub':''
+    const { loginUser, redBooks, entities, routing:{pathname}, appState} = this.props;
+    let klass = (pathname !== '/') ? 'sub':''
 
     return (
       <div id="app" className={klass}>
         <Header 
-          loginUser={loginUser}
-          appState={appState}
-          path={routing.path}
-
           onLogin={this.handleFacebookLogin}
           onLogOut={this.handleLogOut}
-
-          onPushState={this.props.pushState}
-          onUpdateAppState={this.props.updateAppState}
-          onUpdateCurrentUserLocation={this.props.updateCurrentUserLocation}
           />
 
-        <CurrentLocation
-          loginUser={loginUser} 
-          onUpdateAppState={this.props.updateAppState}  
-          onUpdateCurrentUserLocation={this.props.updateCurrentUserLocation}
-        />
-
+        <CurrentLocation />
         <SideBar 
-          appState={appState}
-          loginUser={loginUser}
-
-          onPushState={this.props.pushState}
           onLogin={this.handleFacebookLogin}
           onLogOut={this.handleLogOut}
-          onUpdateAppState={this.props.updateAppState}
         />
 
         {this.renderErrorMessage()}
 
-        <Explore 
-          appState={appState}
-          routing={this.props.routing}
-          onUpdateAppState={this.props.updateAppState}
-          onFindThisKeyWord={this.props.findThisKeyWord} />
+        <Explore  />
         
         {this.renderLoadingRedBooks()}
         {this.renderSearchBooks()}
@@ -213,7 +191,6 @@ class App extends Component {
       return <div className="LoadingState">
         <div className="loading">
           <h2> <i className="fa fa-circle-o-notch fa-spin" /> loading...</h2>
-
         </div>
         <div className="dimmed"></div>
       </div>
@@ -244,7 +221,9 @@ class App extends Component {
 
   renderSearchBooks = () => {
 
-    const { loginUser, entities, routing:{path}, appState: {search} } = this.props
+    const { loginUser, entities, 
+      routing:{ pathname }, 
+      appState: {search} } = this.props
 
     let serchResult = {
       isFetching: false, isSearchResult: true, ids: search.result
@@ -252,18 +231,15 @@ class App extends Component {
 
     let klassName = 'wrap-SearchList';
 
-    if( path !== '/' ) {  // 루트에서만 검색이 가능하다.
+    if( pathname !== '/' ) {  // 루트에서만 검색이 가능하다.
       klassName += ' hide'
     }
 
     if( search.mode === 'book' && 0 < search.result.length ) {
       return <div className={klassName}>
         <h4>{`Search Results: ${search.result.length}`}</h4>
-        <RedBookList 
-          loginUser={loginUser}
+        <RedBookList
           redBooks={serchResult} 
-          entities={entities} 
-          onOpenRedBook={this.handleOpenRedBook}
           onGetRedBoodCardClassName={getRedBoodCardClassName}
           />
       </div>
@@ -276,7 +252,9 @@ class App extends Component {
 
   renderRedBookList = () => {
 
-    const { loginUser,redBooks, entities, routing:{path}, appState } = this.props
+    const { loginUser,redBooks, entities,  
+      routing:{ pathname },
+      appState } = this.props
     let klassName = 'wrap-RedBookList'
 
     if( 0 < appState.search.result.length ) { 
@@ -286,20 +264,12 @@ class App extends Component {
     return <div className={klassName}>
 
       <RedBookListByCountry {...this.props} 
-        onOpenRedBook={this.handleOpenRedBook}
-        onCreateRedBook={this.handleCreateRedBook}
         onGetRedBoodCardClassName={getRedBoodCardClassName} />
       
-      <RedBookStatics 
-        appState={appState}
-        onPushState={this.props.pushState}
-      />
+      <RedBookStatics />
 
       <RedBookList 
-        loginUser={loginUser}
         redBooks={redBooks} 
-        entities={entities} 
-        onOpenRedBook={this.handleOpenRedBook}
         onGetRedBoodCardClassName={getRedBoodCardClassName}
         />
     </div>
@@ -308,12 +278,14 @@ class App extends Component {
 
    renderChildPage = () => {
 
-    const { routing: {path}, params:{uname}, entities:{ redBooks } } = this.props;
+    const { 
+      routing:{ pathname }, 
+      params:{uname}, entities:{ redBooks } } = this.props;
     const { redBookId } = this.state;
     let klassName = 'detail';
     let cityName = null, countryName = null, redBook=null;
 
-    let route = path.split('/')[1];
+    let route = pathname.split('/')[1];
 
     switch( route ){
       case 'guide':
@@ -393,7 +365,7 @@ class App extends Component {
     const { loginUser } = this.props;
     Parse.User.logOut();
     this.props.logOutUser();
-    this.props.pushState('/');
+    browserHistory.push('/');
   };
 
   handleDismissClick = (e) => { 
@@ -401,35 +373,20 @@ class App extends Component {
     e.preventDefault()
   };
 
-  handleOpenRedBook = (redBook, e) => {
-    this.props.pushState(`/guide/${redBook.uname}`)
-    e.preventDefault()
-  };
-
-  handleCreateRedBook = (loc, e) => {
-
-    const { cityName, countryName } = loc;
-    this.props.updateAppState({isValidCreate: true});
-    this.props.pushState(`/create/${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`, `${cityName.replace(/\s/g,'_')},${countryName.replace(/\s/g,'_')}`);
-    e.preventDefault();
-  };
-
 }
 
 App.propTypes = {
   errorMessage: PropTypes.string,
   resetErrorMessage: PropTypes.func.isRequired,
-  pushState: PropTypes.func.isRequired,
   facebookLogin: PropTypes.func.isRequired,
-  updateCurrentUserLocation: PropTypes.func.isRequired,
   updateLoginUserInfo: PropTypes.func.isRequired,
   children: PropTypes.node
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
 
   return {
-    routing: state.routing,
+    routing: state.routing.locationBeforeTransitions,
     appState: state.appState,
     noteState: state.noteState,
     errorMessage: state.errorMessage,
@@ -442,11 +399,8 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, {
   facebookLogin,
   resetErrorMessage,
-  pushState,
   fetchRedBooks,
-  findThisKeyWord,
   updateAppState,
-  updateCurrentUserLocation,
   updateLoginUserInfo,
   logOutUser
 })(App)

@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
 import moment from 'moment';
 
-export default class NoteComment extends Component {
+class NoteComment extends Component {
 
   constructor(props){
     super(props)
@@ -18,7 +19,6 @@ export default class NoteComment extends Component {
     if( !comment ){
       return false;     // 로딩중입니다... 
     } 
-
 
     return <div className="NoteComment">
       <div className="profile photo">
@@ -49,7 +49,7 @@ export default class NoteComment extends Component {
 
     if( stateDeleteComment === 'READY' ){
       return <div className="option">
-        <button className="delete" href="#" onClick={this.handleDeleteComment.bind(this, index)}>
+        <button className="delete" href="#" onClick={this.handleDeleteComment.bind(this, comment)}>
           <i className="fa fa-times"/>
         </button>
       </div>  
@@ -57,7 +57,7 @@ export default class NoteComment extends Component {
 
     if( stateDeleteComment === 'REQUESTING' && (index === this.state.deletingIndex) ){
       return <div className="option on">
-        <button className="delete" href="#" onClick={this.handleDeleteComment.bind(this, index)}>
+        <button className="delete" href="#">
           <i className="fa fa-spinner fa-pulse"/>
         </button>
       </div>  
@@ -76,8 +76,22 @@ export default class NoteComment extends Component {
 }
 
 NoteComment.propTypes = {
-  index: PropTypes.number.isRequired,
   loginUser: PropTypes.object.isRequired,
   noteState: PropTypes.object.isRequired,
+
+  // 외부 주입
+  index: PropTypes.number.isRequired,
+  comment: PropTypes.object.isRequired,
   onDeleteComment: PropTypes.func.isRequired
 }
+
+function mapStateToProps(state) {
+  return {
+    loginUser: state.login,
+    noteState: state.noteState,
+  }
+}
+
+export default connect(mapStateToProps, {
+})(NoteComment)
+

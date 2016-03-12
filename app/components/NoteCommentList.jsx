@@ -1,62 +1,53 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
 import NoteCommentForm from '../components/NoteCommentForm'
 import NoteComment from '../components/NoteComment'
 
-export default class NoteCommentList extends Component {
+class NoteCommentList extends Component {
 
   render() {
 
-    const { isOpenComment } = this.props;
+    const { comments, isOpenComment } = this.props;
 
-    if( isOpenComment ){
-      return this.renderCommentList()
-    }else{
-      return false  
+    if( !isOpenComment ){
+      return false;
     }
-  }
-
-  renderCommentList = () => {
-
-    const { 
-      loginUser, 
-      noteState,
-      comments,
-      isOpenComment,
-      onLogin, onAddComment, onDeleteComment
-    } = this.props;
 
     return <div className="NoteCommentList">
 
       {comments.map( (comment,i) => {
 
-        return <NoteComment key={i}
+        return <NoteComment key={i} 
           index={i}
           comment={comment}
-          noteState={noteState}
-          loginUser={loginUser}
-          onDeleteComment={onDeleteComment.bind(null, comment.id)}
-          />
+          onDeleteComment={this.props.onDeleteComment.bind(this, comment.id)}
+        />
+
       })}
 
       <NoteCommentForm 
-        loginUser={loginUser}
-        noteState={noteState}
-        isOpenComment={isOpenComment}
-        onLogin={onLogin}
-        onAddComment={onAddComment} />
+        isOpenComment={this.props.isOpenComment}
+        onAddComment={this.props.onAddComment}
+      />
     
     </div>
-  };
+  
+  }
 }
 
 NoteCommentList.propTypes = {
-  loginUser: PropTypes.object.isRequired,
-  isOpenComment: PropTypes.bool.isRequired,
-  noteState: PropTypes.object.isRequired,
 
+  // 외부에서 주입
   comments: PropTypes.array.isRequired,
-
-  onLogin: PropTypes.func.isRequired,
+  isOpenComment: PropTypes.bool.isRequired,
   onAddComment: PropTypes.func.isRequired,
-  onDeleteComment: PropTypes.func.isRequired
+  onDeleteComment: PropTypes.func.isRequired,
 }
+
+function mapStateToProps(state) {
+  return {}
+}
+
+export default connect(mapStateToProps, {
+})(NoteCommentList)
+

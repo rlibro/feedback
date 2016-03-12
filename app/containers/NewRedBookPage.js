@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux'
 import { updateRedBookState, addRedBook } from '../actions'
-import { pushPath as pushState, replacePath } from 'redux-simple-router'
+import { browserHistory } from 'react-router'
 import NewRedBookCover from '../components/NewRedBookCover'
 import NewRedBookForm from '../components/NewRedBookForm'
 
@@ -22,7 +22,7 @@ class NewRedBookPage extends Component {
       this.props.updateRedBookState({
         isFetching: {addRedBook: 'READY'}
       });
-      this.props.replacePath(`/guide/${this.props.redirect}`);
+      browserHistory.replace(`/guide/${this.props.redirect}`);
     }
 
     if( !this.state.loadedGeoCoding && loginUser.current_location ){
@@ -47,7 +47,7 @@ class NewRedBookPage extends Component {
 
   render(){
 
-    const { loginUser, replacePath, location, redBookState } = this.props;
+    const { loginUser, location, redBookState } = this.props;
 
     if( !loginUser.id ) {
       return false;
@@ -100,7 +100,7 @@ class NewRedBookPage extends Component {
   };
 
   handleCancelNewRedBook = (e) => {
-    this.props.replacePath('/')
+    browserHistory.replace('/')
   };
 
   handleCreateNewRedBook = (noteText) => {
@@ -136,9 +136,7 @@ class NewRedBookPage extends Component {
 }
 
 NewRedBookPage.propTypes = {
-  redBookState: PropTypes.object.isRequired,
-  pushState: PropTypes.func.isRequired,
-  replacePath: PropTypes.func.isRequired
+  redBookState: PropTypes.object.isRequired
 }
 
 
@@ -173,10 +171,7 @@ function mapStateToProps(state) {
   
 }
 
-
 export default connect(mapStateToProps, {
   updateRedBookState,
-  addRedBook,
-  pushState,
-  replacePath
+  addRedBook
 })(NewRedBookPage)

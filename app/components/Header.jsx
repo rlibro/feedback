@@ -1,7 +1,11 @@
 import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
+import { updateAppState } from '../actions'
 import { findDOMNode } from 'react-dom';
 
-export default class Header extends Component {
+
+class Header extends Component {
   
   constructor(props){
     super(props);
@@ -80,6 +84,17 @@ export default class Header extends Component {
     }
 
     return <ul className="account-menu">
+      
+      {/*<li>
+        <div className="menu bookmark" onClick={this.handleProfile}>
+          <i className="fa icon-bookmark"/> bookmark</div>
+      </li>
+
+      <li>
+        <div className="menu alert" onClick={this.handleProfile}>
+          <i className="fa icon-alert"/> message</div>
+      </li>*/}
+
       <li>
         <div className="photo" onClick={this.handleProfile}>
           <img src={loginUser.picture}/>
@@ -93,10 +108,9 @@ export default class Header extends Component {
   };
 
   handleToggleSideBar = (e) => {
-    this.props.onUpdateAppState({
+    this.props.updateAppState({
       sidebar: !this.props.appState.sidebar
     });
-
 
     const node = findDOMNode(this.refs.logo);
     node.focus();
@@ -109,10 +123,9 @@ export default class Header extends Component {
     this.setState({
       tringLogin: true
     });
-    this.props.onUpdateAppState({
+    this.props.updateAppState({
       tringLogin: true
     });
-
 
     this.props.onLogin();
   };
@@ -123,40 +136,38 @@ export default class Header extends Component {
   };
 
   handleHome = (e) => {
-    this.props.onUpdateAppState({
+    this.props.updateAppState({
       sidebar: false
     });
-    this.props.onPushState('/');
+    browserHistory.push('/');
     e.preventDefault();
   };
 
   handleProfile = (e) => {
-    this.props.onUpdateAppState({
+    this.props.updateAppState({
       sidebar: false
     });
-    this.props.onPushState('/profile');
+    browserHistory.push('/profile');
     e.preventDefault();
-  };
-
-  fetchUserInfo = () => {
-    
-    const { onUpdateLoginUser } = this.props;
-    const loginUser = Parse.User.current();
-    let loginInfo = loginUser.toJSON()
-    loginInfo.id = loginUser.id;
-    delete loginInfo.objectId;
-
-        
   };
 }
 
 Header.propTypes = {
-  loginUser: PropTypes.object.isRequired,
   appState: PropTypes.object.isRequired,
-  path: PropTypes.string.isRequired,
-  onPushState: PropTypes.func.isRequired,
-  onUpdateAppState: PropTypes.func.isRequired,
+  loginUser: PropTypes.object.isRequired,
+  updateAppState: PropTypes.func.isRequired,
   onLogin: PropTypes.func.isRequired,
   onLogOut: PropTypes.func.isRequired
 }
 
+function mapStateToProps(state, ownProps) {
+  return {
+    appState: state.appState,
+    loginUser: state.login,
+    routing: state.routing.locationBeforeTransitions
+  }
+}
+
+export default connect(mapStateToProps, {
+  updateAppState
+})(Header)

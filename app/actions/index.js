@@ -415,7 +415,7 @@ export function fetchNotes (redBookId) {
 export const ADD_NOTE_REQUEST = 'ADD_NOTE_REQUEST'
 export const ADD_NOTE_SUCCESS = 'ADD_NOTE_SUCCESS'
 export const ADD_NOTE_FAILURE = 'ADD_NOTE_FAILURE'
-export function addNote (redBookId, noteText, placeIds, places){
+export function addNote (redBookId, noteText, placeIds, markers){
 
   return (dispatch, getState) => {
     return dispatch(function(){
@@ -430,7 +430,7 @@ export function addNote (redBookId, noteText, placeIds, places){
               content: noteText,
               author: Parse.User.current()
             },
-            Place: places,
+            Place: markers,
             redBookId: redBookId 
           },
           types: [ ADD_NOTE_REQUEST, ADD_NOTE_SUCCESS, ADD_NOTE_FAILURE ],
@@ -633,7 +633,7 @@ export function addPlace (markerKey, userId, noteId, title, label, geo) {
               userId: userId,
               title: title,
               label: label,
-              noteId: noteId
+              tempId: noteId
             },
             geoPoint: geo
           },
@@ -652,7 +652,7 @@ export function addPlace (markerKey, userId, noteId, title, label, geo) {
 export const UPDATE_PLACE_REQUEST = 'UPDATE_PLACE_REQUEST'
 export const UPDATE_PLACE_SUCCESS = 'UPDATE_PLACE_SUCCESS'
 export const UPDATE_PLACE_FAILURE = 'UPDATE_PLACE_FAILURE'
-export function updatePlace (redBookId, noteId, place) {
+export function updatePlace (redBookId, noteId, place, finalSaving) {
   return (dispatch, getState) => {
     return dispatch(function(){
       return {
@@ -666,7 +666,8 @@ export function updatePlace (redBookId, noteId, place) {
             },
             placeId: place.key,
             noteId: noteId,
-            geoPoint: place.position
+            geoPoint: place.position,
+            finalSaving: finalSaving
           },
           types: [ UPDATE_PLACE_REQUEST, UPDATE_PLACE_SUCCESS, UPDATE_PLACE_FAILURE ],
           schema: Schemas.PLACE

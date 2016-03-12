@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { pushPath as pushState } from 'redux-simple-router'
 import { updateNoteState, fetchPlaces } from '../actions'
 import { findDOMNode } from 'react-dom'
 import DisplayMap from '../components/DisplayMap'
@@ -13,7 +12,6 @@ class SingleNotePlacePage extends Component {
     const { loginUser, appState, note, entitiyPlaces, 
       params : {placeId, noteId}, routing
     } = this.props;
-
 
     if( !appState.loadedGoogleSDK ){
       
@@ -33,6 +31,7 @@ class SingleNotePlacePage extends Component {
       if( place ){
         places.push( place );               
       } else {
+        console.log('===> No Place!', note.places[i]);
         isValidPlaces = false;
         break;
       }
@@ -68,16 +67,14 @@ class SingleNotePlacePage extends Component {
     return <div className="SingleNotePlacePage">
 
       <DisplayMap className="GoogleMap" 
-        loginUser={loginUser}
-        mapCenter={mapCenter}
-        zoomLevel={16}
         markers={markers}
+        mapCenter={mapCenter}
+        referer= {routing.pathname}
+
+        zoomLevel={16}
         centerMarkerId={centerMarkerId}
         isReadOnly={true}
         hideMarkerNoteLink={true}
-        referer= {routing.path}
-        onPushState={this.props.pushState}
-        onUpdateNoteState={this.props.updateNoteState}
       />
 
     </div>
@@ -97,7 +94,7 @@ function mapStateToProps(state) {
 
   return {
     appState,
-    routing: state.routing,
+    routing: state.routing.locationBeforeTransitions,
     entitiyPlaces: places,
     loginUser: login
   }
@@ -105,6 +102,5 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps, {
   updateNoteState,
-  fetchPlaces,
-  pushState
+  fetchPlaces
 })(SingleNotePlacePage)

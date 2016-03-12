@@ -1,8 +1,5 @@
 import React, { Component, PropTypes } from 'react'
-import { updateLoginUserInfo } from '../actions'
 import { connect } from 'react-redux'
-import { pushPath as pushState } from 'redux-simple-router'
-import { findDOMNode } from 'react-dom';
 import _ from 'lodash';
 
 class RlibriansPage extends Component {
@@ -72,12 +69,10 @@ class RlibriansPage extends Component {
 }
 
 RlibriansPage.propTypes = {
-  updateLoginUserInfo: PropTypes.func.isRequired
 };
 
 
 function mapStateToProps(state) {
-
   return {
     appState: state.appState,
     entities: state.entities,
@@ -86,6 +81,4 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, {
-  updateLoginUserInfo,
-  pushState
 })(RlibriansPage)

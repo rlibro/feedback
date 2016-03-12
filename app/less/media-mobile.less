@@ -152,7 +152,7 @@
 
   .AttachedPlaces {
     .title {
-      width: 110px;
+      width: 90px;
     }
   }
 
@@ -178,6 +178,14 @@
 
     .GoogleMap {
       height: 460px;
+
+      .markerSearchBox {
+        width: 96%;
+        padding-right: 108px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
     }
   }
 
@@ -227,9 +235,16 @@
     }
   }
 
-  .RedBookNote .note-header .meta .updated {
-    
-    margin-left: 0px;
+  .RedBookNote { 
+    .note-header .meta .updated {  
+      margin-left: 0px;
+    }
+    .edit-content .edit-controls {
+      button {
+        width: 50px;
+        font-size: 11px;
+      }
+    }
   }
 
   .Page {

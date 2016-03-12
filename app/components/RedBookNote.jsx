@@ -1,12 +1,19 @@
 import React, { Component, PropTypes } from 'react';
-import NoteCommentList from '../components/NoteCommentList'
-import ContextMenu from '../components/RedBookNoteContextMenu'
+import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
+import { updateNoteState, resetUpdateNote,
+         updateNote, deleteNote, likeNote, 
+         updatePlace, deletePlace, 
+         fetchComments, addComment, deleteComment } from '../actions'
 import { findDOMNode } from 'react-dom';
+import { render } from '../libs/markdown';
 import moment from 'moment'
-import {render} from '../libs/markdown';
+
+import NoteCommentList from '../components/NoteCommentList'
+import ContextMenu from '../components/NoteContextMenu'
 import AttachedPlaces from '../components/AttachedPlaces';
 
-export default class RedBookNote extends Component {
+class RedBookNote extends Component {
 
   constructor(props) {
     super(props)
@@ -31,14 +38,13 @@ export default class RedBookNote extends Component {
         isOpenComment: false
       });
 
-      this.props.onSaveEditingNoteDone();
+      this.props.resetUpdateNote();
     }
   }
 
   render() {
 
     const { loginUser, noteState, note, comments } = this.props;
-    const { onLogin, onAddComment, onDeleteNote, onDeleteComment} = this.props;
     const { isEditing, isOpenComment } = this.state;
 
     let klassName = 'RedBookNote';
@@ -68,15 +74,11 @@ export default class RedBookNote extends Component {
       {this.renderControls()}
 
       <NoteCommentList 
-        loginUser={loginUser}
         comments={comments}
-        noteState={noteState}
-
-        onLogin={onLogin}
         isOpenComment={isOpenComment}
-        onAddComment={onAddComment.bind(null, note.id)} 
-        onDeleteComment={onDeleteComment.bind(null, note.id)}
-        />
+        onAddComment={this.handleAddComment.bind(null, note.id)} 
+        onDeleteComment={this.handleDeleteComment.bind(null, note.id)}
+      />
     </div>
   }
 
@@ -96,6 +98,19 @@ export default class RedBookNote extends Component {
 
   };
 
+  handleAddComment = (noteId, commentText) => {
+    this.props.addComment(noteId, commentText)
+  };
+
+  handleDeleteComment = (noteId, commentId) => {
+
+    let yes = confirm('the comment will be deleted\nAre you sure?');
+    if( yes ){
+      this.props.deleteComment(commentId, noteId);
+    }
+  };
+
+
   renderContextMenu = () => {
 
     const { hideContextMenu, loginUser, note, noteState } = this.props;
@@ -108,12 +123,11 @@ export default class RedBookNote extends Component {
     return <div className="options">
       <button><i className="fa fa-angle-down" onClick={this.handleOpenContext} /></button>
       <ContextMenu 
-        loginUser={loginUser}
-        noteState={noteState}
+        isOpenContext={isOpenContext}
         noteAuthor={note.author}
         onEditNote={this.handleEditNote.bind(this, note)}
         onDeleteNote={this.handleDeleteNote}
-        isOpenContext={isOpenContext} />
+     />
     </div>
 
   };
@@ -167,11 +181,8 @@ export default class RedBookNote extends Component {
             autoFocus={true}></textarea>
 
           <div className="edit-controls">
-            <AttachedPlaces 
-              appState={this.props.appState}
-              noteState={this.props.noteState}
+            <AttachedPlaces
               onInsertPlace={this.handleInsertPlace}
-              onUpdateNoteState={this.props.onUpdateNoteState}
             />
 
             <button tabIndex="3" className="cancel" onClick={this.handleCancelEditNote}>Cancel</button>
@@ -218,7 +229,7 @@ export default class RedBookNote extends Component {
 
     const node = findDOMNode(this.refs.content);
     node.value += str;
-    this.props.onUpdateNoteState({
+    this.props.updateNoteState({
       formText: node.value
     });   
 
@@ -226,7 +237,10 @@ export default class RedBookNote extends Component {
 
   handleMoveNote = (url, e) => {
 
-    this.props.onPushState(url, {referer: this.props.routing.path});
+    browserHistory.push({
+      pathname: url, 
+      state: {referer: this.props.routing.pathname}
+    });
     e.preventDefault();
 
   };
@@ -239,7 +253,7 @@ export default class RedBookNote extends Component {
       var match = regNote.exec(e.target.href);
 
       if(match){
-        this.props.onPushState(match[0]);
+        browserHistory.push(match[0]);
         window.scrollTo(0,0);
         e.preventDefault();
       } 
@@ -271,7 +285,7 @@ export default class RedBookNote extends Component {
     this.setState({
       isEditing: false
     });
-    this.props.onUpdateNoteState({
+    this.props.updateNoteState({
       isEditing: false, 
       editingId: null,
       openMap: false,
@@ -287,8 +301,8 @@ export default class RedBookNote extends Component {
     const { noteState: { places } } = this.props;
 
 
-    this.props.onSaveEditingNote(note, text, places);
-    this.props.onUpdateNoteState({
+    this.handleSaveEditingNote(note, text, places);
+    this.props.updateNoteState({
       stateNoteUpdate: 'REQUESTING'
     })
 
@@ -296,9 +310,37 @@ export default class RedBookNote extends Component {
     e.preventDefault();
   };
 
+  /**
+   * 노트를 수정할때 처리되는 곳
+   */
+  handleSaveEditingNote = (note, newText, places) => {
+
+    let placeIds = [];
+    let deletedPlaceId = note.places; 
+
+    // 첨부된 최종 위치를 확인해서 새로운 것은 추가하고, 삭제된 녀석을 뽑아낸다. 
+    _.each(places, function(place){
+
+      this.props.updatePlace(note.redBook.objectId, note.id, place, true);
+
+      placeIds.push(place.key);
+
+      deletedPlaceId = _.without(deletedPlaceId, place.key);
+
+    }.bind(this));
+
+    // 기존에 등록된 위치중에 삭제할 녀석이 있다면 삭제 진행
+    _.each(deletedPlaceId, function(placeId){
+      this.props.deletePlace(placeId);
+    }.bind(this));
+
+    // 임시 위치 삭제
+    this.props.updateNote(note.redBook.objectId, note.id, newText, placeIds);
+  };
+
   handleToggleLike = (noteId, e) => {
 
-    this.props.onLikeNote(noteId);
+    this.props.likeNote(noteId);
 
   };
 
@@ -307,7 +349,7 @@ export default class RedBookNote extends Component {
     const { isOpenComment } = this.state;
 
     if( !isOpenComment ){
-       this.props.onFetchComments(noteId) 
+       this.props.fetchComments(noteId) 
     }
 
     this.setState({
@@ -346,7 +388,7 @@ export default class RedBookNote extends Component {
       })
     })
 
-    this.props.onUpdateNoteState({
+    this.props.updateNoteState({
       isEditing: true, 
       editingId: note.id,
       openMap: false,
@@ -357,7 +399,9 @@ export default class RedBookNote extends Component {
   };
 
   handleDeleteNote = (e) => {
-    this.props.onDeleteNote(this.props.note.id);
+    const { note } = this.props;
+
+    this.props.deleteNote( note.id, note.redBook.objectId );
     this.setState({
       isOpenContext: false
     });
@@ -369,17 +413,38 @@ RedBookNote.propTypes = {
   routing: PropTypes.object.isRequired,
   loginUser: PropTypes.object.isRequired,
   noteState: PropTypes.object.isRequired,
+
+  updateNoteState: PropTypes.func.isRequired,
+  
+  updateNote: PropTypes.func.isRequired,
+  deleteNote: PropTypes.func.isRequired,
+  likeNote: PropTypes.func.isRequired,
+
+  updatePlace: PropTypes.func.isRequired, 
+  deletePlace: PropTypes.func.isRequired,
+
+  fetchComments: PropTypes.func.isRequired,
+  addComment: PropTypes.func.isRequired, 
+  deleteComment: PropTypes.func.isRequired,
+  
+
+  // 외부 주입
   note: PropTypes.object.isRequired,
   comments: PropTypes.array.isRequired,
-  places: PropTypes.array.isRequired,
-  onUpdateNoteState: PropTypes.func.isRequired,
-
-  // 댓글관련 컨트롤은 로그인해야만 할수있다. 
-  onLogin: PropTypes.func.isRequired,
-  onFetchComments: PropTypes.func.isRequired,
-  onAddComment: PropTypes.func.isRequired,
-  onDeleteComment: PropTypes.func.isRequired,
-  onDeletePlace: PropTypes.func.isRequired,
-  onLikeNote: PropTypes.func.isRequired,
-  onPushState: PropTypes.func.isRequired
+  places: PropTypes.array.isRequired
 }
+
+function mapStateToProps(state) {
+  return {
+    appState: state.appState, 
+    routing: state.routing.locationBeforeTransitions,
+    loginUser: state.login,
+    noteState: state.noteState,
+  }
+}
+
+export default connect(mapStateToProps, {
+  updateNoteState, resetUpdateNote,
+  updatePlace, deletePlace, updateNote,
+  fetchComments, addComment, deleteComment, likeNote, deleteNote
+})(RedBookNote)

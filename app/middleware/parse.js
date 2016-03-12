@@ -368,6 +368,10 @@ const parseAPI = {
 
   }, 
 
+  /**
+   * 새 노트를 작성할땐 노트 저장이후에 노트 아이디를 
+   * 첨부된 마커를 모두 업데이트 해줘야한다. 
+   */
   addNote: function(schema, params){
 
     const note    = new Note();
@@ -380,18 +384,18 @@ const parseAPI = {
     .then(function(savedNote){
 
       var promises = [];
-      _.each(params.Place, function(placeParam){
+      _.each(params.Place, function(marker){
 
         const geoPoint = new Parse.GeoPoint({
-          latitude: placeParam.position.lat,
-          longitude: placeParam.position.lng
+          latitude: marker.position.lat,
+          longitude: marker.position.lng
         });
 
         const place = new Place();
-        place.id = placeParam.key;
+        place.id = marker.key;
         place.set('note', savedNote);
-        place.set('title', placeParam.title);
-        place.set('label', placeParam.label);
+        place.set('title', marker.title);
+        place.set('label', marker.label);
         place.set('geo', geoPoint);
         place.set('userId', params.Note.author.id);
         place.set('redBookId', params.redBookId);
@@ -478,15 +482,26 @@ const parseAPI = {
     const note = new Note();
     note.id = params.noteId;
 
-    const geoPoint = new Parse.GeoPoint({
-      latitude: params.geoPoint.lat,
-      longitude: params.geoPoint.lng
-    });
+    // 로직상 위치는 아직 수정하지 못함.
+    // const geoPoint = new Parse.GeoPoint({
+    //   latitude: params.geoPoint.lat,
+    //   longitude: params.geoPoint.lng
+    // });
+    // place.set('geo', geoPoint);
 
-    place.set('note', note);
-    place.set('geo', geoPoint);
+    // 라벨과 이름을 업데이트한다.
+    place.set('title', params.Place.title);
+    place.set('label', params.Place.label);
+
+    // 최종적으로 저장할때 템프 아이디를 삭제하고 레드북아이디를 설정한다.
+    if( params.finalSaving ){
+      place.set('note', note);
+      place.set('redBookId', params.Place.redBookId);
+      place.set('tempId', null);  
+    } 
+    
     return place
-    .save(params.Place)
+    .save()
     .then(function(savedPlace){
 
       let placeObject = savedPlace.toJSON();
@@ -596,6 +611,9 @@ const parseAPI = {
         noteId : deletedPlace.get('note').id,
         placeId : deletedPlace.id
       }
+    }, function err(error){
+      console.log('그런거 없어!!')
+      return error.code + ', ' + error.message;
     });
   },
 

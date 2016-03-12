@@ -1,6 +1,9 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
+import { updateNoteState } from '../actions'
 
-export default class RedBookCover extends Component {
+class RedBookCover extends Component {
 
   /**
    * 사용자 위치 정보가 확인된 경우에만 다시 그림
@@ -16,7 +19,7 @@ export default class RedBookCover extends Component {
 
   render(){
 
-    const { redBook, onCloseRedBook } = this.props;
+    const { redBook } = this.props;
     const style = {
       color: 'white',
       backgroundSize: 'cover',
@@ -32,7 +35,7 @@ export default class RedBookCover extends Component {
         <h4 className="country-name">{redBook.countryName}</h4>        
       </div>
       <div className="button-close">
-        <i className="fa fa-times" onClick={onCloseRedBook}/>
+        <i className="fa fa-times" onClick={this.handleCloseRedBook}/>
       </div>
       {this.renderButtons()}
     </div>
@@ -64,12 +67,12 @@ export default class RedBookCover extends Component {
 
   handleCityMap = (e) => {
     const {redBook} = this.props;
-    this.props.onPushState(`/guide/${redBook.uname}/map`);
+    browserHistory.push(`/guide/${redBook.uname}/map`);
   };
 
   handleCityPeople = (e) => {
     const {redBook} = this.props;
-    this.props.onPushState(`/guide/${redBook.uname}/people`);
+    browserHistory.push(`/guide/${redBook.uname}/people`);
   };
 
   handleNewNote = (e) => {
@@ -79,15 +82,38 @@ export default class RedBookCover extends Component {
       alert('please complete your editing note');
 
     } else {
-      this.props.onPushState(`/guide/${redBook.uname}/create`);
+      browserHistory.push(`/guide/${redBook.uname}/create`);
     }
   };
+
+  handleCloseRedBook = (e) => {
+    const { noteState } = this.props;
+
+    if( noteState.editingId ) {
+      return alert('you are editing a note!');
+    }
+
+    this.props.updateNoteState({ places: [] });
+    browserHistory.replace('/');
+  };
+
 }
 
 RedBookCover.propTypes = {
   loginUser: PropTypes.object.isRequired,
-  redBook: PropTypes.object.isRequired,
   noteState: PropTypes.object.isRequired,
-  onPushState: PropTypes.func.isRequired,
-  onCloseRedBook: PropTypes.func.isRequired
+
+  // 외부 주입
+  redBook: PropTypes.object.isRequired
 }
+
+function mapStateToProps(state) {
+  return {
+    loginUser: state.login,
+    noteState: state.noteState,
+  }
+}
+
+export default connect(mapStateToProps, {
+  updateNoteState
+})(RedBookCover)

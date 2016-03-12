@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
+import { updateNoteState } from '../actions'
 
-export default class AttachedPlaces extends Component {
+class AttachedPlaces extends Component {
 
   constructor(props){
     super(props);
@@ -38,6 +40,14 @@ export default class AttachedPlaces extends Component {
     if( places.length ){
       return <ul className="PlaceList">
         {places.map(function(place, i){
+
+          if(typeof place.key === 'number') {
+            return <li className="item" key={i}>
+              <div className="label"><i className="fa fa-spinner fa-pulse"></i> {place.label}</div>
+              <div className="title" title={place.title}>{place.title} [{place.key}]</div>
+            </li>
+          }
+
           return <li className="item" key={i} onClick={this.handleInsertPlace.bind(this, place)}>
             <div className="label"><i className="fa icon-up"></i> {place.label}</div>
             <div className="title" title={place.title}>{place.title} [{place.key}]</div>
@@ -71,7 +81,7 @@ export default class AttachedPlaces extends Component {
     let yes = confirm('Are you sure delete this place?');
 
     if( yes ){
-      this.props.onUpdateNoteState({
+      this.props.updateNoteState({
         places: _.without(places, place)
       });
     }
@@ -81,7 +91,7 @@ export default class AttachedPlaces extends Component {
 
   handleOpenMap = (e) => {
 
-    this.props.onUpdateNoteState({
+    this.props.updateNoteState({
       openMap: true
     });
     this.setState({
@@ -93,6 +103,19 @@ export default class AttachedPlaces extends Component {
 AttachedPlaces.propTypes = {
   appState: PropTypes.object.isRequired,
   noteState: PropTypes.object.isRequired,
-  onUpdateNoteState: PropTypes.func.isRequired,
+  updateNoteState: PropTypes.func.isRequired,
+
+  // 외부 주입
   onInsertPlace: PropTypes.func.isRequired
 }
+
+function mapStateToProps(state) {
+  return {
+    appState: state.appState, 
+    noteState: state.noteState
+  }
+}
+
+export default connect(mapStateToProps, {
+  updateNoteState
+})(AttachedPlaces)

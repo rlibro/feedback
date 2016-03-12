@@ -8,7 +8,7 @@ import {
   resetUpdateNote
 } from '../actions'
 import { connect } from 'react-redux'
-import { pushPath as pushState, replacePath } from 'redux-simple-router'
+import { browserHistory } from 'react-router'
 import RedBookNote from '../components/RedBookNote'
 import _ from 'lodash'
 
@@ -40,7 +40,7 @@ class SingleNotePage extends Component {
     const { noteState: { isFetching }, notes, params:{noteId} } = nextProps;
 
     if( !isFetching.note && !notes[noteId] ) {
-      this.props.pushState('/');
+      browserHistory.push('/');
     }
   }
 
@@ -127,8 +127,7 @@ class SingleNotePage extends Component {
         onLogin={this.handleFacebookLogin}
         onFetchComments={this.handleFetchComments}
         onAddComment={this.handleAddComment}
-        onDeleteComment={this.handleDeleteComment}  
-        onPushState={this.props.pushState}
+        onDeleteComment={this.handleDeleteComment}
         onLikeNote={this.props.likeNote}
         onUpdateNoteState={function(){}}
         onDeletePlace={function(){}}
@@ -147,7 +146,7 @@ class SingleNotePage extends Component {
       returnUrl = routing.state.referer;
     }
 
-    this.props.replacePath(returnUrl);
+    browserHistory.replace(returnUrl);
     
   };
 
@@ -201,7 +200,7 @@ function mapStateToProps(state) {
     entitiyPlaces: places,
     loginUser: state.login,
     noteState: noteState,
-    routing: state.routing
+    routing: state.routing.locationBeforeTransitions
   }
 }
 
@@ -211,7 +210,5 @@ export default connect(mapStateToProps, {
   likeNote,
   addComment,
   deleteComment,
-  resetUpdateNote,
-  pushState,
-  replacePath
+  resetUpdateNote
 })(SingleNotePage)

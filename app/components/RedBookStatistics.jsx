@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
 
-export default class RedBookStatistics extends Component {
+class RedBookStatistics extends Component {
 
   constructor(props) {
     super(props);
@@ -48,13 +50,23 @@ export default class RedBookStatistics extends Component {
   }
 
   handleMoveToUsers = (e) =>{
-    this.props.onPushState('/rlibrians');
+    browserHistory.push({
+      pathname:'/rlibrians',
+      state: {referer:'/'} 
+    });
   };
 
 }
 
-
 RedBookStatistics.propTypes = {
-  appState : PropTypes.object.isRequired,
-  onPushState: PropTypes.func.isRequired
+  appState : PropTypes.object.isRequired
 }
+
+function mapStateToProps(state, ownProps) {
+  return {
+    appState: state.appState
+  }
+}
+
+export default connect(mapStateToProps, {
+})(RedBookStatistics)
