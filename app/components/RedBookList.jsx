@@ -16,15 +16,20 @@ function insertAdsenceBetweenCards(cards){
   
   for(let i=0; i<adCount; ++i){
     let length  = cards.length;
+    let adObj = {id:'adsence'};
 
     // 광고 배열 위치
     const adIndex = 2+Math.floor((i+1)/2)*5+Math.floor(i/2)*7
     //const adIndex =1/2*(12 * (i+1)-Math.pow(-1,i+1)-9)
     //console.log(adIndex);
+    if (adIndex === 2 ){
+      adObj.title = '알리브로 사용법'
+      adObj.content = '곧 업데이트 됩니다.'
+    }
 
     const start = cards.slice(0, adIndex);
     const last  = cards.slice(adIndex, length);
-    start.push({id:'adsence'});
+    start.push(adObj);
     cards = start.concat(last);
   }
 
@@ -90,12 +95,23 @@ class RedBookList extends Component {
         />
 
       } else {
-        className += ' adsence'
+        className += ' adsence';
 
-        return <li key={i} className={className}>
-          <h4>광고 영역</h4>
-          <p>레드북 갯수에 따라 빈공간에 <br/>자동 삽입될 예정</p>
-        </li>
+        if( id.title ){
+          return <li key={i} className={className}>
+            <h4>{id.title}</h4>
+            <p>{id.content}</p>
+          </li>
+        } else {
+
+          return <li key={i} className={className}>
+            <h4>광고 영역</h4>
+            <p>레드북 갯수에 따라 빈공간에 <br/>자동 삽입될 예정</p>
+          </li>
+
+
+        }
+
       }
     
     }) }</ul>
