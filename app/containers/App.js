@@ -301,7 +301,9 @@ class App extends Component {
             React.cloneElement(this.props.children, {
               redBook: redBook,
               cityName: cityName,
-              countryName: countryName
+              countryName: countryName,
+              onLogin: this.handleFacebookLogin,
+              onLogOut: this.handleLogOut
             })
           }
         </div>
@@ -313,7 +315,7 @@ class App extends Component {
       case 'create':
       case 'rlibrians':
       return <div className={klassName}>
-        {this.props.children}
+        {this.props.children} 
       </div> 
 
       default:

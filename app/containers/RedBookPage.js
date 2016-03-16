@@ -1,11 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router'
-
-import { facebookLogin, updateLoginUserInfo, updateNoteState } from '../actions'
-import { fetchNotes, fetchPlaces,
-         updateNote,
-         addPlace, updatePlace, deletePlace } from '../actions'
+import { fetchNotes, fetchPlaces, updatePlace } from '../actions'
 
 import RedBookCover from '../components/RedBookCover'
 import ControlMap from '../components/ControlMap'
@@ -23,13 +19,8 @@ function fetchNotesFromServer(props) {
 class RedBookPage extends Component {
 
   constructor(props){
-
     super(props);
-
-    this.state = {
-      isEditingNote: false,
-      editingNote: null
-    }
+    this.state = {}
   }
 
   /**
@@ -94,7 +85,11 @@ class RedBookPage extends Component {
 
   renderCover = () => {
     const { loginUser, redBook, noteState, entities } = this.props;
-    return <RedBookCover redBook={redBook} />
+    return <RedBookCover 
+      redBook={redBook} 
+      onLogin={this.props.onLogin}
+      onLogOut={this.props.onLogOut}
+    />
   };
 
   renderControlMap = () => {
@@ -126,9 +121,6 @@ class RedBookPage extends Component {
         }}
         markers = {markers}
         disableMoveCenter={true}
-        onAddPlace={this.handleAddPlace}
-        onUpdateNoteState={this.props.updateNoteState}
-
       />
     } else {
       return false;
@@ -180,29 +172,11 @@ class RedBookPage extends Component {
 
     return <RedBookNoteList noteIds={notes.ids} />
   };
-
-  
-  handleAddPlace = (marker) => {
-    const {loginUser, noteState: {editingId}} = this.props;
-
-    if( typeof marker.key === 'string'){
-      this.props.updatePlace(this.props.redBook.id, editingId, marker, true)
-    }else{
-      this.props.addPlace(marker.key, loginUser.id, editingId, marker.title, marker.label, {lat: marker.position.lat, lng: marker.position.lng});
-    }
-    
-  };
-
-  handleDeletePlace = (marker) => {
-    this.props.deletePlace(marker.key);
-  };
-  
 }
 
 RedBookPage.propTypes = {
   noteState: PropTypes.object.isRequired,
   fetchNotes: PropTypes.func.isRequired,
-  facebookLogin: PropTypes.func.isRequired,
   children: PropTypes.node
 }
 
@@ -213,7 +187,7 @@ function mapStateToProps(state) {
     entities: { redBooks },
     routing: { locationBeforeTransitions: { pathname } },
     noteState
-  } = state
+  } = state;
 
   return {
     appState: state.appState,
@@ -229,14 +203,5 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, {
-  facebookLogin,
-  updateLoginUserInfo,
-  updateNoteState,
- 
-  fetchNotes,
-  fetchPlaces,
-  addPlace,
-  updatePlace,
-  updateNote,
-  deletePlace
+  fetchNotes, fetchPlaces
 })(RedBookPage)

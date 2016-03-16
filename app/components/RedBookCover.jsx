@@ -5,15 +5,36 @@ import { updateNoteState } from '../actions'
 
 class RedBookCover extends Component {
 
+  constructor(props){
+    super(props);
+
+    this.state = {
+      showLoginLayer : false
+    }
+  }
+
   /**
    * 사용자 위치 정보가 확인된 경우에만 다시 그림
    */
   shouldComponentUpdate(nextProps, nextState) {
     const { redBook, loginUser } = nextProps;
+    const { showLoginLayer } = nextState;
 
-    if( loginUser && loginUser.current_location ) {
+    // 로그인한 경우에 업데이트
+    if( loginUser && ( loginUser.id !== this.props.loginUser.id ) ) {
       return true;
     }
+
+    // 위치를 로드하면 업데이트
+    if( loginUser && ( loginUser.current_location !== this.props.loginUser.id ) ) {
+      return true;
+    }
+
+    if( showLoginLayer !== this.state.showLoginLayer ){
+      return true;
+    }
+
+
     return false;
   }
 
@@ -37,32 +58,58 @@ class RedBookCover extends Component {
       <div className="button-close">
         <i className="fa fa-times" onClick={this.handleCloseRedBook}/>
       </div>
+      {this.renderLoginLayer()}
       {this.renderButtons()}
     </div>
   }
 
-  renderButtons = () => {
+  renderLoginLayer = () => {
 
-    const { loginUser } = this.props;
+    const { loginUser, appState:{ loadedFacebookSDK, tringLogin } } = this.props;
+    const { showLoginLayer } = this.state;
 
-    if( loginUser && loginUser.id ) {
-    
-      return <div className="controls">
-        <button onClick={this.handleCityMap}><i className="fa icon-map" /> Map</button>
-        <button onClick={this.handleCityPeople}><i className="fa icon-people" /> People</button>
-        <button onClick={this.handleNewNote}><i className="fa icon-add-note" /> Note</button>
-      </div>
-    
-    } else {
-
-      return <div className="controls">
-        <button onClick={this.handleCityMap}><i className="fa icon-map" /> Map</button>
-        <button className="disabled"><i className="fa icon-people" /> People</button>
-        <button className="disabled"><i className="fa icon-add-note" /> Note</button>
-      </div>
-
+    if( !loadedFacebookSDK || loginUser.id || !showLoginLayer) {
+      return false;
     }
 
+    return <div className="login-layer">
+
+      {function(){
+        if( tringLogin ){
+          return <button className="fb-login">
+            <i className="fa fa-spinner fa-pulse"/> Login with Facebook
+          </button>
+        } else {
+          return <button className="fb-login" onClick={this.props.onLogin}>
+            If you want to leave note,<br/> please <span className="btn"><i className="fa fa-facebook"/> Login with Facebook</span>
+          </button>
+        }
+      }.bind(this)()}
+
+    </div>
+  };
+
+  renderButtons = () => {
+
+    const { loginUser } = this.props;    
+    return <div className="controls">
+      <button onClick={this.handleCityMap}><i className="fa icon-map" /> Map</button>
+      {function(){
+        if( loginUser && loginUser.id && loginUser.current_location ){
+          return <button onClick={this.handleCityPeople}><i className="fa icon-people" /> People</button>
+        } else {
+          return <button className="disabled"><i className="fa icon-people" /> People</button>
+        }
+      }.bind(this)()}
+
+      {function(){
+        if( loginUser && loginUser.id ){
+          return <button onClick={this.handleNewNote}><i className="fa icon-add-note" /> Note</button>
+        } else {
+          return <button onClick={this.handleLoginLayer}><i className="fa icon-add-note" /> Note</button>
+        }
+      }.bind(this)()}
+    </div>
   };
 
   handleCityMap = (e) => {
@@ -97,6 +144,12 @@ class RedBookCover extends Component {
     browserHistory.replace('/');
   };
 
+  handleLoginLayer = (e) => {
+    this.setState({
+      showLoginLayer: !this.state.showLoginLayer
+    })
+  }
+
 }
 
 RedBookCover.propTypes = {
@@ -104,11 +157,14 @@ RedBookCover.propTypes = {
   noteState: PropTypes.object.isRequired,
 
   // 외부 주입
-  redBook: PropTypes.object.isRequired
+  redBook: PropTypes.object.isRequired,
+  onLogin: PropTypes.func.isRequired,
+  onLogOut: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {
   return {
+    appState: state.appState,
     loginUser: state.login,
     noteState: state.noteState,
   }

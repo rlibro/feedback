@@ -316,7 +316,7 @@ button {
 
   .RedBookList {
     background-color: #efefef;
-    overflow: auto;
+    overflow: hidden;
     width: 100%;
   }
 
@@ -328,6 +328,7 @@ button {
 }
 
 .LoadingState {
+  position: relative;
 
   &.Note {
     margin-top: 60px;
@@ -338,8 +339,8 @@ button {
   }
 
   .loading {
-    position: relative;
-    float: left;
+    position: absolute;
+    top: 200px;
     width: 100%; 
     margin: 20px 0;
     text-align: center;
@@ -473,6 +474,10 @@ button {
   height: 100%;
   opacity: 0.7;
   z-index: 1;
+}
+
+.detail {
+  margin-top: 54px;
 }
 
 .NewRedBookPage {
@@ -661,6 +666,23 @@ button {
       }
     }
   }
+
+  .login-layer {
+    position: absolute;
+    right: 5px;
+    bottom: 50px;
+
+    button {
+      border-radius: 5px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 5px 10px 7px 10px;
+
+      span.btn {
+        text-decoration: underline;
+      }
+    }
+  }
 }
 
 .Map {
@@ -692,8 +714,8 @@ button {
 
     }
 
-    .LoadingState .loading h2{
-      color: #666;
+    .RedBookPage .LoadingState .loading {
+      color: #fff;
     }
   }
 
@@ -1494,7 +1516,7 @@ button {
   }
 
   .nobody-here {
-    padding: 100px 0 20px 0;
+    padding: 20px 0 20px 0;
     text-align: center;
   }
 
@@ -1506,6 +1528,7 @@ button {
 .CityMapPage.Page{ height: 0px;}
 
 .UserProfilePage, .RegisterPage{
+
   .propfile {
     position: relative;
     border-bottom: 1px solid #dedede;
