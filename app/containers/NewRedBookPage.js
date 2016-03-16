@@ -142,7 +142,8 @@ NewRedBookPage.propTypes = {
 
 function mapStateToProps(state) {
 
-  const { routing, entities:{ redBooks } } = state;
+  const { entities:{ redBooks } } = state;
+  const routing = state.routing.locationBeforeTransitions
   const isValidState = !!routing.state;
 
   if( isValidState ){
