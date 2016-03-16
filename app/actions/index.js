@@ -219,6 +219,15 @@ export function leaveUser(){
  }
 /* END OF updateCurrentUserLocation */
 
+export function changeSortOption(options) {
+  return (dispatch, getState) => {
+    return dispatch({
+      type: 'CHANGE_SORT_OPTION',
+      soryBy: options.sortBy
+    });
+  }
+}
+
 /**
  * 데이터 변경 사항을 저장한다. 
  */

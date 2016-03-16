@@ -314,6 +314,55 @@ button {
     }
   }
 
+  .RedBookListSortOption {
+    position: relative;
+    float: left;
+    margin-bottom: 5px;
+    width: 100%;
+    box-sizing: content-box;
+
+    .content {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 0px 0px;
+      height: 40px;
+      background-color: #fff;
+
+      .title {
+        float: left;
+        width: 60px;
+        height: 38px;
+        line-height: 38px;
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .option-list {
+        float: left;
+        width: 150px;
+        height: 38px;
+
+        li {
+          float: left;
+          margin: 5px 2px 5px 0px;
+          border: 1px solid #ccc;
+          padding: 0 8px;
+          height: 28px;
+          line-height: 28px;
+          font-size: 13px;
+          border-radius: 5px;
+
+
+          &.active {
+            background-color: #789;
+            color: #fff;
+            border: 1px solid #efefef;
+          }
+        }
+      }
+    }
+  }
+
   .RedBookList {
     background-color: #efefef;
     overflow: hidden;

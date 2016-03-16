@@ -20,7 +20,7 @@ function insertAdsenceBetweenCards(cards){
     // 광고 배열 위치
     const adIndex = 2+Math.floor((i+1)/2)*5+Math.floor(i/2)*7
     //const adIndex =1/2*(12 * (i+1)-Math.pow(-1,i+1)-9)
-    console.log(adIndex);
+    //console.log(adIndex);
 
     const start = cards.slice(0, adIndex);
     const last  = cards.slice(adIndex, length);

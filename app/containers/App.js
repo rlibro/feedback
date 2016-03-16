@@ -10,8 +10,9 @@ import SideBar from '../components/SideBar'
 import CurrentLocation from '../components/CurrentLocation'
 import Explore from '../components/Explore'
 
-import RedBookListByCountry from '../components/RedBookListByCountry';
-import RedBookStatics from '../components/RedBookStatistics';
+import RedBookListByCountry from '../components/RedBookListByCountry'
+import RedBookStatics from '../components/RedBookStatistics'
+//import RedBookListSortOption from '../components/RedBookListSortOption'
 
 import RedBookList from '../components/RedBookList'
 import Footer from '../components/Footer'
@@ -209,7 +210,7 @@ class App extends Component {
 
     return (
       <p style={{ backgroundColor: '#e99', padding: 10 }}>
-        <b>{errorMessage}</b>
+        <b>{`인터넷 접속이 원활하지 않습니다. 인터넷 연결을 확인해주세요!`}</b>
         {' '}
         (<a href="#"
             onClick={this.handleDismissClick.bind(this)}>

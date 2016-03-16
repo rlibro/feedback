@@ -143,7 +143,8 @@ const parseAPI = {
   fetchRedBooks: function (schema) {
 
     let query = new Parse.Query(RedBook);
-    query.ascending('cityName');
+    query.descending('updatedAt');
+    //query.ascending('cityName');
 
     return query.find()
     .then(function(data) {
