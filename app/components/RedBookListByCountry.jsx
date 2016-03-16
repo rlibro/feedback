@@ -7,11 +7,18 @@ import RedBook from '../components/RedBook';
 
 function insertAdsenceBetweenCards(cards){
 
-  const adCount = (6 - (cards.length+1) % 6);
+  const adCount = (3 - (cards.length+1) % 3);
   let startIndex = 2;
   
   for(let i=0; i<adCount; ++i){ 
-    cards.push({id:'adsence'});
+
+    let obj = {id:'adsence'};
+    if( (adCount % 2 === 1) && (adCount === i+1) ){
+      // 홀수면 테블릿에서 광고하나 빼자!
+      obj.hideWhenTablet = true;
+    }
+
+    cards.push(obj);
   }
 
   return cards;
@@ -69,7 +76,7 @@ class RedBookListByCountry extends Component {
           className = this.props.onGetRedBoodCardClassName(count, 'RedBook');
 
           if( redBook.id !== 'adsence' ){
-            
+
             return <RedBook key={i}  
               klassName={className}
               redBook={redBook}
@@ -77,7 +84,11 @@ class RedBookListByCountry extends Component {
 
           } else {
 
-            className += ' adsence'
+            className += ' adsence';
+
+            if(redBook.hideWhenTablet) {
+              className += ' hideWhenTablet';
+            }
 
             return <li key={i} className={className}>
               <h4>캠페인 영역</h4>

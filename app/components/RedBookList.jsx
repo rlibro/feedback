@@ -17,10 +17,13 @@ function insertAdsenceBetweenCards(cards){
   for(let i=0; i<adCount; ++i){
     let length  = cards.length;
 
-    // startIndex + i*3; 내가 원하는 위치에 삽입 시킬수 있다.
-    const index = Math.floor(Math.random() * length);
-    const start = cards.slice(0, index);
-    const last  = cards.slice(index, length);
+    // 광고 배열 위치
+    const adIndex = 2+Math.floor((i+1)/2)*5+Math.floor(i/2)*7
+    //const adIndex =1/2*(12 * (i+1)-Math.pow(-1,i+1)-9)
+    console.log(adIndex);
+
+    const start = cards.slice(0, adIndex);
+    const last  = cards.slice(adIndex, length);
     start.push({id:'adsence'});
     cards = start.concat(last);
   }
